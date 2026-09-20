@@ -1,0 +1,18 @@
+{
+  "currency": "USD",
+  "effective_date_checked": "2026-08-09",
+  "source_url": "https://api-docs.deepseek.com/quick_start/pricing/",
+  "unit": "per_1m_tokens",
+  "models": {
+    "deepseek-v4-flash": {
+      "input_cache_hit": 0.0028,
+      "input_cache_miss": 0.14,
+      "output_including_reasoning": 0.28
+    },
+    "deepseek-v4-pro": {
+      "input_cache_hit": 0.003625,
+      "input_cache_miss": 0.435,
+      "output_including_reasoning": 0.87
+    }
+  }
+}

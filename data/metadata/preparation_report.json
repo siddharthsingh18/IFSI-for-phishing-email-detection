@@ -1,0 +1,100 @@
+{
+  "nazario_enron": {
+    "attack_families": {
+      "false_authority": 3,
+      "label_override": 3,
+      "light_obfuscation": 3,
+      "output_hijack": 3,
+      "rule_redefinition": 3
+    },
+    "attack_version": "manual-pi-v1",
+    "counts": {
+      "attacked_phishing": 441,
+      "clean": 882,
+      "clean_legitimate": 441,
+      "clean_phishing": 441,
+      "injected_legitimate_control": 441
+    },
+    "dataset": "nazario_enron_reused",
+    "files": {
+      "attack_manifest": {
+        "path": "data/processed/nazario_enron_reused/attack_manifest.jsonl",
+        "sha256": "77911b7ea8f3a76158b0d09da63cfcb98a6caebecb475782dd0820373bb4d37b"
+      },
+      "attacked_phishing": {
+        "path": "data/processed/nazario_enron_reused/attacked_phishing.jsonl",
+        "sha256": "1d85a604b8c4575f63295c15565f21531b7047a69737a60b984cdea000f4f2b5"
+      },
+      "clean": {
+        "path": "data/processed/nazario_enron_reused/clean.jsonl",
+        "sha256": "2ea45c4f27a27e66fd97a00a6e0055f79f2b989af58099af873fc65b5a49a7e1"
+      },
+      "injected_legitimate_control": {
+        "path": "data/processed/nazario_enron_reused/injected_legitimate_control.jsonl",
+        "sha256": "de92a4db4376b1a63ed9fdde51ec7c0bdb282171101fba1b07c438f151975207"
+      }
+    },
+    "seed": 42,
+    "v1_test_exact_copy": {
+      "path": "data/processed/nazario_enron_reused/v1_test_exact_copy.jsonl",
+      "sha256": "c11219516b077169937ea29cc87240bc19ec5f515d06acb4b25bf1922d33d887"
+    },
+    "v1_test_original_sha256": "c11219516b077169937ea29cc87240bc19ec5f515d06acb4b25bf1922d33d887"
+  },
+  "phishfuzzer": {
+    "attack_families": {
+      "false_authority": 3,
+      "label_override": 3,
+      "light_obfuscation": 3,
+      "output_hijack": 3,
+      "rule_redefinition": 3
+    },
+    "attack_version": "manual-pi-v1",
+    "audit": {
+      "deduplicated_label_counts": {
+        "legitimate": 1100,
+        "phishing": 1118
+      },
+      "empty_removed": {},
+      "excluded_spam": 1074,
+      "normalization": "Unicode NFKC + casefold + whitespace collapse over subject + newline + body; deduplicate within label",
+      "raw_total": 3300,
+      "raw_type_counts": {
+        "Phishing": 1126,
+        "Spam": 1074,
+        "Valid": 1100
+      },
+      "within_label_duplicates_removed": {
+        "Phishing": 8
+      }
+    },
+    "counts": {
+      "attacked_phishing": 1000,
+      "clean": 2000,
+      "clean_legitimate": 1000,
+      "clean_phishing": 1000,
+      "injected_legitimate_control": 1000
+    },
+    "dataset": "phishfuzzer_seed_42",
+    "files": {
+      "attack_manifest": {
+        "path": "data/processed/phishfuzzer_seed_42/attack_manifest.jsonl",
+        "sha256": "06838f38040d3de6623c1a052abfffb0468caca9eac079a29861f20e0a80d6e8"
+      },
+      "attacked_phishing": {
+        "path": "data/processed/phishfuzzer_seed_42/attacked_phishing.jsonl",
+        "sha256": "330d1cb11e045d9a93009f84ea8be61df13bf6ff389fca6d63f8602796703e71"
+      },
+      "clean": {
+        "path": "data/processed/phishfuzzer_seed_42/clean.jsonl",
+        "sha256": "e3dd2a339698449cb4701df80692f5dc9e5e57604cfd26ccef6b6f90c6e5474d"
+      },
+      "injected_legitimate_control": {
+        "path": "data/processed/phishfuzzer_seed_42/injected_legitimate_control.jsonl",
+        "sha256": "a61ac80c76f6222fdd38dbdfe8477a4c399fe03a01ac154935a78ebb98445243"
+      }
+    },
+    "seed": 42
+  },
+  "seed": 42
+}

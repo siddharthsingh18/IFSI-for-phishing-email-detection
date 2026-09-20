@@ -1,0 +1,65 @@
+# Operating-system and editor files
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+.venv*/
+.python311-bootstrap/
+venv/
+dist/
+build/
+*.egg-info/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Dataset text is retained locally but is not redistributed until every
+# upstream license/terms review is complete.
+/data/raw/
+/data/processed/
+
+# Raw result directories in any project area
+**/raw/
+**/raw_results/
+**/raw-results/
+
+# These files contain email bodies, expanded prompts, or per-request model
+# responses. Publish aggregate reports and top-level integrity manifests only.
+/experiments/inputs/*.jsonl
+/experiments/raw/
+/experiments/work/
+
+# Generated scratch artifacts
+/tmp/
+
+# Internal writing/review material is outside the code release. Add selected
+# final publications later only after every author approves redistribution.
+/paper/
+/docs/*
+!/docs/V2_RESEARCH_SPEC_ZH.md
+
+# LaTeX build products (source .tex/.bib and intentional PDFs remain eligible)
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+missfont.log

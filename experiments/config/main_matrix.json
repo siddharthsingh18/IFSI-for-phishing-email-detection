@@ -1,0 +1,522 @@
+{
+  "ablation": {
+    "conditions": [
+      "clean",
+      "attacked_phishing",
+      "injected_legitimate_control"
+    ],
+    "dataset": "phishfuzzer_seed_42",
+    "method": "ours_no_summary",
+    "model": "deepseek-v4-flash",
+    "thinking": "off"
+  },
+  "cell_count": 72,
+  "cells": [
+    {
+      "condition": "clean",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "direct",
+      "model": "deepseek-v4-flash",
+      "thinking": "off"
+    },
+    {
+      "condition": "attacked_phishing",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "direct",
+      "model": "deepseek-v4-flash",
+      "thinking": "off"
+    },
+    {
+      "condition": "injected_legitimate_control",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "direct",
+      "model": "deepseek-v4-flash",
+      "thinking": "off"
+    },
+    {
+      "condition": "clean",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "robust",
+      "model": "deepseek-v4-flash",
+      "thinking": "off"
+    },
+    {
+      "condition": "attacked_phishing",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "robust",
+      "model": "deepseek-v4-flash",
+      "thinking": "off"
+    },
+    {
+      "condition": "injected_legitimate_control",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "robust",
+      "model": "deepseek-v4-flash",
+      "thinking": "off"
+    },
+    {
+      "condition": "clean",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "ours",
+      "model": "deepseek-v4-flash",
+      "thinking": "off"
+    },
+    {
+      "condition": "attacked_phishing",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "ours",
+      "model": "deepseek-v4-flash",
+      "thinking": "off"
+    },
+    {
+      "condition": "injected_legitimate_control",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "ours",
+      "model": "deepseek-v4-flash",
+      "thinking": "off"
+    },
+    {
+      "condition": "clean",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "direct",
+      "model": "deepseek-v4-flash",
+      "thinking": "on"
+    },
+    {
+      "condition": "attacked_phishing",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "direct",
+      "model": "deepseek-v4-flash",
+      "thinking": "on"
+    },
+    {
+      "condition": "injected_legitimate_control",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "direct",
+      "model": "deepseek-v4-flash",
+      "thinking": "on"
+    },
+    {
+      "condition": "clean",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "robust",
+      "model": "deepseek-v4-flash",
+      "thinking": "on"
+    },
+    {
+      "condition": "attacked_phishing",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "robust",
+      "model": "deepseek-v4-flash",
+      "thinking": "on"
+    },
+    {
+      "condition": "injected_legitimate_control",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "robust",
+      "model": "deepseek-v4-flash",
+      "thinking": "on"
+    },
+    {
+      "condition": "clean",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "ours",
+      "model": "deepseek-v4-flash",
+      "thinking": "on"
+    },
+    {
+      "condition": "attacked_phishing",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "ours",
+      "model": "deepseek-v4-flash",
+      "thinking": "on"
+    },
+    {
+      "condition": "injected_legitimate_control",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "ours",
+      "model": "deepseek-v4-flash",
+      "thinking": "on"
+    },
+    {
+      "condition": "clean",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "direct",
+      "model": "deepseek-v4-pro",
+      "thinking": "off"
+    },
+    {
+      "condition": "attacked_phishing",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "direct",
+      "model": "deepseek-v4-pro",
+      "thinking": "off"
+    },
+    {
+      "condition": "injected_legitimate_control",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "direct",
+      "model": "deepseek-v4-pro",
+      "thinking": "off"
+    },
+    {
+      "condition": "clean",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "robust",
+      "model": "deepseek-v4-pro",
+      "thinking": "off"
+    },
+    {
+      "condition": "attacked_phishing",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "robust",
+      "model": "deepseek-v4-pro",
+      "thinking": "off"
+    },
+    {
+      "condition": "injected_legitimate_control",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "robust",
+      "model": "deepseek-v4-pro",
+      "thinking": "off"
+    },
+    {
+      "condition": "clean",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "ours",
+      "model": "deepseek-v4-pro",
+      "thinking": "off"
+    },
+    {
+      "condition": "attacked_phishing",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "ours",
+      "model": "deepseek-v4-pro",
+      "thinking": "off"
+    },
+    {
+      "condition": "injected_legitimate_control",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "ours",
+      "model": "deepseek-v4-pro",
+      "thinking": "off"
+    },
+    {
+      "condition": "clean",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "direct",
+      "model": "deepseek-v4-pro",
+      "thinking": "on"
+    },
+    {
+      "condition": "attacked_phishing",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "direct",
+      "model": "deepseek-v4-pro",
+      "thinking": "on"
+    },
+    {
+      "condition": "injected_legitimate_control",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "direct",
+      "model": "deepseek-v4-pro",
+      "thinking": "on"
+    },
+    {
+      "condition": "clean",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "robust",
+      "model": "deepseek-v4-pro",
+      "thinking": "on"
+    },
+    {
+      "condition": "attacked_phishing",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "robust",
+      "model": "deepseek-v4-pro",
+      "thinking": "on"
+    },
+    {
+      "condition": "injected_legitimate_control",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "robust",
+      "model": "deepseek-v4-pro",
+      "thinking": "on"
+    },
+    {
+      "condition": "clean",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "ours",
+      "model": "deepseek-v4-pro",
+      "thinking": "on"
+    },
+    {
+      "condition": "attacked_phishing",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "ours",
+      "model": "deepseek-v4-pro",
+      "thinking": "on"
+    },
+    {
+      "condition": "injected_legitimate_control",
+      "dataset": "phishfuzzer_seed_42",
+      "method": "ours",
+      "model": "deepseek-v4-pro",
+      "thinking": "on"
+    },
+    {
+      "condition": "clean",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "direct",
+      "model": "deepseek-v4-flash",
+      "thinking": "off"
+    },
+    {
+      "condition": "attacked_phishing",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "direct",
+      "model": "deepseek-v4-flash",
+      "thinking": "off"
+    },
+    {
+      "condition": "injected_legitimate_control",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "direct",
+      "model": "deepseek-v4-flash",
+      "thinking": "off"
+    },
+    {
+      "condition": "clean",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "robust",
+      "model": "deepseek-v4-flash",
+      "thinking": "off"
+    },
+    {
+      "condition": "attacked_phishing",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "robust",
+      "model": "deepseek-v4-flash",
+      "thinking": "off"
+    },
+    {
+      "condition": "injected_legitimate_control",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "robust",
+      "model": "deepseek-v4-flash",
+      "thinking": "off"
+    },
+    {
+      "condition": "clean",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "ours",
+      "model": "deepseek-v4-flash",
+      "thinking": "off"
+    },
+    {
+      "condition": "attacked_phishing",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "ours",
+      "model": "deepseek-v4-flash",
+      "thinking": "off"
+    },
+    {
+      "condition": "injected_legitimate_control",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "ours",
+      "model": "deepseek-v4-flash",
+      "thinking": "off"
+    },
+    {
+      "condition": "clean",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "direct",
+      "model": "deepseek-v4-flash",
+      "thinking": "on"
+    },
+    {
+      "condition": "attacked_phishing",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "direct",
+      "model": "deepseek-v4-flash",
+      "thinking": "on"
+    },
+    {
+      "condition": "injected_legitimate_control",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "direct",
+      "model": "deepseek-v4-flash",
+      "thinking": "on"
+    },
+    {
+      "condition": "clean",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "robust",
+      "model": "deepseek-v4-flash",
+      "thinking": "on"
+    },
+    {
+      "condition": "attacked_phishing",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "robust",
+      "model": "deepseek-v4-flash",
+      "thinking": "on"
+    },
+    {
+      "condition": "injected_legitimate_control",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "robust",
+      "model": "deepseek-v4-flash",
+      "thinking": "on"
+    },
+    {
+      "condition": "clean",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "ours",
+      "model": "deepseek-v4-flash",
+      "thinking": "on"
+    },
+    {
+      "condition": "attacked_phishing",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "ours",
+      "model": "deepseek-v4-flash",
+      "thinking": "on"
+    },
+    {
+      "condition": "injected_legitimate_control",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "ours",
+      "model": "deepseek-v4-flash",
+      "thinking": "on"
+    },
+    {
+      "condition": "clean",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "direct",
+      "model": "deepseek-v4-pro",
+      "thinking": "off"
+    },
+    {
+      "condition": "attacked_phishing",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "direct",
+      "model": "deepseek-v4-pro",
+      "thinking": "off"
+    },
+    {
+      "condition": "injected_legitimate_control",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "direct",
+      "model": "deepseek-v4-pro",
+      "thinking": "off"
+    },
+    {
+      "condition": "clean",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "robust",
+      "model": "deepseek-v4-pro",
+      "thinking": "off"
+    },
+    {
+      "condition": "attacked_phishing",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "robust",
+      "model": "deepseek-v4-pro",
+      "thinking": "off"
+    },
+    {
+      "condition": "injected_legitimate_control",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "robust",
+      "model": "deepseek-v4-pro",
+      "thinking": "off"
+    },
+    {
+      "condition": "clean",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "ours",
+      "model": "deepseek-v4-pro",
+      "thinking": "off"
+    },
+    {
+      "condition": "attacked_phishing",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "ours",
+      "model": "deepseek-v4-pro",
+      "thinking": "off"
+    },
+    {
+      "condition": "injected_legitimate_control",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "ours",
+      "model": "deepseek-v4-pro",
+      "thinking": "off"
+    },
+    {
+      "condition": "clean",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "direct",
+      "model": "deepseek-v4-pro",
+      "thinking": "on"
+    },
+    {
+      "condition": "attacked_phishing",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "direct",
+      "model": "deepseek-v4-pro",
+      "thinking": "on"
+    },
+    {
+      "condition": "injected_legitimate_control",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "direct",
+      "model": "deepseek-v4-pro",
+      "thinking": "on"
+    },
+    {
+      "condition": "clean",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "robust",
+      "model": "deepseek-v4-pro",
+      "thinking": "on"
+    },
+    {
+      "condition": "attacked_phishing",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "robust",
+      "model": "deepseek-v4-pro",
+      "thinking": "on"
+    },
+    {
+      "condition": "injected_legitimate_control",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "robust",
+      "model": "deepseek-v4-pro",
+      "thinking": "on"
+    },
+    {
+      "condition": "clean",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "ours",
+      "model": "deepseek-v4-pro",
+      "thinking": "on"
+    },
+    {
+      "condition": "attacked_phishing",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "ours",
+      "model": "deepseek-v4-pro",
+      "thinking": "on"
+    },
+    {
+      "condition": "injected_legitimate_control",
+      "dataset": "nazario_enron_quality_seed_42",
+      "method": "ours",
+      "model": "deepseek-v4-pro",
+      "thinking": "on"
+    }
+  ],
+  "matrix_version": "main-v2-quality-filtered",
+  "prompt_version": "v2-main-2026-08-09.1"
+}

@@ -1,0 +1,47 @@
+{
+  "format": "phishbench-v2-retained-artifacts-v1",
+  "created_utc": "2026-08-30",
+  "policy": "Keep frozen inputs, unique raw model outputs, final aggregate results, and the minimum run configuration only.",
+  "artifacts": {
+    "config/deepseek_pricing_2026-08-09.json": {
+      "bytes": 462,
+      "sha256": "55f4f8e88d838c6e6b49b0967d74108bd207fb6a9cf154522ffc655024dcaa45"
+    },
+    "config/main_matrix.json": {
+      "bytes": 13429,
+      "sha256": "7738d7838e53a8e525cb8bad1b85e0378c467b73410be108b3149318d2b0c650"
+    },
+    "inputs/phishbench_portable_prompts_v1.jsonl": {
+      "bytes": 109625583,
+      "prompt_records": 18868,
+      "sha256": "c3df4691b30c91ee8658a4f4e55951f269511fc81d1d9e9534792ba2ff42141d"
+    },
+    "inputs/prompt_snapshot_v2-main-2026-08-09.1.json": {
+      "bytes": 10606,
+      "sha256": "9a92feca88c80dbf7e17e897fba6cf7a2e76abb3c0283945b922da335b5413e0"
+    },
+    "raw/deepseek-v4-main/MANIFEST.json": {
+      "bytes": 36055,
+      "result_files": 72,
+      "result_records": 59472,
+      "uncompressed_result_bytes": 212510776,
+      "sha256": "4c3cf01e3ff74759669268eaa34aa6d698f2927acded533dab183399906704de"
+    },
+    "raw/qwen3.5-vllm-main/MANIFEST.json": {
+      "bytes": 892,
+      "result_files": 4,
+      "result_records": 75472,
+      "uncompressed_result_bytes": 1032634786,
+      "sha256": "c9d0cc4ab3b74b4e91d9c4ee5b0d5e161202a5f86b662ae261f9bef83f4f253e"
+    },
+    "results/ALL_EXPERIMENT_RESULTS_ZH.md": {
+      "bytes": 8925,
+      "sha256": "e83e04d699c9cd81a53e83137e82387f49897281379d14eefc10fa264cd19f78"
+    },
+    "results/all-model-results.json": {
+      "bytes": 146659,
+      "configurations": 8,
+      "sha256": "e245aab0034b9efe2c28aaef8c14ec6a74f458c42bbd953c0431b958d29d04b6"
+    }
+  }
+}
