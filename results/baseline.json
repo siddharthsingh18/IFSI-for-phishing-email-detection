@@ -1,0 +1,35 @@
+{
+  "model": "TF-IDF + LogisticRegression",
+  "hyperparameters": {
+    "max_features": 10000,
+    "stop_words": "english",
+    "sublinear_tf": true,
+    "classifier": "LogisticRegression",
+    "C": 1.0,
+    "seed": 42
+  },
+  "train_samples": 4178,
+  "test_samples": 522,
+  "metrics": {
+    "confusion_matrix": [
+      [
+        393,
+        1
+      ],
+      [
+        7,
+        121
+      ]
+    ],
+    "true_negatives": 393,
+    "false_positives": 1,
+    "false_negatives": 7,
+    "true_positives": 121,
+    "precision": 0.9918032786885246,
+    "recall": 0.9453125,
+    "f1": 0.968,
+    "fpr": 0.0025380710659898475,
+    "accuracy": 0.9846743295019157,
+    "total_samples": 522
+  }
+}
