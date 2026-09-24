@@ -27,8 +27,8 @@ build/
 *.pem
 *.key
 
-# Dataset text is retained locally but is not redistributed until every
-# upstream license/terms review is complete.
+# Data directories
+data/
 /data/raw/
 /data/processed/
 
@@ -36,6 +36,9 @@ build/
 **/raw/
 **/raw_results/
 **/raw-results/
+raw/
+raw_results/
+raw-results/
 
 # These files contain email bodies, expanded prompts, or per-request model
 # responses. Publish aggregate reports and top-level integrity manifests only.
