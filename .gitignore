@@ -66,3 +66,8 @@ raw-results/
 *.synctex.gz
 *.toc
 missfont.log
+
+# Intermediate prediction traces and RAG vector index
+results/*.jsonl
+results/rag_index/
+

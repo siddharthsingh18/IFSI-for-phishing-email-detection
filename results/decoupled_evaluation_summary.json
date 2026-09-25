@@ -1,0 +1,105 @@
+{
+  "baseline_prompt6_single_call_fpr": 0.2595,
+  "combined_coupled_single_call_fpr": 0.0051,
+  "delta_combined_coupled_vs_prompt6": -0.2544,
+  "delta_is_phishing_only_vs_prompt6": 0.4613,
+  "delta_two_call_decoupled_vs_combined_coupled": 0.7157,
+  "delta_two_call_decoupled_vs_is_phishing_only": 0.0,
+  "delta_two_call_decoupled_vs_prompt6": 0.4613,
+  "is_phishing_only_fpr": 0.7208,
+  "results_by_variant": {
+    "M3_Combined_Coupled": {
+      "runtime_seconds": 217.18,
+      "unmarked_control": {
+        "false_positives": 2,
+        "fpr": 0.0051,
+        "invalid_count": 0,
+        "invalid_rate": 0.0,
+        "specificity": 0.9949,
+        "total_samples": 394,
+        "true_negatives": 392,
+        "valid_count": 394
+      },
+      "unmarked_phishing": {
+        "evasion_rate": 0.9688,
+        "false_negatives": 124,
+        "invalid_count": 0,
+        "invalid_rate": 0.0,
+        "recall": 0.0312,
+        "total_samples": 128,
+        "true_positives": 4,
+        "valid_count": 128
+      }
+    },
+    "M3_IsPhishing_Only": {
+      "runtime_seconds": 116.92,
+      "unmarked_control": {
+        "false_positives": 284,
+        "fpr": 0.7208,
+        "invalid_count": 0,
+        "invalid_rate": 0.0,
+        "specificity": 0.2792,
+        "total_samples": 394,
+        "true_negatives": 110,
+        "valid_count": 394
+      },
+      "unmarked_phishing": {
+        "evasion_rate": 0.0391,
+        "false_negatives": 5,
+        "invalid_count": 0,
+        "invalid_rate": 0.0,
+        "recall": 0.9609,
+        "total_samples": 128,
+        "true_positives": 123,
+        "valid_count": 128
+      }
+    },
+    "M3_Prompt6_SingleCall": {
+      "runtime_seconds": 456.13,
+      "unmarked_control": {
+        "false_positives": 96,
+        "fpr": 0.2595,
+        "invalid_count": 24,
+        "invalid_rate": 0.0609,
+        "specificity": 0.7405,
+        "total_samples": 394,
+        "true_negatives": 274,
+        "valid_count": 370
+      },
+      "unmarked_phishing": {
+        "evasion_rate": 0.7895,
+        "false_negatives": 90,
+        "invalid_count": 14,
+        "invalid_rate": 0.1094,
+        "recall": 0.2105,
+        "total_samples": 128,
+        "true_positives": 24,
+        "valid_count": 114
+      }
+    },
+    "M3_TwoCall_Decoupled": {
+      "runtime_seconds": 263.57,
+      "unmarked_control": {
+        "false_positives": 284,
+        "fpr": 0.7208,
+        "invalid_count": 0,
+        "invalid_rate": 0.0,
+        "specificity": 0.2792,
+        "total_samples": 394,
+        "true_negatives": 110,
+        "valid_count": 394
+      },
+      "unmarked_phishing": {
+        "evasion_rate": 0.0391,
+        "false_negatives": 5,
+        "invalid_count": 0,
+        "invalid_rate": 0.0,
+        "recall": 0.9609,
+        "total_samples": 128,
+        "true_positives": 123,
+        "valid_count": 128
+      }
+    }
+  },
+  "two_call_decoupled_fpr": 0.7208
+}

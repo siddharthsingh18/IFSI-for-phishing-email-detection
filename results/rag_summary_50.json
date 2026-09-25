@@ -1,0 +1,35 @@
+{
+  "model": "qwen2.5:0.5b",
+  "method": "RAG (top_k=3) + Ollama",
+  "top_k": 3,
+  "temperature": 0.0,
+  "total_emails_evaluated": 50,
+  "total_runtime_seconds": 47.957,
+  "avg_latency_per_email_seconds": 0.9591,
+  "valid_count": 45,
+  "invalid_count": 5,
+  "invalid_rate": 0.1,
+  "metrics_on_valid": {
+    "confusion_matrix": [
+      [
+        13,
+        16
+      ],
+      [
+        10,
+        6
+      ]
+    ],
+    "true_negatives": 13,
+    "false_positives": 16,
+    "false_negatives": 10,
+    "true_positives": 6,
+    "precision": 0.2727272727272727,
+    "recall": 0.375,
+    "f1": 0.3157894736842105,
+    "fpr": 0.5517241379310345,
+    "accuracy": 0.4222222222222222,
+    "total_samples": 45
+  },
+  "predictions_file": "results/rag_predictions_50.jsonl"
+}

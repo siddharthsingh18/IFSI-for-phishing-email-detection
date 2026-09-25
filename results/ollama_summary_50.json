@@ -1,0 +1,33 @@
+{
+  "model": "qwen2.5:0.5b",
+  "temperature": 0.0,
+  "total_emails_evaluated": 50,
+  "total_runtime_seconds": 102.8582,
+  "avg_latency_per_email_seconds": 2.0572,
+  "valid_count": 39,
+  "invalid_count": 11,
+  "invalid_rate": 0.22,
+  "metrics_on_valid": {
+    "confusion_matrix": [
+      [
+        4,
+        23
+      ],
+      [
+        0,
+        12
+      ]
+    ],
+    "true_negatives": 4,
+    "false_positives": 23,
+    "false_negatives": 0,
+    "true_positives": 12,
+    "precision": 0.34285714285714286,
+    "recall": 1.0,
+    "f1": 0.5106382978723404,
+    "fpr": 0.8518518518518519,
+    "accuracy": 0.41025641025641024,
+    "total_samples": 39
+  },
+  "predictions_file": "results/ollama_predictions_50.jsonl"
+}

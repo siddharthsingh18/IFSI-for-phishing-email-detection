@@ -32,124 +32,92 @@ data/metadata/         Source provenance and preparation summaries
 Email corpora, expanded per-email prompts, and per-request model traces are
 intentionally excluded from Git. See [PUBLIC_RELEASE.md](PUBLIC_RELEASE.md).
 
-## Installation
+## Installation & Environment Setup
 
-PhishBench requires Python 3.10 or newer and has no third-party runtime
-dependencies.
+PhishBench requires **Python 3.11+**.
 
 ```bash
-python3 -m venv .venv
+# 1. Create and activate virtual environment
+python3.11 -m venv .venv
 source .venv/bin/activate
-python -m pip install -e .
+
+# 2. Install package in editable mode with dependencies
+pip install -e .
+
+# 3. Verify installation with test suite (49 passing tests)
+pytest tests/
 ```
 
-## Offline verification
+## Local Model Server Setup (Ollama)
 
-These commands do not call a model service and do not require private data:
+The LLM evaluations (M2, M3, M4) utilize `qwen2.5:0.5b` served via local Ollama.
 
 ```bash
-python -m unittest discover -s tests -v
+# 1. Start Ollama daemon (redirect logs to avoid pipe stalls)
+ollama serve > /tmp/ollama.log 2>&1 &
 
-phishbench-run \
-  --input examples/sample_emails.jsonl \
-  --output /tmp/phishbench-results.jsonl \
-  --manifest /tmp/phishbench-manifest.json \
-  --dataset synthetic_demo \
-  --condition clean \
-  --method ours \
-  --model deepseek-v4-pro \
-  --thinking off \
-  --limit 1 \
-  --dry-run
+# 2. Pull evaluation model
+ollama pull qwen2.5:0.5b
 
-./src/tools/release/check_public_release.sh
+# 3. Verify server responsiveness
+curl -s http://127.0.0.1:11434/api/tags
 ```
 
-The dry-run writes a manifest and computes the exact expanded-prompt hash, but
-does not read an API key or send a request.
+Configuration parameters (temperature 0.0, timeout, token limits) are managed in [`config/ollama_config.json`](config/ollama_config.json).
 
-## Core implementation map
+## Reproducing the Experiment Pipeline
 
-The requested reproducibility components are deliberately separated:
-
-- prompt-injection simulation: `src/phishbench/attacks.py`;
-- dataset preparation and paired conditions: `src/phishbench/prepare.py` and
-  `src/phishbench/attacks.py`;
-- batch inference: `src/phishbench/runner.py` and
-  `src/tools/inference/run_deepseek_matrix.sh`;
-- exact paper prompts: `prompts/direct.txt`, `prompts/robust.txt`, and
-  `prompts/ours.txt`;
-- metric and paired-test implementation: `src/phishbench/evaluate.py`;
-- aggregate paper-table rebuild: `src/tools/evaluation/rebuild_final_results.sh`.
-
-To score one or more completed JSONL result files and write the complete
-machine-readable report directly:
-
+### Step 1: Data Preparation & Stratified Split
+Deduplicate raw email records and generate stratified 80/10/10 train/validation/test splits:
 ```bash
-./scripts/run_scoring.sh output/metrics.json results-a.jsonl results-b.jsonl
+python -m phishbench.data_loader \
+  --data-dir data/raw \
+  --output-dir data/splits \
+  --seed 42
 ```
 
-The scorer reports failure-as-error classification metrics, valid-output-only
-metrics, injection detection, paired flips, exact McNemar comparisons, output
-token distributions, format reliability, latency summaries, and estimated
-API cost when the matching pricing snapshot is available.
-
-This workspace is nested inside a larger historical Git repository. Create a
-standalone public tree instead of publishing the parent repository:
-
+### Step 2: Build RAG Vector Index (Train Split Only)
+Index embeddings for the 4,178 training emails using `all-MiniLM-L6-v2` and FAISS:
 ```bash
-./src/tools/release/export_public_tree.sh /tmp/ifsi-public
-cd /tmp/ifsi-public
-git init
+python -m phishbench.rag \
+  --train data/splits/train.jsonl \
+  --output-dir results/rag_index
 ```
 
-Inspect the exported tree and choose a license before committing or pushing.
-
-## Reproducing the experiment pipeline
-
-1. Acquire the upstream datasets and verify their terms. The local data layout
-   and pinned source metadata are described in [data/README.md](data/README.md).
-2. Prepare paired clean/attack/control files with the commands in
-   [src/tools/README.md](src/tools/README.md).
-3. Freeze the prompt snapshot and experiment matrix:
-
-   ```bash
-   ./src/tools/prompts/freeze_prompts.sh
-   ./src/tools/prompts/export_portable_prompts.sh
-   ```
-
-4. For DeepSeek-compatible inference, set `DEEPSEEK_API_KEY` in the shell and
-   run a cell or the matrix. Never place a key in a tracked file.
-5. Evaluate local-model JSONL with `evaluate_portable_results.py`, then combine
-   all model results using the evaluation tools.
-
-The archived paper results can be rebuilt only when the excluded raw artifacts
-are present locally:
-
+### Step 3: Generate Injection Datasets (Marked & Unmarked)
+Synthesize explicit-marker and naturally blended prompt injections across both phishing and legitimate control emails:
 ```bash
-BOOTSTRAP_ITERATIONS=2000 ./src/tools/evaluation/rebuild_final_results.sh
+python -m phishbench.injections \
+  --test-split data/splits/test.jsonl \
+  --output-dir data/injections \
+  --seed 42
 ```
 
-This rebuild reads saved JSONL files; it does not invoke a model API.
+### Step 4: Execute Full Benchmark & Generate Report (M1–M4)
+Run all four detection methods across Clean, Marked, and Unmarked conditions ($4 \times 3 = 12$ matrix), compute confusion matrices, 2,000-sample bootstrap 95% CIs, and paired McNemar tests:
+```bash
+python -m phishbench.benchmark_suite \
+  --train data/splits/train.jsonl \
+  --splits-dir data/splits \
+  --injections-dir data/injections \
+  --rag-index results/rag_index \
+  --results-dir results \
+  --config config/ollama_config.json \
+  --concurrency 4
+```
 
-## Frozen experimental scope
+### Step 5: Inspect Evaluation Artifacts
+- **Comprehensive Markdown Report**: [`results/report.md`](results/report.md)
+- **Machine-Readable Summary**: [`results/full_benchmark_summary.json`](results/full_benchmark_summary.json)
+- **Per-Method Prediction Traces**: `results/M{1,2,3,4}_{clean,marked,unmarked}_predictions.jsonl`
 
-- datasets: PhishFuzzer and a quality-filtered Nazario + Enron set;
-- conditions: clean, attacked phishing, injected legitimate control;
-- methods: Direct, Robust, Ours; plus a limited no-summary ablation;
-- main paper models: DeepSeek-v4-Pro, Qwen3.5-9B, Qwen3.5-35B-A3B;
-- audit/boundary model: DeepSeek-v4-Flash;
-- reasoning regimes: non-thinking and thinking.
+## Evaluated Methods (M1–M4)
 
-The complete aggregate result is
-`experiments/results/all-model-results.json`. The reports under
-`experiments/results/` explain the metrics and statistical families. The
-results support a model-dependent robustness/cost trade-off, not universal
-superiority across every model and reasoning regime.
+- **M1 (TF-IDF + LogisticRegression)**: Feature baseline trained on bag-of-words/n-grams ($V=10,000$).
+- **M2 (Zero-Shot LLM)**: Direct prompt to `qwen2.5:0.5b` without external reference context.
+- **M3 (RAG Combined Single-Call)**: Single API call retrieving top-3 train exemplars, generating verdict, confidence, and explanatory reasoning tokens.
+- **M4 (RAG Two-Call Decoupled)**: Staged inference with strictly zero shared context: Call 1 performs prompt injection detection alone; Call 2 performs pure boolean phishing classification with RAG context.
 
-## Citation and license
+## Citation and License
 
-Citation metadata and a publication link will be added when the proceedings
-record is final. A
-software license has intentionally not been selected in this working copy;
-both authors should approve one before public release.
+Released under the MIT License. See [LICENSE](LICENSE) for details.
