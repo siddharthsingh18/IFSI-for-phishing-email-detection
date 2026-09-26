@@ -1026,3 +1026,57 @@ def synthesize_injection(
         injected_body = f"{original_body}\n\n{payload}"
 
     return injected_body, payload
+
+
+@st.cache_data
+def load_attack_family_examples() -> dict[str, dict[str, Any]]:
+    """Load authentic marked and unmarked templates grouped by attack family from data/injections."""
+    marked_by_fam: dict[str, dict[str, Any]] = {}
+    unmarked_by_fam: dict[str, dict[str, list[dict[str, Any]]]] = {}
+
+    for fn in ("marked-phishing.jsonl", "marked-control.jsonl"):
+        p = DATA_DIR / "injections" / fn
+        if p.exists():
+            try:
+                with open(p, encoding="utf-8") as f:
+                    for line in f:
+                        if line.strip():
+                            d = json.loads(line)
+                            fam = d.get("attack_family")
+                            if fam and fam not in marked_by_fam:
+                                marked_by_fam[fam] = {
+                                    "injected_text": d.get("injected_text", ""),
+                                    "base_instruction": d.get("base_instruction", ""),
+                                    "attack_template_id": d.get("attack_template_id", ""),
+                                }
+            except Exception as exc:
+                print(f"Warning reading {fn}: {exc}")
+
+    for fn in ("unmarked-phishing.jsonl", "unmarked-control.jsonl"):
+        p = DATA_DIR / "injections" / fn
+        if p.exists():
+            try:
+                with open(p, encoding="utf-8") as f:
+                    for line in f:
+                        if line.strip():
+                            d = json.loads(line)
+                            fam = d.get("attack_family")
+                            style = d.get("injection_style", "forwarded_notice")
+                            if fam:
+                                unmarked_by_fam.setdefault(fam, {}).setdefault(style, []).append({
+                                    "injected_text": d.get("injected_text", ""),
+                                    "base_instruction": d.get("base_instruction", ""),
+                                    "attack_template_id": d.get("attack_template_id", ""),
+                                    "attack_position": d.get("attack_position", "body_start"),
+                                })
+            except Exception as exc:
+                print(f"Warning reading {fn}: {exc}")
+
+    families = ["label_override", "false_authority", "output_hijack", "rule_redefinition", "light_obfuscation"]
+    result = {}
+    for fam in families:
+        result[fam] = {
+            "marked": marked_by_fam.get(fam, {}),
+            "unmarked_by_style": unmarked_by_fam.get(fam, {}),
+        }
+    return result
