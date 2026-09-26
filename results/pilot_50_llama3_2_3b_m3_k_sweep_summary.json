@@ -1,0 +1,79 @@
+{
+  "k_values": [
+    1,
+    3,
+    5
+  ],
+  "model": "llama3.2:3b",
+  "results_by_k": {
+    "k=1": {
+      "k": 1,
+      "metrics": {
+        "accuracy": 0.8958,
+        "avg_latency": 2.22,
+        "f1": 0.8571,
+        "false_negatives": 2,
+        "false_positives": 3,
+        "fpr": 0.0968,
+        "invalid_count": 2,
+        "invalid_rate": 0.04,
+        "k": 1,
+        "precision": 0.8333,
+        "recall": 0.8824,
+        "runtime_seconds": 110.93,
+        "specificity": 0.9032,
+        "total_samples": 50,
+        "true_negatives": 28,
+        "true_positives": 15,
+        "valid_count": 48
+      },
+      "predictions_file": "results/pilot_50_llama3_2_3b_M3_k1_predictions.jsonl"
+    },
+    "k=3": {
+      "k": 3,
+      "metrics": {
+        "accuracy": 0.913,
+        "avg_latency": 2.79,
+        "f1": 0.8889,
+        "false_negatives": 1,
+        "false_positives": 3,
+        "fpr": 0.1034,
+        "invalid_count": 4,
+        "invalid_rate": 0.08,
+        "k": 3,
+        "precision": 0.8421,
+        "recall": 0.9412,
+        "runtime_seconds": 139.42,
+        "specificity": 0.8966,
+        "total_samples": 50,
+        "true_negatives": 26,
+        "true_positives": 16,
+        "valid_count": 46
+      },
+      "predictions_file": "results/pilot_50_llama3_2_3b_M3_k3_predictions.jsonl"
+    },
+    "k=5": {
+      "k": 5,
+      "metrics": {
+        "accuracy": 0.9592,
+        "avg_latency": 3.3,
+        "f1": 0.9444,
+        "false_negatives": 0,
+        "false_positives": 2,
+        "fpr": 0.0625,
+        "invalid_count": 1,
+        "invalid_rate": 0.02,
+        "k": 5,
+        "precision": 0.8947,
+        "recall": 1.0,
+        "runtime_seconds": 164.96,
+        "specificity": 0.9375,
+        "total_samples": 50,
+        "true_negatives": 30,
+        "true_positives": 17,
+        "valid_count": 49
+      },
+      "predictions_file": "results/pilot_50_llama3_2_3b_M3_k5_predictions.jsonl"
+    }
+  }
+}

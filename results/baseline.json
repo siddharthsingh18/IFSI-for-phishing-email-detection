@@ -30,6 +30,10 @@
     "f1": 0.968,
     "fpr": 0.0025380710659898475,
     "accuracy": 0.9846743295019157,
-    "total_samples": 522
+    "total_samples": 522,
+    "invalid_count": 0,
+    "invalid_rate": 0.0,
+    "total_runtime_seconds": 0.148,
+    "mean_latency_seconds": 0.0003
   }
 }

@@ -1,0 +1,11 @@
+{
+  "config_hash": "fbc6dedef6c39a2508044e6cf96dc70337a4c1c6e55a98d6c23c728040101b2f",
+  "git_commit": "79edf07c2d3ca6374d9170de8a7b4154bd2a506e",
+  "model": "llama3.2:3b",
+  "model_name": "llama3.2:3b",
+  "prompt_hash": "aa7fc2331c81d135018e06a50959cd6443543f44526fe40f12d042117ed6ed5d",
+  "prompt_template_hash": "aa7fc2331c81d135018e06a50959cd6443543f44526fe40f12d042117ed6ed5d",
+  "results_file": "pilot_50_llama3_2_3b_M2_predictions.jsonl",
+  "timestamp": "2026-09-25T23:53:43.094565+00:00",
+  "timestamp_utc": "2026-09-25T23:53:43.094565+00:00"
+}

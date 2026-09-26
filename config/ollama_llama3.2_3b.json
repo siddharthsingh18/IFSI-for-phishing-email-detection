@@ -1,0 +1,8 @@
+{
+  "model": "llama3.2:3b",
+  "temperature": 0.0,
+  "api_base": "http://127.0.0.1:11434",
+  "timeout_seconds": 30.0,
+  "max_retries": 1,
+  "num_predict": 512
+}

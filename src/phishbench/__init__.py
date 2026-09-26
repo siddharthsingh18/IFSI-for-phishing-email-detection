@@ -39,6 +39,16 @@ _INJECTION_EXPORTS = {
 }
 
 
+_MANIFEST_EXPORTS = {
+    "compute_config_hash",
+    "compute_prompt_hash",
+    "create_manifest_record",
+    "get_git_commit",
+    "get_manifest_path",
+    "save_manifest_alongside",
+}
+
+
 def __getattr__(name: str) -> Any:
     if name in _DATA_LOADER_EXPORTS:
         from . import data_loader
@@ -56,6 +66,10 @@ def __getattr__(name: str) -> Any:
         from . import injections
 
         return getattr(injections, name)
+    if name in _MANIFEST_EXPORTS:
+        from . import manifest
+
+        return getattr(manifest, name)
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
 
@@ -65,4 +79,6 @@ __all__ = [
     *_BASELINE_EXPORTS,
     *_RAG_EXPORTS,
     *_INJECTION_EXPORTS,
+    *_MANIFEST_EXPORTS,
 ]
+

@@ -150,3 +150,19 @@ def test_ollama_client_invalid_equals_error_after_max_retries() -> None:
         assert meta["retries"] == 1  # 1 initial + 1 retry = 1 retry attempted
         assert "HTTP 500" in meta["error"]
         assert mock_post.call_count == 2
+
+
+def test_same_config_produces_same_prompt_hash() -> None:
+    """Test that identical configs produce identical prompt template hashes."""
+    cfg1 = OllamaConfig(model="qwen2.5:0.5b", temperature=0.0)
+    cfg2 = OllamaConfig(model="qwen2.5:0.5b", temperature=0.0)
+    assert cfg1.compute_prompt_hash() == cfg2.compute_prompt_hash()
+    assert cfg1.prompt_hash == cfg2.prompt_hash
+
+    # Same custom template produces same hash
+    template = "Classify email: {{text}}"
+    cfg3 = OllamaConfig(prompt_template=template)
+    cfg4 = OllamaConfig(prompt_template=template)
+    assert cfg3.prompt_hash == cfg4.prompt_hash
+    assert cfg1.prompt_hash != cfg3.prompt_hash
+

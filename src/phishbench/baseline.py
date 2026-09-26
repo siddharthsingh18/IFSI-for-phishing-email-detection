@@ -136,8 +136,16 @@ def train_and_evaluate_baseline(
         output_path.parent.mkdir(parents=True, exist_ok=True)
         with output_path.open("w", encoding="utf-8") as f:
             json.dump(result, f, indent=2)
+        from .manifest import save_manifest_alongside
+        save_manifest_alongside(
+            output_path,
+            config=result["hyperparameters"],
+            model_name=result["model"],
+            method="m1",
+        )
 
     return result
+
 
 
 def main() -> None:

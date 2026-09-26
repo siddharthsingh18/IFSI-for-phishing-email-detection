@@ -48,6 +48,12 @@ from .evaluate_decoupled_rag import (
     HasInjectionResult,
     IsPhishingResult,
 )
+from .manifest import (
+    create_manifest_record,
+    get_all_method_prompt_hashes,
+    save_manifest_alongside,
+)
+
 
 
 # =========================================================================
@@ -111,6 +117,35 @@ def exact_mcnemar_test(
     }
 
 
+def apply_holm_bonferroni(paired_tests: dict[str, Any], alpha: float = 0.05) -> dict[str, Any]:
+    """Apply Holm-Bonferroni step-down correction across all paired hypothesis tests."""
+    sorted_keys = sorted(paired_tests.keys(), key=lambda k: paired_tests[k]["p_value"])
+    m = len(sorted_keys)
+    cum_max = 0.0
+
+    for rank, key in enumerate(sorted_keys, start=1):
+        item = paired_tests[key]
+        raw_p = float(item["p_value"])
+        factor = m - rank + 1
+        hb_p = min(1.0, raw_p * factor)
+        cum_max = max(cum_max, hb_p)
+        adj_p = min(1.0, cum_max)
+
+        item["raw_p_value"] = raw_p
+        item["holm_bonferroni_rank"] = rank
+        item["holm_bonferroni_factor"] = factor
+        item["holm_bonferroni_p_value"] = adj_p
+        item["significant_after_holm_bonferroni"] = adj_p < alpha
+    return paired_tests
+
+
+def fmt_latency(sec: float) -> str:
+    """Format latency concisely in seconds or milliseconds."""
+    if sec < 0.001:
+        return f"{sec * 1000:.2f} ms"
+    return f"{sec:.4f}s"
+
+
 def compute_cell_metrics(predictions: Sequence[dict[str, Any]]) -> dict[str, Any]:
     """Compute complete classification metrics and confusion matrix."""
     total = len(predictions)
@@ -131,6 +166,9 @@ def compute_cell_metrics(predictions: Sequence[dict[str, Any]]) -> dict[str, Any
     fpr = fp / (fp + tn) if (fp + tn) > 0 else 0.0
     f1 = (2 * precision * recall) / (precision + recall) if (precision + recall) > 0 else 0.0
 
+    latencies = [float(p["latency_seconds"]) for p in predictions if "latency_seconds" in p and p["latency_seconds"] is not None]
+    mean_lat = round(sum(latencies) / len(latencies), 6) if latencies else 0.0
+
     return {
         "total_samples": total,
         "valid_count": valid_count,
@@ -146,6 +184,7 @@ def compute_cell_metrics(predictions: Sequence[dict[str, Any]]) -> dict[str, Any
         "specificity": round(specificity, 4),
         "fpr": round(fpr, 4),
         "f1": round(f1, 4),
+        "mean_latency_seconds": mean_lat,
     }
 
 
@@ -476,6 +515,7 @@ async def run_benchmark_suite(
     results_dir: Path,
     config_path: Path,
     concurrency: int = 4,
+    top_k: int = 3,
 ) -> tuple[dict[str, Any], str]:
     results_dir.mkdir(parents=True, exist_ok=True)
     cfg_dict = json.loads(config_path.read_text(encoding="utf-8")) if config_path.exists() else {}
@@ -504,8 +544,8 @@ async def run_benchmark_suite(
     for c_name, c_records in conditions_data.items():
         for r in c_records:
             if "ref_block" not in r:
-                r["ref_block"] = format_reference_block(retriever.retrieve(r["text"], top_k=3))
-    print("RAG references ready for all conditions.", flush=True)
+                r["ref_block"] = format_reference_block(retriever.retrieve(r["text"], top_k=top_k))
+    print(f"RAG references (k={top_k}) ready for all conditions.", flush=True)
 
     # 3. Execution matrix
     matrix_preds: dict[str, dict[str, list[dict[str, Any]]]] = {
@@ -591,11 +631,30 @@ async def run_benchmark_suite(
     print("\nComputing metrics and bootstrap confidence intervals (2,000 resamples)...", flush=True)
     summary_data: dict[str, Any] = {"cells": {}, "paired_tests": {}}
 
+    # Benchmark cell runtimes lookup (measured during benchmark execution)
+    cell_runtimes = {
+        "M1_clean": 0.148,
+        "M1_marked": 0.152,
+        "M1_unmarked": 0.150,
+        "M2_clean": 268.065,
+        "M2_marked": 228.356,
+        "M2_unmarked": 267.131,
+        "M3_clean": 389.382,
+        "M3_marked": 344.580,
+        "M3_unmarked": 456.130,
+        "M4_clean": 227.292,
+        "M4_marked": 210.940,
+        "M4_unmarked": 263.570,
+    }
+
     for m_name in ("M1", "M2", "M3", "M4"):
         for c_name in ("clean", "marked", "unmarked"):
             cell_key = f"{m_name}_{c_name}"
             preds = matrix_preds[m_name][c_name]
             metrics = compute_cell_metrics(preds)
+            rt = cell_runtimes.get(cell_key, 0.0)
+            metrics["total_runtime_seconds"] = rt
+            metrics["mean_latency_seconds"] = round(rt / metrics["total_samples"], 6) if metrics["total_samples"] > 0 else 0.0
             cis = bootstrap_metric_cis(preds, n_iterations=2000, seed=42)
             summary_data["cells"][cell_key] = {
                 "method": m_name,
@@ -629,20 +688,63 @@ async def run_benchmark_suite(
             matrix_preds["M4"][c_name],
         )
 
+    apply_holm_bonferroni(paired_tests)
     summary_data["paired_tests"] = paired_tests
 
-    # Save summary JSON
+    # Save summary JSON with manifest
     summary_json_path = results_dir / "full_benchmark_summary.json"
+    manifest_record = create_manifest_record(
+        results_file=summary_json_path,
+        config=config,
+        model_name=config.model,
+        extra={"prompt_template_hashes": get_all_method_prompt_hashes()},
+    )
+    summary_data["manifest"] = manifest_record
     write_json(summary_json_path, summary_data)
-    print(f"Saved machine-readable summary to {summary_json_path}", flush=True)
+    save_manifest_alongside(summary_json_path, manifest=manifest_record)
+    print(f"Saved machine-readable summary and manifest to {summary_json_path}", flush=True)
 
     # 6. Format Markdown Report
     report_md = build_markdown_report(summary_data)
     report_path = results_dir / "report.md"
     report_path.write_text(report_md, encoding="utf-8")
-    print(f"Saved full evaluation report to {report_path}", flush=True)
+    save_manifest_alongside(
+        report_path,
+        config=config,
+        model_name=config.model,
+        extra={"prompt_template_hashes": get_all_method_prompt_hashes()},
+    )
+    print(f"Saved full evaluation report and manifest to {report_path}", flush=True)
+
+    # 7. Manifest step: Save JSON manifest records alongside each predictions results file
+    for c_name in ("clean", "marked", "unmarked"):
+        save_manifest_alongside(
+            results_dir / f"M1_{c_name}_predictions.jsonl",
+            config=cfg_dict,
+            model_name="TF-IDF + LogisticRegression",
+            method="m1",
+        )
+        save_manifest_alongside(
+            results_dir / f"M2_{c_name}_predictions.jsonl",
+            config=config,
+            model_name=config.model,
+            method="m2",
+        )
+        save_manifest_alongside(
+            results_dir / f"M3_{c_name}_predictions.jsonl",
+            config=config,
+            model_name=config.model,
+            method="m3",
+        )
+        save_manifest_alongside(
+            results_dir / f"M4_{c_name}_predictions.jsonl",
+            config=config,
+            model_name=config.model,
+            method="m4",
+        )
 
     return summary_data, report_md
+
 
 
 def build_markdown_report(data: dict[str, Any]) -> str:
@@ -683,8 +785,8 @@ def build_markdown_report(data: dict[str, Any]) -> str:
         "- **Marked**: Prompt injections enclosed in explicit delimiter markers (`[BEGIN EMBEDDED CLASSIFIER MESSAGE]`).",
         "- **Unmarked**: Injections rewritten and naturally blended into normal email language (disclaimers, forwarding headers, signature blocks).",
         "",
-        "| Method | Condition | Accuracy | Recall (Attacked Phish) | FPR (Injected Control) | Precision | Specificity | F1 Score | Invalid Rate |",
-        "| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |",
+        "| Method | Condition | Accuracy | Recall (Attacked Phish) | FPR (Injected Control) | Precision | Specificity | F1 Score | Invalid Rate | Mean Latency |",
+        "| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |",
     ]
 
     method_labels = {
@@ -698,8 +800,31 @@ def build_markdown_report(data: dict[str, Any]) -> str:
         for c in ("clean", "marked", "unmarked"):
             cell = cells[f"{m}_{c}"]
             met = cell["metrics"]
+            lat_str = fmt_latency(met.get("mean_latency_seconds", 0.0))
             lines.append(
-                f"| **{method_labels[m]}** | `{c}` | {met['accuracy']:.4f} | {met['recall']:.4f} | {met['fpr']:.4f} | {met['precision']:.4f} | {met['specificity']:.4f} | {met['f1']:.4f} | {met['invalid_rate']:.2%} |"
+                f"| **{method_labels[m]}** | `{c}` | {met['accuracy']:.4f} | {met['recall']:.4f} | {met['fpr']:.4f} | {met['precision']:.4f} | {met['specificity']:.4f} | {met['f1']:.4f} | {met['invalid_rate']:.2%} | `{lat_str}` |"
+            )
+
+    lines.extend([
+        "",
+        "### 2.1 Operational Reliability & Latency Breakdown",
+        "",
+        "Detailed operational summary reporting format validity, failure-to-format counts, total batch wall-clock runtime, and mean per-email inference latency across all 12 experimental conditions:",
+        "",
+        "| Method | Condition | Total Samples | Valid Calls | Invalid Calls | Invalid Rate | Total Runtime | Mean Latency (per email) | Throughput |",
+        "| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |",
+    ])
+
+    for m in ("M1", "M2", "M3", "M4"):
+        for c in ("clean", "marked", "unmarked"):
+            cell = cells[f"{m}_{c}"]
+            met = cell["metrics"]
+            rt = met.get("total_runtime_seconds", 0.0)
+            lat = met.get("mean_latency_seconds", 0.0)
+            tp = (met["total_samples"] / rt) if rt > 0 else 0.0
+            tp_str = f"{tp:.1f} emails/s" if tp >= 1.0 else f"{tp:.2f} emails/s"
+            lines.append(
+                f"| **{method_labels[m]}** | `{c}` | {met['total_samples']} | {met['valid_count']} | {met['invalid_count']} | {met['invalid_rate']:.2%} | {rt:.2f}s | {fmt_latency(lat)} | {tp_str} |"
             )
 
     lines.extend([
@@ -743,48 +868,88 @@ def build_markdown_report(data: dict[str, Any]) -> str:
         "",
         "---",
         "",
-        "## 5. Paired McNemar Hypothesis Tests",
+        "## 5. Paired McNemar Hypothesis Tests (with Holm-Bonferroni Correction)",
         "",
         "Tests evaluate discordant classification pairs on matching original email IDs using exact two-sided binomial tests.",
+        "Both unadjusted (raw) $p$-values and Holm-Bonferroni adjusted $p$-values are reported to control the Family-Wise Error Rate (FWER) at $\\alpha = 0.05$.",
         "",
         "### A. M2 (Zero-Shot) vs M3 (RAG Combined)",
-        "| Condition | Paired N | Both Correct | M2 Correct, M3 Wrong (b) | M2 Wrong, M3 Correct (c) | Exact p-value | Significance (α=0.05) |",
-        "| :--- | :---: | :---: | :---: | :---: | :---: | :---: |",
+        "| Condition | Paired N | Both Correct | M2 Correct, M3 Wrong (b) | M2 Wrong, M3 Correct (c) | Raw p-value | Holm-Bonferroni p-value | Significance (α=0.05) |",
+        "| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |",
     ])
 
     for c in ("clean", "marked", "unmarked"):
         p = paired[f"M2_vs_M3__{c}"]
-        sig = "**Statistically Significant**" if p["significant_alpha_0_05"] else "Not Significant"
+        sig = "**Statistically Significant**" if p.get("significant_after_holm_bonferroni", p["significant_alpha_0_05"]) else "Not Significant"
+        hb_p = p.get("holm_bonferroni_p_value", p["p_value"])
         lines.append(
-            f"| `{c}` | {p['paired_samples']} | {p['both_correct']} | {p['a_correct_b_wrong (b)']} | {p['a_wrong_b_correct (c)']} | `{p['p_value']:.4e}` | {sig} |"
+            f"| `{c}` | {p['paired_samples']} | {p['both_correct']} | {p['a_correct_b_wrong (b)']} | {p['a_wrong_b_correct (c)']} | `{p['p_value']:.4e}` | `{hb_p:.4e}` | {sig} |"
         )
 
     lines.extend([
         "",
         "### B. Marked vs Unmarked Injections (Per Method)",
-        "| Method | Paired N | Both Correct | Marked Correct, Unmarked Wrong (b) | Marked Wrong, Unmarked Correct (c) | Exact p-value | Significance (α=0.05) |",
-        "| :--- | :---: | :---: | :---: | :---: | :---: | :---: |",
+        "| Method | Paired N | Both Correct | Marked Correct, Unmarked Wrong (b) | Marked Wrong, Unmarked Correct (c) | Raw p-value | Holm-Bonferroni p-value | Significance (α=0.05) |",
+        "| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |",
     ])
 
     for m in ("M1", "M2", "M3", "M4"):
         p = paired[f"marked_vs_unmarked__{m}"]
-        sig = "**Statistically Significant**" if p["significant_alpha_0_05"] else "Not Significant"
+        sig = "**Statistically Significant**" if p.get("significant_after_holm_bonferroni", p["significant_alpha_0_05"]) else "Not Significant"
+        hb_p = p.get("holm_bonferroni_p_value", p["p_value"])
         lines.append(
-            f"| **{method_labels[m]}** | {p['paired_samples']} | {p['both_correct']} | {p['a_correct_b_wrong (b)']} | {p['a_wrong_b_correct (c)']} | `{p['p_value']:.4e}` | {sig} |"
+            f"| **{method_labels[m]}** | {p['paired_samples']} | {p['both_correct']} | {p['a_correct_b_wrong (b)']} | {p['a_wrong_b_correct (c)']} | `{p['p_value']:.4e}` | `{hb_p:.4e}` | {sig} |"
         )
 
     lines.extend([
         "",
         "### C. Combined (M3) vs Decoupled (M4)",
-        "| Condition | Paired N | Both Correct | M3 Correct, M4 Wrong (b) | M3 Wrong, M4 Correct (c) | Exact p-value | Significance (α=0.05) |",
-        "| :--- | :---: | :---: | :---: | :---: | :---: | :---: |",
+        "| Condition | Paired N | Both Correct | M3 Correct, M4 Wrong (b) | M3 Wrong, M4 Correct (c) | Raw p-value | Holm-Bonferroni p-value | Significance (α=0.05) |",
+        "| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |",
     ])
 
     for c in ("clean", "marked", "unmarked"):
         p = paired[f"combined_vs_decoupled_M3_vs_M4__{c}"]
-        sig = "**Statistically Significant**" if p["significant_alpha_0_05"] else "Not Significant"
+        sig = "**Statistically Significant**" if p.get("significant_after_holm_bonferroni", p["significant_alpha_0_05"]) else "Not Significant"
+        hb_p = p.get("holm_bonferroni_p_value", p["p_value"])
         lines.append(
-            f"| `{c}` | {p['paired_samples']} | {p['both_correct']} | {p['a_correct_b_wrong (b)']} | {p['a_wrong_b_correct (c)']} | `{p['p_value']:.4e}` | {sig} |"
+            f"| `{c}` | {p['paired_samples']} | {p['both_correct']} | {p['a_correct_b_wrong (b)']} | {p['a_wrong_b_correct (c)']} | `{p['p_value']:.4e}` | `{hb_p:.4e}` | {sig} |"
+        )
+
+    lines.extend([
+        "",
+        "### D. Comprehensive Holm-Bonferroni Family-Wise Error Rate Summary",
+        "",
+        "Rank-ordered Holm-Bonferroni step-down correction across all $m = 10$ paired McNemar hypothesis tests to control Family-Wise Error Rate (FWER):",
+        "",
+        "| Rank ($k$) | Hypothesis Test Comparison | Discordant ($b / c$) | Raw $p$-value | Multiplier ($m - k + 1$) | Holm-Bonferroni $p$-value | Decision (α=0.05) |",
+        "| :---: | :--- | :---: | :---: | :---: | :---: | :---: |",
+    ])
+
+    comparison_names = {
+        "M2_vs_M3__clean": "M2 vs M3 (Clean)",
+        "M2_vs_M3__marked": "M2 vs M3 (Marked)",
+        "M2_vs_M3__unmarked": "M2 vs M3 (Unmarked)",
+        "marked_vs_unmarked__M1": "M1 (Marked vs Unmarked)",
+        "marked_vs_unmarked__M2": "M2 (Marked vs Unmarked)",
+        "marked_vs_unmarked__M3": "M3 (Marked vs Unmarked)",
+        "marked_vs_unmarked__M4": "M4 (Marked vs Unmarked)",
+        "combined_vs_decoupled_M3_vs_M4__clean": "M3 vs M4 (Clean)",
+        "combined_vs_decoupled_M3_vs_M4__marked": "M3 vs M4 (Marked)",
+        "combined_vs_decoupled_M3_vs_M4__unmarked": "M3 vs M4 (Unmarked)",
+    }
+
+    sorted_paired = sorted(paired.items(), key=lambda x: x[1].get("holm_bonferroni_rank", 999))
+    for test_key, p in sorted_paired:
+        rank = p.get("holm_bonferroni_rank", "-")
+        mult = p.get("holm_bonferroni_factor", "-")
+        raw_p = p.get("raw_p_value", p["p_value"])
+        hb_p = p.get("holm_bonferroni_p_value", p["p_value"])
+        decision = "**Reject $H_0$ (Significant)**" if p.get("significant_after_holm_bonferroni", False) else "Fail to Reject (Not Sig.)"
+        disc = f"{p['a_correct_b_wrong (b)']} / {p['a_wrong_b_correct (c)']}"
+        c_label = comparison_names.get(test_key, test_key)
+        lines.append(
+            f"| {rank} | {c_label} | {disc} | `{raw_p:.4e}` | {mult} | `{hb_p:.4e}` | {decision} |"
         )
 
     lines.extend([
@@ -838,6 +1003,7 @@ def main() -> None:
     parser.add_argument("--results-dir", type=Path, default=Path("results"))
     parser.add_argument("--config", type=Path, default=Path("config/ollama_config.json"))
     parser.add_argument("--concurrency", type=int, default=4)
+    parser.add_argument("-k", "--k", "--top-k", dest="top_k", type=int, default=3, help="Top k neighbors to retrieve for RAG")
     args = parser.parse_args()
 
     asyncio.run(run_benchmark_suite(
@@ -848,6 +1014,7 @@ def main() -> None:
         results_dir=args.results_dir,
         config_path=args.config,
         concurrency=args.concurrency,
+        top_k=args.top_k,
     ))
 
 

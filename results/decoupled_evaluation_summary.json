@@ -29,7 +29,11 @@
         "total_samples": 128,
         "true_positives": 4,
         "valid_count": 128
-      }
+      },
+      "total_samples": 522,
+      "mean_latency_seconds": 0.4161,
+      "invalid_count": 0,
+      "invalid_rate": 0.0
     },
     "M3_IsPhishing_Only": {
       "runtime_seconds": 116.92,
@@ -52,7 +56,11 @@
         "total_samples": 128,
         "true_positives": 123,
         "valid_count": 128
-      }
+      },
+      "total_samples": 522,
+      "mean_latency_seconds": 0.224,
+      "invalid_count": 0,
+      "invalid_rate": 0.0
     },
     "M3_Prompt6_SingleCall": {
       "runtime_seconds": 456.13,
@@ -75,7 +83,11 @@
         "total_samples": 128,
         "true_positives": 24,
         "valid_count": 114
-      }
+      },
+      "total_samples": 522,
+      "mean_latency_seconds": 0.8738,
+      "invalid_count": 38,
+      "invalid_rate": 0.0728
     },
     "M3_TwoCall_Decoupled": {
       "runtime_seconds": 263.57,
@@ -98,7 +110,11 @@
         "total_samples": 128,
         "true_positives": 123,
         "valid_count": 128
-      }
+      },
+      "total_samples": 522,
+      "mean_latency_seconds": 0.5049,
+      "invalid_count": 0,
+      "invalid_rate": 0.0
     }
   },
   "two_call_decoupled_fpr": 0.7208

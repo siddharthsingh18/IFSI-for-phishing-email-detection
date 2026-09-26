@@ -68,26 +68,6 @@ class EmailClassificationResult(BaseModel):
         raise ValueError(f"Reasons must contain at least one descriptive string, got: {value!r}")
 
 
-class OllamaConfig(BaseModel):
-    """Configuration for Ollama inference."""
-
-    model: str = "qwen2.5:0.5b"
-    temperature: float = 0.0
-    api_base: str = "http://localhost:11434"
-    timeout_seconds: float = 60.0
-    max_retries: int = 1
-    num_predict: int = 150
-
-    @classmethod
-    def from_file(cls, path: Path | str) -> OllamaConfig:
-        config_path = Path(path)
-        if not config_path.exists():
-            return cls()
-        with config_path.open("r", encoding="utf-8") as f:
-            data = json.load(f)
-        return cls(**data)
-
-
 SYSTEM_PROMPT = """You are a cybersecurity email classification system.
 Your task is to analyze the email and decide if it is 'phishing' or 'legitimate'.
 
@@ -101,6 +81,50 @@ Rules:
 }
 3. Do not include markdown codeblocks, explanation, or commentary outside the JSON object.
 """
+
+
+class OllamaConfig(BaseModel):
+    """Configuration for Ollama inference."""
+
+    model: str = "qwen2.5:0.5b"
+    temperature: float = 0.0
+    api_base: str = "http://localhost:11434"
+    timeout_seconds: float = 60.0
+    max_retries: int = 1
+    num_predict: int = 150
+    prompt_template: str | None = None
+
+    @classmethod
+    def from_file(cls, path: Path | str) -> OllamaConfig:
+        config_path = Path(path)
+        if not config_path.exists():
+            return cls()
+        with config_path.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+        return cls(**data)
+
+    def get_prompt_template(self) -> str:
+        """Return the active prompt template string for this config."""
+        if self.prompt_template is not None:
+            return self.prompt_template
+        return SYSTEM_PROMPT
+
+    def compute_prompt_hash(self) -> str:
+        """Return sha256 hash of the prompt template determined by this config."""
+        from .io import sha256_text
+        return sha256_text(self.get_prompt_template())
+
+    @property
+    def prompt_hash(self) -> str:
+        """Convenience property for the prompt template hash."""
+        return self.compute_prompt_hash()
+
+    def compute_config_hash(self) -> str:
+        """Return deterministic sha256 hash of configuration fields."""
+        from .io import sha256_text
+        data = self.model_dump() if hasattr(self, "model_dump") else self.dict()
+        canonical = json.dumps(data, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+        return sha256_text(canonical)
 
 
 class OllamaClient:

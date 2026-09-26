@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 import unittest
 from phishbench.benchmark_suite import (
     bootstrap_metric_cis,
     compute_cell_metrics,
     exact_mcnemar_test,
 )
+
 
 
 class TestBenchmarkSuiteStats(unittest.TestCase):
@@ -93,5 +95,76 @@ class TestBenchmarkSuiteStats(unittest.TestCase):
             self.assertLessEqual(hi, 1.0)
 
 
+class TestBenchmarkManifest(unittest.TestCase):
+    def test_same_config_produces_same_prompt_hash(self) -> None:
+        """Verify that identical configurations produce deterministic and identical prompt hashes."""
+        from phishbench.manifest import compute_prompt_hash
+        from phishbench.ollama_client import OllamaConfig
+        from pathlib import Path
+
+        # 1. Two separately instantiated OllamaConfig objects with identical parameters
+        cfg1 = OllamaConfig(model="qwen2.5:0.5b", temperature=0.0)
+        cfg2 = OllamaConfig(model="qwen2.5:0.5b", temperature=0.0)
+
+        hash1 = compute_prompt_hash(cfg1)
+        hash2 = compute_prompt_hash(cfg2)
+        self.assertEqual(hash1, hash2)
+        self.assertEqual(cfg1.compute_prompt_hash(), cfg2.compute_prompt_hash())
+        self.assertEqual(cfg1.prompt_hash, cfg2.prompt_hash)
+        self.assertEqual(len(hash1), 64)  # Valid 64-char sha256 hex string
+
+        # 2. Configs loaded from identical file
+        cfg_file = Path("config/ollama_config.json")
+        if cfg_file.exists():
+            cfg_a = OllamaConfig.from_file(cfg_file)
+            cfg_b = OllamaConfig.from_file(cfg_file)
+            self.assertEqual(compute_prompt_hash(cfg_a), compute_prompt_hash(cfg_b))
+            self.assertEqual(cfg_a.prompt_hash, cfg_b.prompt_hash)
+
+        # 3. Two configs with same custom prompt template
+        custom_prompt = "You are an email security reviewer: {{email}}\nOutput valid json."
+        cfg_custom1 = OllamaConfig(model="llama3.2:3b", prompt_template=custom_prompt)
+        cfg_custom2 = OllamaConfig(model="llama3.2:3b", prompt_template=custom_prompt)
+        self.assertEqual(compute_prompt_hash(cfg_custom1), compute_prompt_hash(cfg_custom2))
+        self.assertEqual(cfg_custom1.prompt_hash, cfg_custom2.prompt_hash)
+
+        # 4. Config with different prompt template produces different hash
+        cfg_diff = OllamaConfig(model="llama3.2:3b", prompt_template="A completely different template.")
+        self.assertNotEqual(cfg_custom1.prompt_hash, cfg_diff.prompt_hash)
+
+    def test_manifest_creation_and_fields(self) -> None:
+        """Verify manifest record contains exact required fields and is saved alongside results file."""
+        import tempfile
+        from phishbench.manifest import create_manifest_record, get_manifest_path, save_manifest_alongside
+        from phishbench.ollama_client import OllamaConfig
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            results_file = Path(tmpdir) / "test_eval_predictions.jsonl"
+            results_file.write_text('{"id": 1, "verdict": "phishing"}\n', encoding="utf-8")
+
+            cfg = OllamaConfig(model="qwen2.5:0.5b")
+            record = create_manifest_record(results_file=results_file, config=cfg)
+
+            # Check exact 5 required fields
+            self.assertIn("prompt_template_hash", record)
+            self.assertIn("model_name", record)
+            self.assertIn("config_hash", record)
+            self.assertIn("git_commit", record)
+            self.assertIn("timestamp", record)
+
+            self.assertEqual(record["model_name"], "qwen2.5:0.5b")
+            self.assertEqual(record["prompt_template_hash"], cfg.prompt_hash)
+            self.assertEqual(len(record["config_hash"]), 64)
+            self.assertTrue(len(record["git_commit"]) > 0)
+            self.assertTrue("T" in record["timestamp"])  # ISO 8601 format
+
+            # Save alongside results file
+            manifest_path = save_manifest_alongside(results_file, manifest=record)
+            self.assertEqual(manifest_path, Path(tmpdir) / "test_eval_predictions.manifest.json")
+            self.assertTrue(manifest_path.exists())
+            self.assertEqual(manifest_path, get_manifest_path(results_file))
+
+
 if __name__ == "__main__":
     unittest.main()
+

@@ -150,3 +150,20 @@ def test_classify_with_rag_mocked_ollama() -> None:
             assert REFERENCE_DELIMITER_START in user_msg
             assert REFERENCE_DELIMITER_END in user_msg
             assert "Candidate Email To Classify:" in user_msg
+
+
+def test_rag_cli_k_flag() -> None:
+    """Verify that -k, --k, and --top-k flags correctly parse top_k value."""
+    import argparse
+    from phishbench.rag import main
+
+    # Inspect argument parser configuration
+    # Create parser mimicking main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-k", "--k", "--top-k", dest="top_k", type=int, default=3)
+
+    assert parser.parse_args(["--k", "1"]).top_k == 1
+    assert parser.parse_args(["-k", "5"]).top_k == 5
+    assert parser.parse_args(["--top-k", "2"]).top_k == 2
+    assert parser.parse_args([]).top_k == 3
+

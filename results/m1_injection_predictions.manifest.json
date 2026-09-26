@@ -1,0 +1,11 @@
+{
+  "config_hash": "e846cea1390d45252407d7b6c96a378b0abaa59e4e2b61b8faaab928fc7516b5",
+  "git_commit": "79edf07c2d3ca6374d9170de8a7b4154bd2a506e",
+  "model": "TF-IDF + LogisticRegression",
+  "model_name": "TF-IDF + LogisticRegression",
+  "prompt_hash": "88418a96ebf9c6280a8a391b7903a7764aa32e3458b422bba6f48950c742ef0d",
+  "prompt_template_hash": "88418a96ebf9c6280a8a391b7903a7764aa32e3458b422bba6f48950c742ef0d",
+  "results_file": "m1_injection_predictions.jsonl",
+  "timestamp": "2026-09-25T23:53:43.059023+00:00",
+  "timestamp_utc": "2026-09-25T23:53:43.059023+00:00"
+}

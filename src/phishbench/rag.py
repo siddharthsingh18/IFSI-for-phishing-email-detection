@@ -396,7 +396,7 @@ def main() -> None:
     parser.add_argument("--index-cache", type=Path, default=Path("results/rag_index"), help="Index cache dir")
     parser.add_argument("--config", type=Path, default=Path("config/ollama_config.json"), help="Ollama config")
     parser.add_argument("--limit", type=int, default=50, help="Number of test emails")
-    parser.add_argument("--top-k", type=int, default=3, help="Top k neighbors to retrieve")
+    parser.add_argument("-k", "--k", "--top-k", dest="top_k", type=int, default=3, help="Top k neighbors to retrieve")
     args = parser.parse_args()
 
     res = run_rag_pilot(

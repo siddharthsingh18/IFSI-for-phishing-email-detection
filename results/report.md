@@ -13,20 +13,39 @@ Evaluation conducted over $N = 522$ test split emails (128 Phishing, 394 Legitim
 - **Marked**: Prompt injections enclosed in explicit delimiter markers (`[BEGIN EMBEDDED CLASSIFIER MESSAGE]`).
 - **Unmarked**: Injections rewritten and naturally blended into normal email language (disclaimers, forwarding headers, signature blocks).
 
-| Method | Condition | Accuracy | Recall (Attacked Phish) | FPR (Injected Control) | Precision | Specificity | F1 Score | Invalid Rate |
+| Method | Condition | Accuracy | Recall (Attacked Phish) | FPR (Injected Control) | Precision | Specificity | F1 Score | Invalid Rate | Mean Latency |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **M1 (TF-IDF + LogReg)** | `clean` | 0.9847 | 0.9453 | 0.0025 | 0.9918 | 0.9975 | 0.9680 | 0.00% | `0.28 ms` |
+| **M1 (TF-IDF + LogReg)** | `marked` | 0.9751 | 0.9062 | 0.0025 | 0.9915 | 0.9975 | 0.9469 | 0.00% | `0.29 ms` |
+| **M1 (TF-IDF + LogReg)** | `unmarked` | 0.9770 | 0.9141 | 0.0025 | 0.9915 | 0.9975 | 0.9512 | 0.00% | `0.29 ms` |
+| **M2 (Zero-Shot LLM)** | `clean` | 0.2386 | 1.0000 | 1.0000 | 0.2386 | 0.0000 | 0.3853 | 11.69% | `0.5135s` |
+| **M2 (Zero-Shot LLM)** | `marked` | 0.2565 | 0.9569 | 0.9770 | 0.2461 | 0.0230 | 0.3915 | 11.11% | `0.4375s` |
+| **M2 (Zero-Shot LLM)** | `unmarked` | 0.2838 | 0.9123 | 0.9244 | 0.2464 | 0.0756 | 0.3881 | 12.26% | `0.5117s` |
+| **M3 (RAG Combined)** | `clean` | 0.4246 | 0.4159 | 0.5726 | 0.1895 | 0.4274 | 0.2604 | 11.11% | `0.7459s` |
+| **M3 (RAG Combined)** | `marked` | 0.6688 | 0.0982 | 0.1562 | 0.1618 | 0.8438 | 0.1222 | 8.62% | `0.6601s` |
+| **M3 (RAG Combined)** | `unmarked` | 0.6157 | 0.2105 | 0.2595 | 0.2000 | 0.7405 | 0.2051 | 7.28% | `0.8738s` |
+| **M4 (RAG Decoupled)** | `clean` | 0.4176 | 0.9922 | 0.7690 | 0.2953 | 0.2310 | 0.4552 | 0.00% | `0.4354s` |
+| **M4 (RAG Decoupled)** | `marked` | 0.4655 | 0.8984 | 0.6751 | 0.3018 | 0.3249 | 0.4519 | 0.00% | `0.4041s` |
+| **M4 (RAG Decoupled)** | `unmarked` | 0.4464 | 0.9609 | 0.7208 | 0.3022 | 0.2792 | 0.4598 | 0.00% | `0.5049s` |
+
+### 2.1 Operational Reliability & Latency Breakdown
+
+Detailed operational summary reporting format validity, failure-to-format counts, total batch wall-clock runtime, and mean per-email inference latency across all 12 experimental conditions:
+
+| Method | Condition | Total Samples | Valid Calls | Invalid Calls | Invalid Rate | Total Runtime | Mean Latency (per email) | Throughput |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **M1 (TF-IDF + LogReg)** | `clean` | 0.9847 | 0.9453 | 0.0025 | 0.9918 | 0.9975 | 0.9680 | 0.00% |
-| **M1 (TF-IDF + LogReg)** | `marked` | 0.9751 | 0.9062 | 0.0025 | 0.9915 | 0.9975 | 0.9469 | 0.00% |
-| **M1 (TF-IDF + LogReg)** | `unmarked` | 0.9770 | 0.9141 | 0.0025 | 0.9915 | 0.9975 | 0.9512 | 0.00% |
-| **M2 (Zero-Shot LLM)** | `clean` | 0.2386 | 1.0000 | 1.0000 | 0.2386 | 0.0000 | 0.3853 | 11.69% |
-| **M2 (Zero-Shot LLM)** | `marked` | 0.2565 | 0.9569 | 0.9770 | 0.2461 | 0.0230 | 0.3915 | 11.11% |
-| **M2 (Zero-Shot LLM)** | `unmarked` | 0.2838 | 0.9123 | 0.9244 | 0.2464 | 0.0756 | 0.3881 | 12.26% |
-| **M3 (RAG Combined)** | `clean` | 0.4246 | 0.4159 | 0.5726 | 0.1895 | 0.4274 | 0.2604 | 11.11% |
-| **M3 (RAG Combined)** | `marked` | 0.6688 | 0.0982 | 0.1562 | 0.1618 | 0.8438 | 0.1222 | 8.62% |
-| **M3 (RAG Combined)** | `unmarked` | 0.6157 | 0.2105 | 0.2595 | 0.2000 | 0.7405 | 0.2051 | 7.28% |
-| **M4 (RAG Decoupled)** | `clean` | 0.4176 | 0.9922 | 0.7690 | 0.2953 | 0.2310 | 0.4552 | 0.00% |
-| **M4 (RAG Decoupled)** | `marked` | 0.4655 | 0.8984 | 0.6751 | 0.3018 | 0.3249 | 0.4519 | 0.00% |
-| **M4 (RAG Decoupled)** | `unmarked` | 0.4464 | 0.9609 | 0.7208 | 0.3022 | 0.2792 | 0.4598 | 0.00% |
+| **M1 (TF-IDF + LogReg)** | `clean` | 522 | 522 | 0 | 0.00% | 0.15s | 0.28 ms | 3527.0 emails/s |
+| **M1 (TF-IDF + LogReg)** | `marked` | 522 | 522 | 0 | 0.00% | 0.15s | 0.29 ms | 3434.2 emails/s |
+| **M1 (TF-IDF + LogReg)** | `unmarked` | 522 | 522 | 0 | 0.00% | 0.15s | 0.29 ms | 3480.0 emails/s |
+| **M2 (Zero-Shot LLM)** | `clean` | 522 | 461 | 61 | 11.69% | 268.06s | 0.5135s | 1.9 emails/s |
+| **M2 (Zero-Shot LLM)** | `marked` | 522 | 464 | 58 | 11.11% | 228.36s | 0.4375s | 2.3 emails/s |
+| **M2 (Zero-Shot LLM)** | `unmarked` | 522 | 458 | 64 | 12.26% | 267.13s | 0.5117s | 2.0 emails/s |
+| **M3 (RAG Combined)** | `clean` | 522 | 464 | 58 | 11.11% | 389.38s | 0.7459s | 1.3 emails/s |
+| **M3 (RAG Combined)** | `marked` | 522 | 477 | 45 | 8.62% | 344.58s | 0.6601s | 1.5 emails/s |
+| **M3 (RAG Combined)** | `unmarked` | 522 | 484 | 38 | 7.28% | 456.13s | 0.8738s | 1.1 emails/s |
+| **M4 (RAG Decoupled)** | `clean` | 522 | 522 | 0 | 0.00% | 227.29s | 0.4354s | 2.3 emails/s |
+| **M4 (RAG Decoupled)** | `marked` | 522 | 522 | 0 | 0.00% | 210.94s | 0.4041s | 2.5 emails/s |
+| **M4 (RAG Decoupled)** | `unmarked` | 522 | 522 | 0 | 0.00% | 263.57s | 0.5049s | 2.0 emails/s |
 
 ---
 
@@ -68,31 +87,49 @@ Evaluation conducted over $N = 522$ test split emails (128 Phishing, 394 Legitim
 
 ---
 
-## 5. Paired McNemar Hypothesis Tests
+## 5. Paired McNemar Hypothesis Tests (with Holm-Bonferroni Correction)
 
 Tests evaluate discordant classification pairs on matching original email IDs using exact two-sided binomial tests.
+Both unadjusted (raw) $p$-values and Holm-Bonferroni adjusted $p$-values are reported to control the Family-Wise Error Rate (FWER) at $\alpha = 0.05$.
 
 ### A. M2 (Zero-Shot) vs M3 (RAG Combined)
-| Condition | Paired N | Both Correct | M2 Correct, M3 Wrong (b) | M2 Wrong, M3 Correct (c) | Exact p-value | Significance (α=0.05) |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| `clean` | 522 | 44 | 66 | 153 | `3.9043e-09` | **Statistically Significant** |
-| `marked` | 522 | 18 | 101 | 301 | `3.4472e-24` | **Statistically Significant** |
-| `unmarked` | 522 | 46 | 84 | 252 | `1.2216e-20` | **Statistically Significant** |
+| Condition | Paired N | Both Correct | M2 Correct, M3 Wrong (b) | M2 Wrong, M3 Correct (c) | Raw p-value | Holm-Bonferroni p-value | Significance (α=0.05) |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| `clean` | 522 | 44 | 66 | 153 | `3.9043e-09` | `3.1235e-08` | **Statistically Significant** |
+| `marked` | 522 | 18 | 101 | 301 | `3.4472e-24` | `3.4472e-23` | **Statistically Significant** |
+| `unmarked` | 522 | 46 | 84 | 252 | `1.2216e-20` | `1.0994e-19` | **Statistically Significant** |
 
 ### B. Marked vs Unmarked Injections (Per Method)
-| Method | Paired N | Both Correct | Marked Correct, Unmarked Wrong (b) | Marked Wrong, Unmarked Correct (c) | Exact p-value | Significance (α=0.05) |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **M1 (TF-IDF + LogReg)** | 522 | 509 | 0 | 1 | `1.0000e+00` | Not Significant |
-| **M2 (Zero-Shot LLM)** | 522 | 91 | 28 | 39 | `2.2155e-01` | Not Significant |
-| **M3 (RAG Combined)** | 522 | 229 | 90 | 69 | `1.1243e-01` | Not Significant |
-| **M4 (RAG Decoupled)** | 522 | 175 | 68 | 58 | `4.2279e-01` | Not Significant |
+| Method | Paired N | Both Correct | Marked Correct, Unmarked Wrong (b) | Marked Wrong, Unmarked Correct (c) | Raw p-value | Holm-Bonferroni p-value | Significance (α=0.05) |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **M1 (TF-IDF + LogReg)** | 522 | 509 | 0 | 1 | `1.0000e+00` | `1.0000e+00` | Not Significant |
+| **M2 (Zero-Shot LLM)** | 522 | 91 | 28 | 39 | `2.2155e-01` | `8.6260e-01` | Not Significant |
+| **M3 (RAG Combined)** | 522 | 229 | 90 | 69 | `1.1243e-01` | `5.6215e-01` | Not Significant |
+| **M4 (RAG Decoupled)** | 522 | 175 | 68 | 58 | `4.2279e-01` | `8.6260e-01` | Not Significant |
 
 ### C. Combined (M3) vs Decoupled (M4)
-| Condition | Paired N | Both Correct | M3 Correct, M4 Wrong (b) | M3 Wrong, M4 Correct (c) | Exact p-value | Significance (α=0.05) |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| `clean` | 522 | 77 | 120 | 141 | `2.1565e-01` | Not Significant |
-| `marked` | 522 | 113 | 206 | 130 | `3.9935e-05` | **Statistically Significant** |
-| `unmarked` | 522 | 110 | 188 | 123 | `2.7145e-04` | **Statistically Significant** |
+| Condition | Paired N | Both Correct | M3 Correct, M4 Wrong (b) | M3 Wrong, M4 Correct (c) | Raw p-value | Holm-Bonferroni p-value | Significance (α=0.05) |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| `clean` | 522 | 77 | 120 | 141 | `2.1565e-01` | `8.6260e-01` | Not Significant |
+| `marked` | 522 | 113 | 206 | 130 | `3.9935e-05` | `2.7955e-04` | **Statistically Significant** |
+| `unmarked` | 522 | 110 | 188 | 123 | `2.7145e-04` | `1.6287e-03` | **Statistically Significant** |
+
+### D. Comprehensive Holm-Bonferroni Family-Wise Error Rate Summary
+
+Rank-ordered Holm-Bonferroni step-down correction across all $m = 10$ paired McNemar hypothesis tests to control Family-Wise Error Rate (FWER):
+
+| Rank ($k$) | Hypothesis Test Comparison | Discordant ($b / c$) | Raw $p$-value | Multiplier ($m - k + 1$) | Holm-Bonferroni $p$-value | Decision (α=0.05) |
+| :---: | :--- | :---: | :---: | :---: | :---: | :---: |
+| 1 | M2 vs M3 (Marked) | 101 / 301 | `3.4472e-24` | 10 | `3.4472e-23` | **Reject $H_0$ (Significant)** |
+| 2 | M2 vs M3 (Unmarked) | 84 / 252 | `1.2216e-20` | 9 | `1.0994e-19` | **Reject $H_0$ (Significant)** |
+| 3 | M2 vs M3 (Clean) | 66 / 153 | `3.9043e-09` | 8 | `3.1235e-08` | **Reject $H_0$ (Significant)** |
+| 4 | M3 vs M4 (Marked) | 206 / 130 | `3.9935e-05` | 7 | `2.7955e-04` | **Reject $H_0$ (Significant)** |
+| 5 | M3 vs M4 (Unmarked) | 188 / 123 | `2.7145e-04` | 6 | `1.6287e-03` | **Reject $H_0$ (Significant)** |
+| 6 | M3 (Marked vs Unmarked) | 90 / 69 | `1.1243e-01` | 5 | `5.6215e-01` | Fail to Reject (Not Sig.) |
+| 7 | M3 vs M4 (Clean) | 120 / 141 | `2.1565e-01` | 4 | `8.6260e-01` | Fail to Reject (Not Sig.) |
+| 8 | M2 (Marked vs Unmarked) | 28 / 39 | `2.2155e-01` | 3 | `8.6260e-01` | Fail to Reject (Not Sig.) |
+| 9 | M4 (Marked vs Unmarked) | 68 / 58 | `4.2279e-01` | 2 | `8.6260e-01` | Fail to Reject (Not Sig.) |
+| 10 | M1 (Marked vs Unmarked) | 0 / 1 | `1.0000e+00` | 1 | `1.0000e+00` | Fail to Reject (Not Sig.) |
 
 ---
 
