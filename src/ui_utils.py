@@ -199,6 +199,149 @@ def load_report_markdown() -> str:
 
 
 @st.cache_data
+def load_pilot_summary() -> dict[str, Any]:
+    """Load pilot benchmark summary for llama3.2:3b."""
+    summary_path = RESULTS_DIR / "pilot_50_llama3_2_3b_summary.json"
+    if summary_path.exists():
+        with open(summary_path, encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+
+
+@st.cache_data
+def load_email_text_lookup() -> dict[str, str]:
+    """Load text mapping from id -> raw email text across test split and injection datasets."""
+    lookup: dict[str, str] = {}
+    test_path = DATA_DIR / "splits" / "test.jsonl"
+    if test_path.exists():
+        try:
+            with open(test_path, encoding="utf-8") as f:
+                for line in f:
+                    if line.strip():
+                        item = json.loads(line)
+                        lookup[item["id"]] = item.get("text", "")
+        except Exception as exc:
+            print(f"Warning reading test.jsonl: {exc}")
+
+    for fn in ("marked-phishing.jsonl", "marked-control.jsonl", "unmarked-phishing.jsonl", "unmarked-control.jsonl"):
+        p = DATA_DIR / "injections" / fn
+        if p.exists():
+            try:
+                with open(p, encoding="utf-8") as f:
+                    for line in f:
+                        if line.strip():
+                            item = json.loads(line)
+                            lookup[item["id"]] = item.get("text", "")
+            except Exception as exc:
+                print(f"Warning reading {fn}: {exc}")
+    return lookup
+
+
+@st.cache_data
+def get_worst_mistakes(
+    methods: tuple[str, ...] | None = None,
+    conditions: tuple[str, ...] | None = None,
+    model_choice: str = "All Models",
+    top_n_per_method: int = 10,
+) -> list[dict[str, Any]]:
+    """Return the top N highest-confidence wrong predictions per method from saved *_predictions.jsonl files.
+
+    Each record includes:
+    - method: str
+    - model: str
+    - condition: str
+    - id: str
+    - true_label: str ('Phishing' or 'Legitimate')
+    - predicted_label: str ('Phishing' or 'Legitimate' or 'Invalid')
+    - confidence: float
+    - snippet: str (truncated to 200 characters)
+    """
+    lookup = load_email_text_lookup()
+
+    file_specs: list[tuple[str, str, str, Path]] = []
+    # Full benchmark files (qwen2.5:0.5b / TF-IDF)
+    for m in ("M1", "M2", "M3", "M4"):
+        for c in ("clean", "marked", "unmarked"):
+            p = RESULTS_DIR / f"{m}_{c}_predictions.jsonl"
+            if p.exists():
+                model_name = "TF-IDF + LogReg" if m == "M1" else "qwen2.5:0.5b"
+                file_specs.append((m, c, model_name, p))
+
+    # Pilot llama3.2:3b files
+    for m in ("M2", "M3", "M4"):
+        p = RESULTS_DIR / f"pilot_50_llama3_2_3b_{m}_predictions.jsonl"
+        if p.exists():
+            file_specs.append((m, "unmarked", "llama3.2:3b", p))
+
+    mistakes_by_method: dict[str, list[dict[str, Any]]] = {}
+
+    for m, c, mod, p in file_specs:
+        if methods and m not in methods:
+            continue
+        if conditions and c.lower() not in [cond.lower() for cond in conditions]:
+            continue
+        if model_choice != "All Models":
+            if "0.5b" in model_choice and "0.5b" not in mod and m != "M1":
+                continue
+            if "llama" in model_choice.lower() and "llama" not in mod.lower() and m != "M1":
+                continue
+
+        try:
+            with open(p, encoding="utf-8") as f:
+                for line in f:
+                    if not line.strip():
+                        continue
+                    row = json.loads(line)
+                    tl = int(row.get("true_label", 0))
+                    pl = row.get("predicted_label")
+
+                    # Check if prediction is wrong
+                    is_wrong = (pl is None) or (int(pl) != tl)
+                    if not is_wrong:
+                        continue
+
+                    eid = str(row.get("id", ""))
+                    orig_id = str(row.get("original_id", ""))
+                    raw_text = lookup.get(eid) or lookup.get(orig_id, "")
+                    clean_text = " ".join(raw_text.split())
+                    snippet = (clean_text[:200] + "...") if len(clean_text) > 200 else clean_text
+                    if not snippet:
+                        snippet = f"[Email ID: {eid} - Raw text unavailable]"
+
+                    raw_conf = row.get("confidence")
+                    if raw_conf is not None:
+                        conf = float(raw_conf)
+                    else:
+                        conf = 0.95 if pl == 1 else 0.90
+
+                    pred_str = "Phishing" if pl == 1 else ("Legitimate" if pl == 0 else "Invalid Output")
+                    true_str = "Phishing" if tl == 1 else "Legitimate"
+
+                    entry = {
+                        "method": m,
+                        "condition": c.capitalize(),
+                        "model": mod,
+                        "id": eid,
+                        "true_label": true_str,
+                        "predicted_label": pred_str,
+                        "confidence": conf,
+                        "snippet": snippet,
+                    }
+                    mistakes_by_method.setdefault(m, []).append(entry)
+        except Exception as exc:
+            print(f"Warning reading {p}: {exc}")
+
+    output: list[dict[str, Any]] = []
+    # Sort descending by confidence and take top N per method
+    for m in sorted(mistakes_by_method.keys()):
+        m_list = mistakes_by_method[m]
+        m_list.sort(key=lambda x: x["confidence"], reverse=True)
+        output.extend(m_list[:top_n_per_method])
+
+    return output
+
+
+@st.cache_data
 def load_preset_samples() -> dict[str, dict[str, str]]:
     """Return a curated set of preset emails representing each evaluation condition."""
     return {
