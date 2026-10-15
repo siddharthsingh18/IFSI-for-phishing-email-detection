@@ -8,10 +8,6 @@ version = "0.1.0"
 description = "Reproducible evaluation of injection-first staged inference for LLM phishing detection"
 readme = "README.md"
 requires-python = ">=3.11"
-authors = [
-  {name = "Zhenwei Zhu"},
-  {name = "Jia Liu"},
-]
 dependencies = [
   "faiss-cpu==1.15.1",
   "httpx==0.28.1",
@@ -20,7 +16,8 @@ dependencies = [
   "pytest==8.3.5",
   "scikit-learn==1.9.1",
   "sentence-transformers==6.1.0",
-  "streamlit>=1.30.0",
+  "fastapi>=0.110.0",
+  "uvicorn>=0.28.0",
 ]
 
 classifiers = [

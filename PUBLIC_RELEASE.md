@@ -10,7 +10,7 @@ redistributing email text or per-request model traces.
 - frozen prompt snapshot JSON and experiment configuration
 - aggregate machine-readable results and reports
 - source/preparation metadata and top-level integrity manifests
-- selected paper source or PDF only after all authors approve redistribution
+- selected documentation and summary reports
 
 ## Keep local by default
 
@@ -26,7 +26,7 @@ license review.
 
 ## Before the first push
 
-1. Choose and add a software license with both authors' approval. Until then,
+1. Choose and add an appropriate software license before release. Until then,
    public visibility does not grant reuse rights.
 2. Review `git status --short` and `git diff --cached --stat`.
 3. Run `./src/tools/release/check_public_release.sh`.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the three-model statistics used by the CoMeSySo manuscript.
+"""Build the three-model statistics used by the benchmark evaluation.
 
 The script is deliberately read-only with respect to model outputs.  It reparses
 the retained JSONL records, restricts the multiplicity families to the three
@@ -82,7 +82,7 @@ def build(rows: list[dict[str, Any]]) -> dict[str, Any]:
         row["holm_significant_0_05"] = row["holm_p_12"] < 0.05
 
     return {
-        "format": "comesyso-paper-statistics-v1",
+        "format": "paper-statistics-v1",
         "scope": {
             "configs": list(CONFIGS),
             "datasets": list(DATASETS),

@@ -11,7 +11,6 @@ if str(src_dir) not in sys.path:
     sys.path.insert(0, str(src_dir))
 
 import pytest
-from streamlit.testing.v1 import AppTest
 
 from ui_utils import (
     load_attack_family_examples,
@@ -63,19 +62,3 @@ def test_prompt_8_benchmark_cells_present() -> None:
             assert "fpr" in metrics
             assert 0.0 <= metrics["recall"] <= 1.0
             assert 0.0 <= metrics["fpr"] <= 1.0
-
-
-def test_injection_lab_apptest_loads_and_changes_family() -> None:
-    """Test that pages/3_Injection_Lab.py loads cleanly and allows family selection."""
-    lab_path = Path(__file__).resolve().parents[1] / "pages" / "3_Injection_Lab.py"
-    at = AppTest.from_file(str(lab_path))
-    at.run(timeout=15)
-    assert not at.exception, f"Injection Lab threw exception on initial load: {at.exception}"
-
-    # Select another family
-    at.selectbox[0].set_value("false_authority").run(timeout=15)
-    assert not at.exception, f"Injection Lab threw exception after selecting false_authority: {at.exception}"
-
-    # Select another family
-    at.selectbox[0].set_value("output_hijack").run(timeout=15)
-    assert not at.exception, f"Injection Lab threw exception after selecting output_hijack: {at.exception}"

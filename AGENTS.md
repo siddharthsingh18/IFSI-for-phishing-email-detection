@@ -1,0 +1,1 @@
+Stack migration complete. Frontend is React (Vite) + FastAPI. Old Streamlit application and dependencies have been removed. Keep src/ui_utils.py (proxying to src/core/) as the source of truth for all inference and benchmark loading logic.
