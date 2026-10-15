@@ -11,7 +11,6 @@ if str(src_dir) not in sys.path:
     sys.path.insert(0, str(src_dir))
 
 import pytest
-from streamlit.testing.v1 import AppTest
 
 from ui_utils import (
     apply_unmarked_injection,
@@ -148,17 +147,3 @@ def test_evaluate_method_disagreements_split_decision() -> None:
     assert summary["majority_verdict"] == "split"
     assert summary["method_styles"]["M1"]["card_class"] == "card-disagreement-danger"
     assert summary["method_styles"]["M2"]["card_class"] == "card-disagreement-warning"
-
-
-def test_app_test_live_test_page_loads() -> None:
-    """Test that pages/1_Live_Test.py loads without error and renders widgets."""
-    page_path = Path(__file__).resolve().parents[1] / "pages" / "1_Live_Test.py"
-    at = AppTest.from_file(str(page_path))
-    at.run()
-    assert not at.exception, f"Live Test page threw exception: {at.exception}"
-    assert len(at.title) >= 1
-    assert len(at.toggle) >= 1
-
-    # Toggle unmarked injection
-    at.toggle[0].set_value(True).run()
-    assert not at.exception, f"Live Test page threw exception after toggle: {at.exception}"

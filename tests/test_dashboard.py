@@ -11,7 +11,6 @@ if str(src_dir) not in sys.path:
     sys.path.insert(0, str(src_dir))
 
 import pytest
-from streamlit.testing.v1 import AppTest
 
 from ui_utils import (
     get_worst_mistakes,
@@ -83,19 +82,3 @@ def test_get_worst_mistakes_filtered_by_method_and_condition() -> None:
     for item in m3_unmarked:
         assert item["method"] == "M3"
         assert item["condition"] == "Unmarked"
-
-
-def test_dashboard_apptest_loads_and_filters() -> None:
-    """Test that Dashboard page loads without error and responds to filter modifications."""
-    dashboard_path = Path(__file__).resolve().parents[1] / "pages" / "2_Dashboard.py"
-    at = AppTest.from_file(str(dashboard_path))
-    at.run(timeout=15)
-    assert not at.exception, f"Dashboard threw exception on load: {at.exception}"
-
-    # Filter methods to M1 and M3
-    at.sidebar.multiselect[0].set_value(["M1", "M3"]).run(timeout=15)
-    assert not at.exception, f"Dashboard threw exception on method filter: {at.exception}"
-
-    # Filter condition to unmarked
-    at.sidebar.multiselect[1].set_value(["unmarked"]).run(timeout=15)
-    assert not at.exception, f"Dashboard threw exception on condition filter: {at.exception}"

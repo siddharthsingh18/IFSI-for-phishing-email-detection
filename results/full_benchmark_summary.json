@@ -757,5 +757,16 @@
       "M4_call1_injection_detector": "1bb379f29ff370e49dea20ffa3fd58f3b4cbce5731a7f401046aa5cc98de981f",
       "M4_call2_is_phishing_only": "4843021020e31b6afd504f8b0aa212f9dfd7c9be0d2335270e39ce5bc03974e6"
     }
+  },
+  "dataset": {
+    "total_emails": 5222,
+    "train_size": 4178,
+    "val_size": 522,
+    "test_size": 522,
+    "test_phishing": 128,
+    "test_legitimate": 394,
+    "marked_injections": 522,
+    "unmarked_injections": 522,
+    "total_injections": 1044
   }
 }
