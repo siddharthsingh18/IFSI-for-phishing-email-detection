@@ -8,3 +8,4 @@ export * from './MagneticButton';
 export * from './MotionTest';
 export * from './Skeleton';
 export * from './AppInitialLoader';
+export * from './OfflineFallbackBanner';

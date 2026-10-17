@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { apiClient, type BenchmarkSummary } from '../api/client';
 import { Card } from '../components/Card';
+import { OfflineFallbackBanner } from '../components/OfflineFallbackBanner';
 import { Badge } from '../components/Badge';
 import { StatTile, type StatTileVariant } from '../components/StatTile';
 import { SkeletonStatTile, SkeletonCard } from '../components/Skeleton';
@@ -97,6 +98,7 @@ const AnimatedStatTile: React.FC<AnimatedStatTileProps> = ({
 export const LandingPage: React.FC = () => {
   const [summary, setSummary] = useState<BenchmarkSummary | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [isUsingFallback, setIsUsingFallback] = useState<boolean>(false);
 
   useEffect(() => {
     let mounted = true;
@@ -111,6 +113,7 @@ export const LandingPage: React.FC = () => {
       .catch((err) => {
         console.error('Failed to load benchmark summary for About page:', err);
         if (mounted) {
+          setIsUsingFallback(true);
           setLoading(false);
         }
       });
@@ -392,6 +395,13 @@ export const LandingPage: React.FC = () => {
       exit={{ opacity: 0, y: -8, transition: { duration: 0.16 } }}
       className="space-y-16 pb-16 max-w-7xl mx-auto"
     >
+      {/* Unmissable Fallback Warning Banner */}
+      {isUsingFallback && (
+        <OfflineFallbackBanner
+          onRetry={() => window.location.reload()}
+        />
+      )}
+
       {/* =========================================================================
           SECTION 1: HERO (Animates in first via fadeInUp on mount)
           ========================================================================= */}

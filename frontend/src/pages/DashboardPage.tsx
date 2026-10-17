@@ -32,6 +32,7 @@ import {
   type MistakeRecord,
 } from '../api/client';
 import { Card } from '../components/Card';
+import { OfflineFallbackBanner } from '../components/OfflineFallbackBanner';
 import { Badge } from '../components/Badge';
 import { StatTile } from '../components/StatTile';
 import { SkeletonStatTile, SkeletonTableRow, SkeletonChart } from '../components/Skeleton';
@@ -89,6 +90,7 @@ export const DashboardPage: React.FC = () => {
   const [mcnemar, setMcnemar] = useState<McNemarResponse | null>(null);
   const [mistakes, setMistakes] = useState<MistakeRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isUsingFallback, setIsUsingFallback] = useState(false);
 
   // Reactive Filter States
   const [filterMethod, setFilterMethod] = useState<string>('all');
@@ -122,6 +124,7 @@ export const DashboardPage: React.FC = () => {
       .catch((err) => {
         console.error('Failed to load dashboard benchmark data:', err);
         if (!mounted) return;
+        setIsUsingFallback(true);
         setIsLoading(false);
       });
 
@@ -407,6 +410,13 @@ export const DashboardPage: React.FC = () => {
       exit="exit"
       className="space-y-16 pb-16 max-w-7xl mx-auto"
     >
+      {/* Unmissable Fallback Warning Banner */}
+      {isUsingFallback && (
+        <OfflineFallbackBanner
+          onRetry={() => window.location.reload()}
+        />
+      )}
+
       {/* Page Header */}
       <div>
         <div className="flex items-center gap-2 text-teal-400 text-xs font-semibold uppercase tracking-wider">

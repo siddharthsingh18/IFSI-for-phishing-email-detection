@@ -19,6 +19,7 @@ import {
   type PresetSample,
 } from '../api/client';
 import { Card } from '../components/Card';
+import { OfflineFallbackBanner } from '../components/OfflineFallbackBanner';
 import { Badge } from '../components/Badge';
 import { MethodResultCard } from '../components/MethodResultCard';
 import { Skeleton, SkeletonMethodCard } from '../components/Skeleton';
@@ -44,6 +45,7 @@ export const LiveTestPage: React.FC = () => {
   const [presets, setPresets] = useState<Record<string, PresetSample>>({});
   const [selectedPresetKey, setSelectedPresetKey] = useState<string>('');
   const [loadingPresets, setLoadingPresets] = useState(true);
+  const [isUsingFallback, setIsUsingFallback] = useState(false);
 
   // Execution & Output States
   const [isLoading, setIsLoading] = useState(false);
@@ -69,7 +71,10 @@ export const LiveTestPage: React.FC = () => {
       })
       .catch((err) => {
         console.error('Failed to load preset emails:', err);
-        if (mounted) setLoadingPresets(false);
+        if (mounted) {
+          setLoadingPresets(false);
+          setIsUsingFallback(true);
+        }
       });
 
     return () => {
@@ -215,6 +220,13 @@ export const LiveTestPage: React.FC = () => {
       exit="exit"
       className="space-y-16 pb-16 max-w-7xl mx-auto"
     >
+      {/* Unmissable Fallback Warning Banner */}
+      {isUsingFallback && (
+        <OfflineFallbackBanner
+          onRetry={() => window.location.reload()}
+        />
+      )}
+
       {/* Page Title & Context Header */}
       <div>
         <div className="flex items-center gap-2 text-teal-400 text-xs font-semibold uppercase tracking-wider">
