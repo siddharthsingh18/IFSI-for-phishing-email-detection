@@ -1,31 +1,52 @@
 @import "tailwindcss";
 @import "./styles/theme.css";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-heading: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
 
-  --color-slate-950: #020617;
-  --color-slate-900: #0b1120;
-  --color-slate-850: #0f172a;
-  --color-slate-800: #1e293b;
-  --color-slate-700: #334155;
+  --color-slate-950: var(--slate-950);
+  --color-slate-900: var(--slate-900);
+  --color-slate-850: var(--slate-850);
+  --color-slate-800: var(--slate-800);
+  --color-slate-700: var(--slate-700);
+  --color-slate-600: var(--slate-600);
+  --color-slate-500: var(--slate-500);
+  --color-slate-400: var(--slate-400);
+  --color-slate-300: var(--slate-300);
+  --color-slate-200: var(--slate-200);
+  --color-slate-100: var(--slate-100);
+  --color-slate-50:  var(--slate-50);
 
-  --color-teal-accent: #14b8a6;
-  --color-teal-accent-light: #2dd4bf;
-  --color-teal-accent-dark: #0d9488;
+  --color-teal-accent: var(--color-accent);
+  --color-teal-accent-light: var(--color-accent-light);
+  --color-teal-accent-dark: var(--color-accent-hover);
+
+  --shadow-card: var(--shadow-card);
+  --shadow-hover: var(--shadow-hover);
+  --shadow-modal: var(--shadow-modal);
 }
 
 @layer base {
-  body {
+  html, body {
     margin: 0;
     font-family: var(--font-sans);
-    background-color: #020617;
-    color: #e2e8f0;
+    background-color: var(--slate-950);
+    color: var(--slate-200);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     min-height: 100vh;
+    max-width: 100%;
+    overflow-x: clip;
+    transition: background-color 150ms ease, color 150ms ease;
+  }
+
+  #root {
+    max-width: 100%;
+    overflow-x: clip;
   }
 
   * {

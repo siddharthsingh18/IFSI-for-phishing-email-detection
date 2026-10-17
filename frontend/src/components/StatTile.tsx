@@ -29,25 +29,22 @@ export const StatTile: React.FC<StatTileProps> = ({
 }) => {
   const variantStyles: Record<StatTileVariant, { container: string; valueText: string; iconBox: string }> = {
     default: {
-      container: 'bg-slate-900/60 border-slate-800/80 hover:border-slate-700/80',
+      container: 'bg-slate-900/60 border-slate-800/80 border-t-slate-700/70 hover:border-slate-700/80 hover:border-t-slate-600/80',
       valueText: 'text-white',
       iconBox: 'bg-slate-800/60 text-slate-400 border-slate-700/50',
     },
     accent: {
-      container:
-        'bg-slate-900/80 border-teal-500/30 hover:border-teal-500/50 shadow-lg shadow-teal-500/5',
+      container: 'bg-slate-900/80 border-teal-500/30 border-t-teal-400/40 hover:border-teal-500/50 hover:border-t-teal-300/50',
       valueText: 'text-teal-300',
       iconBox: 'bg-teal-500/10 text-teal-400 border-teal-500/20',
     },
     phishing: {
-      container:
-        'bg-slate-900/80 border-rose-500/30 hover:border-rose-500/50 shadow-lg shadow-rose-500/5',
+      container: 'bg-slate-900/80 border-rose-500/30 border-t-rose-400/40 hover:border-rose-500/50 hover:border-t-rose-300/50',
       valueText: 'text-rose-400',
       iconBox: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
     },
     legitimate: {
-      container:
-        'bg-slate-900/80 border-emerald-500/30 hover:border-emerald-500/50 shadow-lg shadow-emerald-500/5',
+      container: 'bg-slate-900/80 border-emerald-500/30 border-t-emerald-400/40 hover:border-emerald-500/50 hover:border-t-emerald-300/50',
       valueText: 'text-emerald-400',
       iconBox: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
     },
@@ -57,7 +54,7 @@ export const StatTile: React.FC<StatTileProps> = ({
 
   return (
     <div
-      className={`rounded-xl border p-5 transition-all backdrop-blur-sm ${currentVariant.container} ${className}`}
+      className={`rounded-xl border p-5 backdrop-blur-sm elevation-card hover:elevation-hover transition-all duration-150 hover:scale-[1.02] hover:brightness-105 ${currentVariant.container} ${className}`}
       {...props}
     >
       <div className="flex items-start justify-between gap-3">
@@ -84,7 +81,7 @@ export const StatTile: React.FC<StatTileProps> = ({
       </div>
 
       {(subtext || trend || trendText) && (
-        <div className="mt-3 flex items-center justify-between text-xs text-slate-500 pt-3 border-t border-slate-800/60">
+        <div className="mt-3 flex items-center justify-between text-xs text-slate-400 pt-3 border-t border-slate-800/60">
           {subtext && <span>{subtext}</span>}
           {trend && (
             <span

@@ -124,3 +124,101 @@ export const radii = {
   '2xl': '1.25rem', // 20px
   full: '9999px',
 } as const;
+
+// Unified Depth System: 3 Consistent Multi-Layered Tokens (Light source: top-left -> down-right)
+// Layer 0: 1px inner top highlight to simulate light catching an edge (Stripe/Linear bevel)
+// Layers 1-3: Contact shadow, mid-dispersion, and deep ambient plume falling down-right
+export const shadows = {
+  card: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.07), 1px 2px 4px rgba(0, 0, 0, 0.35), 3px 6px 16px rgba(0, 0, 0, 0.30), 6px 16px 36px rgba(0, 0, 0, 0.25)',
+  hover: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.11), 2px 4px 8px rgba(0, 0, 0, 0.40), 6px 14px 28px rgba(0, 0, 0, 0.35), 12px 28px 52px rgba(0, 0, 0, 0.35)',
+  modal: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.14), 3px 6px 12px rgba(0, 0, 0, 0.45), 10px 20px 40px rgba(0, 0, 0, 0.45), 20px 40px 80px rgba(0, 0, 0, 0.55)',
+} as const;
+
+export const transitions = {
+  hover: '150ms cubic-bezier(0.16, 1, 0.3, 1)',
+  standard: '200ms cubic-bezier(0.16, 1, 0.3, 1)',
+} as const;
+
+// Dual-Theme System: Dark Slate Foundation (Prompt 28) and Light Slate Foundation
+export const themes = {
+  dark: {
+    name: 'dark' as const,
+    surfaces: {
+      canvas: '#020617',          // Midnight Dark Slate (not pure black)
+      card: '#0b1120',            // Surface base
+      elevated: '#0f172a',        // Elevated surface / modals
+      subtle: '#1e293b',          // Inset panels / preview wells
+    },
+    borders: {
+      primary: '#1e293b',
+      subtle: '#334155',
+    },
+    text: {
+      primary: '#f8fafc',
+      secondary: '#cbd5e1',
+      muted: '#94a3b8',
+      faint: '#64748b',
+    },
+    accent: {
+      primary: '#14b8a6',
+      hover: '#0d9488',
+      light: '#2dd4bf',
+      glow: 'rgba(20, 184, 166, 0.25)',
+    },
+    chart: {
+      grid: '#1e293b',
+      text: '#94a3b8',
+      axis: '#475569',
+      tooltipBg: '#0b1120',
+      tooltipBorder: '#334155',
+      tooltipText: '#f8fafc',
+      legendText: '#cbd5e1',
+    },
+    shadows: {
+      card: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.07), 1px 2px 4px rgba(0, 0, 0, 0.35), 3px 6px 16px rgba(0, 0, 0, 0.30), 6px 16px 36px rgba(0, 0, 0, 0.25)',
+      hover: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.11), 2px 4px 8px rgba(0, 0, 0, 0.40), 6px 14px 28px rgba(0, 0, 0, 0.35), 12px 28px 52px rgba(0, 0, 0, 0.35)',
+      modal: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.14), 3px 6px 12px rgba(0, 0, 0, 0.45), 10px 20px 40px rgba(0, 0, 0, 0.45), 20px 40px 80px rgba(0, 0, 0, 0.55)',
+    },
+  },
+  light: {
+    name: 'light' as const,
+    surfaces: {
+      canvas: '#f8fafc',          // Clean light slate canvas (slate-50)
+      card: '#ffffff',            // Crisp white surface
+      elevated: '#f1f5f9',        // Light slate elevated / modals (slate-100)
+      subtle: '#f1f5f9',          // Inset panels / preview wells
+    },
+    borders: {
+      primary: '#e2e8f0',         // Slate 200 primary borders
+      subtle: '#cbd5e1',          // Slate 300 secondary borders
+    },
+    text: {
+      primary: '#0f172a',         // Slate 900 primary text
+      secondary: '#334155',       // Slate 700 body text
+      muted: '#64748b',           // Slate 500 subtitles & captions
+      faint: '#94a3b8',           // Slate 400 inactive text
+    },
+    accent: {
+      primary: '#0d9488',         // Teal 600 - deeper for high contrast on light
+      hover: '#0f766e',
+      light: '#14b8a6',
+      glow: 'rgba(13, 148, 136, 0.18)',
+    },
+    chart: {
+      grid: '#e2e8f0',
+      text: '#475569',
+      axis: '#cbd5e1',
+      tooltipBg: '#ffffff',
+      tooltipBorder: '#e2e8f0',
+      tooltipText: '#0f172a',
+      legendText: '#334155',
+    },
+    shadows: {
+      card: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.9), 1px 2px 4px rgba(15, 23, 42, 0.04), 3px 6px 14px rgba(15, 23, 42, 0.06), 6px 16px 28px rgba(15, 23, 42, 0.04)',
+      hover: 'inset 0 1px 0 0 rgba(255, 255, 255, 1), 2px 4px 8px rgba(15, 23, 42, 0.06), 6px 14px 24px rgba(15, 23, 42, 0.08), 12px 28px 44px rgba(15, 23, 42, 0.06)',
+      modal: 'inset 0 1px 0 0 rgba(255, 255, 255, 1), 3px 6px 12px rgba(15, 23, 42, 0.08), 10px 20px 36px rgba(15, 23, 42, 0.12), 20px 40px 72px rgba(15, 23, 42, 0.10)',
+    },
+  },
+} as const;
+
+

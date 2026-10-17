@@ -78,6 +78,7 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
     <Card
       variant={chosenVariant}
       padding="none"
+      tilt={true}
       className="flex flex-col justify-between overflow-hidden"
     >
       <div className="p-5 space-y-4">
@@ -193,8 +194,8 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
               transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
               className={`h-full rounded-full ${
                 isPhishing
-                  ? 'bg-gradient-to-r from-rose-500 to-red-400 shadow-sm shadow-rose-500/40'
-                  : 'bg-gradient-to-r from-teal-500 to-emerald-400 shadow-sm shadow-teal-500/40'
+                  ? 'bg-gradient-to-r from-rose-500 to-red-400'
+                  : 'bg-gradient-to-r from-teal-500 to-emerald-400'
               }`}
             />
           </div>
@@ -206,7 +207,7 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
         <button
           type="button"
           onClick={toggleDetails}
-          className="w-full px-4 py-2.5 flex items-center justify-between text-xs font-medium text-slate-300 hover:text-teal-300 hover:bg-slate-900/60 transition-colors"
+          className="w-full px-4 py-2.5 flex items-center justify-between text-xs font-medium text-slate-300 hover:text-teal-300 hover:bg-slate-900/70 hover:brightness-105 active:scale-[0.97] active:bg-slate-900/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-inset transition-all duration-150"
         >
           <span className="flex items-center gap-1.5">
             <Database className="h-3.5 w-3.5 text-teal-400" />
@@ -221,14 +222,14 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
 
         {/* Collapsible Content */}
         {isOpen && (
-          <div className="p-4 pt-2 space-y-3.5 text-xs text-slate-300 border-t border-slate-800/60 bg-slate-950/80 max-h-96 overflow-y-auto">
+          <div className="p-4 pt-3 space-y-3.5 text-xs text-slate-200 border-t border-slate-800/80 bg-slate-950/85 backdrop-blur-md max-h-96 overflow-y-auto">
             {/* 1. Reasoning Tokens / Points */}
             {result.reasons && result.reasons.length > 0 && (
               <div className="space-y-1.5">
-                <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">
+                <span className="text-[11px] font-semibold text-slate-300 uppercase tracking-wider block">
                   Model Reasoning Tokens:
                 </span>
-                <ul className="space-y-1 text-slate-300 text-xs">
+                <ul className="space-y-1 text-slate-200 text-xs">
                   {result.reasons.map((r, i) => (
                     <li key={i} className="flex items-start gap-1.5 leading-relaxed">
                       <span className="text-teal-400 font-bold">&bull;</span>
@@ -241,33 +242,33 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
 
             {/* 2. M4 Two-Call Pipeline Breakdown */}
             {result.method.startsWith('M4') && (
-              <div className="space-y-2 pt-2 border-t border-slate-800/60">
+              <div className="space-y-2 pt-2 border-t border-slate-800/80">
                 <span className="text-[11px] font-semibold text-teal-300 uppercase tracking-wider block">
                   Two-Stage Isolated Execution Trace:
                 </span>
-                <div className="rounded-lg bg-slate-900/80 p-2.5 border border-slate-800 space-y-1">
-                  <div className="font-semibold text-slate-200">
+                <div className="rounded-lg bg-slate-900/80 backdrop-blur-sm p-2.5 border border-slate-800/80 border-t-slate-700/60 space-y-1">
+                  <div className="font-semibold text-slate-100">
                     Stage 1: Prompt Injection Detector
                   </div>
-                  <div className="text-[11px] text-slate-400">
-                    Injection Detected: <span className="font-mono text-white">{result.has_injection ? 'TRUE' : 'FALSE'}</span>
+                  <div className="text-[11px] text-slate-300">
+                    Injection Detected: <span className="font-mono text-white font-medium">{result.has_injection ? 'TRUE' : 'FALSE'}</span>
                   </div>
                   {result.raw_response_call1 && (
-                    <div className="text-[10px] font-mono text-slate-400 break-words mt-1 bg-slate-950 p-1.5 rounded">
+                    <div className="text-[10px] font-mono text-slate-300 break-words mt-1 bg-slate-950/85 backdrop-blur-sm p-1.5 rounded border border-slate-800/60">
                       {result.raw_response_call1}
                     </div>
                   )}
                 </div>
 
-                <div className="rounded-lg bg-slate-900/80 p-2.5 border border-slate-800 space-y-1">
-                  <div className="font-semibold text-slate-200">
+                <div className="rounded-lg bg-slate-900/80 backdrop-blur-sm p-2.5 border border-slate-800/80 border-t-slate-700/60 space-y-1">
+                  <div className="font-semibold text-slate-100">
                     Stage 2: Boolean Phishing Classifier
                   </div>
-                  <div className="text-[11px] text-slate-400">
-                    Phishing Verdict: <span className="font-mono text-white">{result.is_phishing_only ? 'TRUE (PHISHING)' : 'FALSE (LEGITIMATE)'}</span>
+                  <div className="text-[11px] text-slate-300">
+                    Phishing Verdict: <span className="font-mono text-white font-medium">{result.is_phishing_only ? 'TRUE (PHISHING)' : 'FALSE (LEGITIMATE)'}</span>
                   </div>
                   {result.raw_response_call2 && (
-                    <div className="text-[10px] font-mono text-slate-400 break-words mt-1 bg-slate-950 p-1.5 rounded">
+                    <div className="text-[10px] font-mono text-slate-300 break-words mt-1 bg-slate-950/85 backdrop-blur-sm p-1.5 rounded border border-slate-800/60">
                       {result.raw_response_call2}
                     </div>
                   )}
@@ -277,8 +278,8 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
 
             {/* 3. Retrieved FAISS Exemplars (For M3 & M4) */}
             {result.retrieved_samples && result.retrieved_samples.length > 0 && (
-              <div className="space-y-2 pt-2 border-t border-slate-800/60">
-                <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">
+              <div className="space-y-2 pt-2 border-t border-slate-800/80">
+                <span className="text-[11px] font-semibold text-slate-300 uppercase tracking-wider block">
                   Retrieved FAISS Exemplars (Top {result.retrieved_samples.length}):
                 </span>
                 <div className="space-y-2">
@@ -290,10 +291,10 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
                     return (
                       <div
                         key={idx}
-                        className="rounded-lg bg-slate-900/80 p-2 border border-slate-800 text-[11px] space-y-1"
+                        className="rounded-lg bg-slate-900/80 backdrop-blur-sm p-2 border border-slate-800/80 border-t-slate-700/60 text-[11px] space-y-1"
                       >
                         <div className="flex items-center justify-between text-[10px]">
-                          <span className="font-mono text-slate-400">{sampleId}</span>
+                          <span className="font-mono text-slate-300">{sampleId}</span>
                           <div className="flex items-center gap-1.5">
                             {score && (
                               <span className="text-slate-400">Similarity: {score}%</span>
@@ -307,7 +308,7 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
                           </div>
                         </div>
                         {sample.text && (
-                          <p className="text-slate-400 font-mono text-[10px] line-clamp-2">
+                          <p className="text-slate-300 font-mono text-[10px] line-clamp-2">
                             {sample.text}
                           </p>
                         )}
@@ -320,7 +321,7 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
 
             {/* 4. Raw Response Snippet */}
             {result.raw_response && (
-              <div className="pt-2 border-t border-slate-800/60 space-y-1">
+              <div className="pt-2 border-t border-slate-800/80 space-y-1">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] text-slate-400 uppercase font-mono">
                     Raw Completion String:
@@ -328,7 +329,7 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
                   <button
                     type="button"
                     onClick={() => handleCopy(result.method, result.raw_response || '')}
-                    className="text-[10px] text-teal-400 hover:text-teal-300 inline-flex items-center gap-1"
+                    className="text-[10px] text-teal-400 hover:text-teal-300 hover:scale-[1.05] hover:brightness-110 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 rounded px-1.5 py-0.5 inline-flex items-center gap-1 transition-all duration-150"
                   >
                     {isCopied ? (
                       <>
@@ -341,7 +342,7 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
                     )}
                   </button>
                 </div>
-                <pre className="p-2 rounded bg-slate-950 border border-slate-800 text-[10px] font-mono text-slate-300 whitespace-pre-wrap break-all">
+                <pre className="p-2.5 rounded-lg bg-slate-950/85 backdrop-blur-sm border border-slate-800/80 border-t-slate-700/60 text-[10px] font-mono text-slate-200 whitespace-pre-wrap break-all shadow-inner">
                   {result.raw_response}
                 </pre>
               </div>
