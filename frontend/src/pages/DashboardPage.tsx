@@ -34,9 +34,11 @@ import {
 import { Card } from '../components/Card';
 import { Badge } from '../components/Badge';
 import { StatTile } from '../components/StatTile';
+import { SkeletonStatTile, SkeletonTableRow, SkeletonChart } from '../components/Skeleton';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fadeInUp } from '../lib/motion';
 import { useCountUp } from '../hooks/useCountUp';
+import { useTheme } from '../hooks/useTheme';
 
 // Human-friendly label mapping for methods
 const METHOD_LABELS: Record<string, string> = {
@@ -81,6 +83,7 @@ interface MetricTableRow {
 type SortField = 'method' | 'condition' | 'model' | 'accuracy' | 'recall' | 'fpr' | 'precision' | 'f1' | 'latencySeconds';
 
 export const DashboardPage: React.FC = () => {
+  const { chartColors } = useTheme();
   // Data States
   const [summary, setSummary] = useState<BenchmarkSummary | null>(null);
   const [mcnemar, setMcnemar] = useState<McNemarResponse | null>(null);
@@ -402,7 +405,7 @@ export const DashboardPage: React.FC = () => {
       initial="hidden"
       animate="visible"
       exit="exit"
-      className="space-y-10 max-w-7xl mx-auto py-2"
+      className="space-y-16 pb-16 max-w-7xl mx-auto"
     >
       {/* Page Header */}
       <div>
@@ -421,39 +424,65 @@ export const DashboardPage: React.FC = () => {
       {/* =========================================================================
           SECTION 1: TOP 4 STAT TILES (Count up on mount with explicit sample tags)
           ========================================================================= */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatTile
-          label="Best F1 Score"
-          value={isLoading ? '...' : animatedBestF1.toFixed(4)}
-          subtext={`${topStats.bestF1.sub} • [${topStats.bestF1.sample}]`}
-          variant="legitimate"
-          icon={<Target className="h-5 w-5" />}
-        />
+      <div className="relative">
+        <AnimatePresence mode="popLayout" initial={false}>
+          {isLoading ? (
+            <motion.div
+              key="stats-skeleton"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25, ease: 'easeInOut' }}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full"
+            >
+              {Array.from({ length: 4 }).map((_, i) => (
+                <SkeletonStatTile key={i} />
+              ))}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="stats-content"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.35, ease: 'easeOut' }}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full"
+            >
+              <StatTile
+                label="Best F1 Score"
+                value={animatedBestF1.toFixed(4)}
+                subtext={`${topStats.bestF1.sub} • [${topStats.bestF1.sample}]`}
+                variant="legitimate"
+                icon={<Target className="h-5 w-5" />}
+              />
 
-        <StatTile
-          label="Lowest False Alarm (FPR)"
-          value={isLoading ? '...' : `${animatedLowestFpr.toFixed(2)}%`}
-          subtext={`${topStats.lowestFpr.sub} • [${topStats.lowestFpr.sample}]`}
-          variant="accent"
-          icon={<ShieldAlert className="h-5 w-5" />}
-        />
+              <StatTile
+                label="Lowest False Alarm (FPR)"
+                value={`${animatedLowestFpr.toFixed(2)}%`}
+                subtext={`${topStats.lowestFpr.sub} • [${topStats.lowestFpr.sample}]`}
+                variant="accent"
+                icon={<ShieldAlert className="h-5 w-5" />}
+              />
 
-        <StatTile
-          label="Fastest Inference"
-          value={isLoading ? '...' : `${animatedFastestLat.toFixed(2)} ms`}
-          subtext={`${topStats.fastestLatency.sub} • [${topStats.fastestLatency.sample}]`}
-          variant="default"
-          icon={<Zap className="h-5 w-5" />}
-        />
+              <StatTile
+                label="Fastest Inference"
+                value={`${animatedFastestLat.toFixed(2)} ms`}
+                subtext={`${topStats.fastestLatency.sub} • [${topStats.fastestLatency.sample}]`}
+                variant="default"
+                icon={<Zap className="h-5 w-5" />}
+              />
 
-        <StatTile
-          label="Benchmark Test Emails"
-          value={isLoading ? '...' : Math.round(animatedTotalEmails).toLocaleString()}
-          unit="emails"
-          subtext={`[${topStats.totalEmails.sample}]`}
-          variant="default"
-          icon={<Database className="h-5 w-5" />}
-        />
+              <StatTile
+                label="Benchmark Test Emails"
+                value={Math.round(animatedTotalEmails).toLocaleString()}
+                unit="emails"
+                subtext={`[${topStats.totalEmails.sample}]`}
+                variant="default"
+                icon={<Database className="h-5 w-5" />}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* =========================================================================
@@ -475,7 +504,7 @@ export const DashboardPage: React.FC = () => {
               <select
                 value={filterMethod}
                 onChange={(e) => setFilterMethod(e.target.value)}
-                className="w-full rounded-xl bg-slate-950 border border-slate-800 px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-teal-500 transition-colors"
+                className="w-full rounded-xl bg-slate-950 border border-slate-800 px-3 py-1.5 text-xs text-slate-200 hover:border-slate-700 hover:bg-slate-900/50 active:scale-[0.98] focus:outline-none focus:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-all duration-150 cursor-pointer"
               >
                 <option value="all">All Methods (M1–M4)</option>
                 <option value="M1">M1: TF-IDF + LogReg</option>
@@ -493,7 +522,7 @@ export const DashboardPage: React.FC = () => {
               <select
                 value={filterCondition}
                 onChange={(e) => setFilterCondition(e.target.value)}
-                className="w-full rounded-xl bg-slate-950 border border-slate-800 px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-teal-500 transition-colors"
+                className="w-full rounded-xl bg-slate-950 border border-slate-800 px-3 py-1.5 text-xs text-slate-200 hover:border-slate-700 hover:bg-slate-900/50 active:scale-[0.98] focus:outline-none focus:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-all duration-150 cursor-pointer"
               >
                 <option value="all">All Conditions (Clean, Marked, Unmarked)</option>
                 <option value="clean">Clean (No Injections)</option>
@@ -510,7 +539,7 @@ export const DashboardPage: React.FC = () => {
               <select
                 value={filterModel}
                 onChange={(e) => setFilterModel(e.target.value)}
-                className="w-full rounded-xl bg-slate-950 border border-slate-800 px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-teal-500 transition-colors"
+                className="w-full rounded-xl bg-slate-950 border border-slate-800 px-3 py-1.5 text-xs text-slate-200 hover:border-slate-700 hover:bg-slate-900/50 active:scale-[0.98] focus:outline-none focus:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-all duration-150 cursor-pointer"
               >
                 <option value="all">All Models [N=522 &amp; Pilot N=50]</option>
                 <option value="qwen">qwen2.5:0.5b [Full Split N=522]</option>
@@ -524,7 +553,7 @@ export const DashboardPage: React.FC = () => {
             <button
               type="button"
               onClick={handleResetFilters}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors self-end md:self-center"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 hover:scale-[1.02] hover:brightness-105 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-all duration-150 self-end md:self-center"
             >
               <RotateCcw className="h-3.5 w-3.5" />
               <span>Reset</span>
@@ -568,8 +597,11 @@ export const DashboardPage: React.FC = () => {
                 <thead className="bg-slate-950/70 border-b border-slate-800 text-[11px] font-semibold text-slate-400 uppercase tracking-wider select-none">
                   <tr>
                     <th
+                      tabIndex={0}
+                      role="button"
                       onClick={() => handleSort('method')}
-                      className="px-4 py-3 cursor-pointer hover:text-white transition-colors"
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSort('method'); } }}
+                      className="px-4 py-3 cursor-pointer hover:text-white hover:bg-slate-800/40 hover:brightness-105 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-inset transition-all duration-150 select-none"
                     >
                       <div className="flex items-center gap-1">
                         <span>Method</span>
@@ -577,8 +609,11 @@ export const DashboardPage: React.FC = () => {
                       </div>
                     </th>
                     <th
+                      tabIndex={0}
+                      role="button"
                       onClick={() => handleSort('model')}
-                      className="px-4 py-3 cursor-pointer hover:text-white transition-colors"
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSort('model'); } }}
+                      className="px-4 py-3 cursor-pointer hover:text-white hover:bg-slate-800/40 hover:brightness-105 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-inset transition-all duration-150 select-none"
                     >
                       <div className="flex items-center gap-1">
                         <span>Model &amp; Size</span>
@@ -586,8 +621,11 @@ export const DashboardPage: React.FC = () => {
                       </div>
                     </th>
                     <th
+                      tabIndex={0}
+                      role="button"
                       onClick={() => handleSort('condition')}
-                      className="px-4 py-3 cursor-pointer hover:text-white transition-colors"
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSort('condition'); } }}
+                      className="px-4 py-3 cursor-pointer hover:text-white hover:bg-slate-800/40 hover:brightness-105 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-inset transition-all duration-150 select-none"
                     >
                       <div className="flex items-center gap-1">
                         <span>Condition</span>
@@ -595,8 +633,11 @@ export const DashboardPage: React.FC = () => {
                       </div>
                     </th>
                     <th
+                      tabIndex={0}
+                      role="button"
                       onClick={() => handleSort('accuracy')}
-                      className="px-4 py-3 cursor-pointer hover:text-white transition-colors text-right"
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSort('accuracy'); } }}
+                      className="px-4 py-3 cursor-pointer hover:text-white active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-inset transition-all select-none text-right"
                     >
                       <div className="flex items-center justify-end gap-1">
                         <span>Accuracy</span>
@@ -604,8 +645,11 @@ export const DashboardPage: React.FC = () => {
                       </div>
                     </th>
                     <th
+                      tabIndex={0}
+                      role="button"
                       onClick={() => handleSort('recall')}
-                      className="px-4 py-3 cursor-pointer hover:text-white transition-colors text-right"
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSort('recall'); } }}
+                      className="px-4 py-3 cursor-pointer hover:text-white active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-inset transition-all select-none text-right"
                     >
                       <div className="flex items-center justify-end gap-1">
                         <span>Recall (Catch)</span>
@@ -613,8 +657,11 @@ export const DashboardPage: React.FC = () => {
                       </div>
                     </th>
                     <th
+                      tabIndex={0}
+                      role="button"
                       onClick={() => handleSort('fpr')}
-                      className="px-4 py-3 cursor-pointer hover:text-white transition-colors text-right"
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSort('fpr'); } }}
+                      className="px-4 py-3 cursor-pointer hover:text-white active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-inset transition-all select-none text-right"
                     >
                       <div className="flex items-center justify-end gap-1">
                         <span>FPR (Alarm)</span>
@@ -622,8 +669,11 @@ export const DashboardPage: React.FC = () => {
                       </div>
                     </th>
                     <th
+                      tabIndex={0}
+                      role="button"
                       onClick={() => handleSort('precision')}
-                      className="px-4 py-3 cursor-pointer hover:text-white transition-colors text-right"
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSort('precision'); } }}
+                      className="px-4 py-3 cursor-pointer hover:text-white active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-inset transition-all select-none text-right"
                     >
                       <div className="flex items-center justify-end gap-1">
                         <span>Precision</span>
@@ -631,8 +681,11 @@ export const DashboardPage: React.FC = () => {
                       </div>
                     </th>
                     <th
+                      tabIndex={0}
+                      role="button"
                       onClick={() => handleSort('f1')}
-                      className="px-4 py-3 cursor-pointer hover:text-white transition-colors text-right"
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSort('f1'); } }}
+                      className="px-4 py-3 cursor-pointer hover:text-white active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-inset transition-all select-none text-right"
                     >
                       <div className="flex items-center justify-end gap-1">
                         <span>F1 Score</span>
@@ -640,8 +693,11 @@ export const DashboardPage: React.FC = () => {
                       </div>
                     </th>
                     <th
+                      tabIndex={0}
+                      role="button"
                       onClick={() => handleSort('latencySeconds')}
-                      className="px-4 py-3 cursor-pointer hover:text-white transition-colors text-right"
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSort('latencySeconds'); } }}
+                      className="px-4 py-3 cursor-pointer hover:text-white active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-inset transition-all select-none text-right"
                     >
                       <div className="flex items-center justify-end gap-1">
                         <span>Latency</span>
@@ -650,15 +706,37 @@ export const DashboardPage: React.FC = () => {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 font-mono text-xs">
-                  {sortedRows.length === 0 ? (
-                    <tr>
-                      <td colSpan={9} className="px-6 py-8 text-center text-slate-500 font-sans">
-                        No benchmark configurations match the selected filters.
-                      </td>
-                    </tr>
+                <AnimatePresence mode="wait" initial={false}>
+                  {isLoading ? (
+                    <motion.tbody
+                      key="matrix-skeleton"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.2, ease: 'easeInOut' }}
+                      className="divide-y divide-slate-800/60 font-mono text-xs"
+                    >
+                      {Array.from({ length: 8 }).map((_, i) => (
+                        <SkeletonTableRow key={i} columns={9} />
+                      ))}
+                    </motion.tbody>
                   ) : (
-                    sortedRows.map((row) => {
+                    <motion.tbody
+                      key="matrix-rows"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.28, ease: 'easeOut' }}
+                      className="divide-y divide-slate-800/60 font-mono text-xs"
+                    >
+                      {sortedRows.length === 0 ? (
+                        <tr>
+                          <td colSpan={9} className="px-6 py-8 text-center text-slate-500 font-sans">
+                            No benchmark configurations match the selected filters.
+                          </td>
+                        </tr>
+                      ) : (
+                        sortedRows.map((row) => {
                       const isHighF1 = row.f1 > 0.85;
                       const isLowFpr = row.fpr < 0.05;
                       const isPilot = row.sampleSize.includes('Pilot');
@@ -666,7 +744,8 @@ export const DashboardPage: React.FC = () => {
                       return (
                         <tr
                           key={row.id}
-                          className="hover:bg-slate-850/50 transition-colors group"
+                          tabIndex={0}
+                          className="hover:bg-slate-800/60 hover:brightness-105 active:scale-[0.98] active:bg-slate-800/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-inset focus-visible:bg-slate-800/70 transition-all duration-150 group cursor-pointer"
                         >
                           <td className="px-4 py-3 font-sans font-semibold text-white whitespace-nowrap">
                             <span className="flex items-center gap-1.5">
@@ -748,128 +827,165 @@ export const DashboardPage: React.FC = () => {
                       );
                     })
                   )}
-                </tbody>
+                    </motion.tbody>
+                  )}
+                </AnimatePresence>
               </table>
             </div>
           </Card>
 
-          {/* SECTION 4: TWO RECHARTS BAR CHARTS (isAnimationActive enabled) */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Chart 1: Recall vs. FPR */}
-            <Card variant="elevated" padding="md">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                <div>
-                  <h3 className="text-base font-bold text-white tracking-tight">
-                    Recall (Phishing Catch) vs. FPR (False Alarms)
-                  </h3>
-                  <p className="text-xs text-slate-400">
-                    Evaluating evasion resistance vs false-alarm tax across filtered configurations [N=522 &amp; Pilot N=50].
-                  </p>
+          {/* SECTION 4: TWO RECHARTS BAR CHARTS (Horizontally scroll below 640px) */}
+          <div className="relative">
+            <AnimatePresence mode="popLayout" initial={false}>
+              {isLoading ? (
+                <motion.div
+                  key="charts-skeleton"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.25, ease: 'easeInOut' }}
+                  className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full"
+                >
+                <SkeletonChart
+                  title="Recall (Catch Rate) vs. FPR (False Alarms)"
+                  subtitle="Evaluating evasion resistance across configurations"
+                />
+                <SkeletonChart
+                  title="Operational Latency per Method & Condition"
+                  subtitle="Mean per-email inference latency in milliseconds"
+                />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="charts-content"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.35, ease: 'easeOut' }}
+                className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full"
+              >
+              {/* Chart 1: Recall vs. FPR */}
+              <Card variant="elevated" padding="md">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                  <div>
+                    <h3 className="text-base font-bold text-white tracking-tight">
+                      Recall (Phishing Catch) vs. FPR (False Alarms)
+                    </h3>
+                    <p className="text-xs text-slate-400">
+                      Evaluating evasion resistance vs false-alarm tax across filtered configurations [N=522 &amp; Pilot N=50].
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-              <div className="pt-4 h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={chartData}
-                    margin={{ top: 10, right: 10, left: -10, bottom: 35 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
-                    <XAxis
-                      dataKey="name"
-                      stroke="#64748b"
-                      tick={{ fill: '#94a3b8', fontSize: 10 }}
-                      angle={-25}
-                      textAnchor="end"
-                      interval={0}
-                    />
-                    <YAxis
-                      stroke="#64748b"
-                      tick={{ fill: '#94a3b8', fontSize: 10 }}
-                      unit="%"
-                      domain={[0, 100]}
-                    />
-                    <Tooltip content={<CustomChartTooltip />} />
-                    <Legend
-                      verticalAlign="top"
-                      align="right"
-                      wrapperStyle={{ paddingBottom: 10, fontSize: 11 }}
-                    />
-                    <Bar
-                      dataKey="recallPct"
-                      name="Recall (Catch Rate %)"
-                      fill="#14b8a6"
-                      radius={[4, 4, 0, 0]}
-                      isAnimationActive={true}
-                      animationDuration={800}
-                      animationEasing="ease-out"
-                    />
-                    <Bar
-                      dataKey="fprPct"
-                      name="FPR (False Alarm %)"
-                      fill="#f43f5e"
-                      radius={[4, 4, 0, 0]}
-                      isAnimationActive={true}
-                      animationDuration={800}
-                      animationEasing="ease-out"
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </Card>
-
-            {/* Chart 2: Operational Latency */}
-            <Card variant="elevated" padding="md">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                <div>
-                  <h3 className="text-base font-bold text-white tracking-tight">
-                    Operational Latency per Method &amp; Condition
-                  </h3>
-                  <p className="text-xs text-slate-400">
-                    Mean per-email inference latency in milliseconds [Labeled N=522 / N=50].
-                  </p>
+                <div className="overflow-x-auto pt-4 pb-2">
+                  <div className="min-w-[560px] h-80">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart
+                        data={chartData}
+                        margin={{ top: 10, right: 10, left: -10, bottom: 35 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid} vertical={false} />
+                        <XAxis
+                          dataKey="name"
+                          stroke={chartColors.axis}
+                          tick={{ fill: chartColors.text, fontSize: 10 }}
+                          angle={-25}
+                          textAnchor="end"
+                          interval={0}
+                        />
+                        <YAxis
+                          stroke={chartColors.axis}
+                          tick={{ fill: chartColors.text, fontSize: 10 }}
+                          unit="%"
+                          domain={[0, 100]}
+                        />
+                        <Tooltip content={<CustomChartTooltip />} />
+                        <Legend
+                          verticalAlign="top"
+                          align="right"
+                          wrapperStyle={{ paddingBottom: 10, fontSize: 11, color: chartColors.legendText }}
+                        />
+                        <Bar
+                          dataKey="recallPct"
+                          name="Recall (Catch Rate %)"
+                          fill="#14b8a6"
+                          radius={[4, 4, 0, 0]}
+                          isAnimationActive={true}
+                          animationDuration={800}
+                          animationEasing="ease-out"
+                        />
+                        <Bar
+                          dataKey="fprPct"
+                          name="FPR (False Alarm %)"
+                          fill="#f43f5e"
+                          radius={[4, 4, 0, 0]}
+                          isAnimationActive={true}
+                          animationDuration={800}
+                          animationEasing="ease-out"
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
                 </div>
-              </div>
+              </Card>
 
-              <div className="pt-4 h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={chartData}
-                    margin={{ top: 10, right: 10, left: -5, bottom: 35 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
-                    <XAxis
-                      dataKey="name"
-                      stroke="#64748b"
-                      tick={{ fill: '#94a3b8', fontSize: 10 }}
-                      angle={-25}
-                      textAnchor="end"
-                      interval={0}
-                    />
-                    <YAxis
-                      stroke="#64748b"
-                      tick={{ fill: '#94a3b8', fontSize: 10 }}
-                      unit="ms"
-                    />
-                    <Tooltip content={<CustomChartTooltip isLatency />} />
-                    <Legend
-                      verticalAlign="top"
-                      align="right"
-                      wrapperStyle={{ paddingBottom: 10, fontSize: 11 }}
-                    />
-                    <Bar
-                      dataKey="latencyMs"
-                      name="Mean Latency (ms)"
-                      fill="#0ea5e9"
-                      radius={[4, 4, 0, 0]}
-                      isAnimationActive={true}
-                      animationDuration={800}
-                      animationEasing="ease-out"
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </Card>
+              {/* Chart 2: Operational Latency */}
+              <Card variant="elevated" padding="md">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                  <div>
+                    <h3 className="text-base font-bold text-white tracking-tight">
+                      Operational Latency per Method &amp; Condition
+                    </h3>
+                    <p className="text-xs text-slate-400">
+                      Mean per-email inference latency in milliseconds [Labeled N=522 / N=50].
+                    </p>
+                  </div>
+                </div>
+
+                <div className="overflow-x-auto pt-4 pb-2">
+                  <div className="min-w-[560px] h-80">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart
+                        data={chartData}
+                        margin={{ top: 10, right: 10, left: -5, bottom: 35 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid} vertical={false} />
+                        <XAxis
+                          dataKey="name"
+                          stroke={chartColors.axis}
+                          tick={{ fill: chartColors.text, fontSize: 10 }}
+                          angle={-25}
+                          textAnchor="end"
+                          interval={0}
+                        />
+                        <YAxis
+                          stroke={chartColors.axis}
+                          tick={{ fill: chartColors.text, fontSize: 10 }}
+                          unit="ms"
+                        />
+                        <Tooltip content={<CustomChartTooltip isLatency />} />
+                        <Legend
+                          verticalAlign="top"
+                          align="right"
+                          wrapperStyle={{ paddingBottom: 10, fontSize: 11, color: chartColors.legendText }}
+                        />
+                        <Bar
+                          dataKey="latencyMs"
+                          name="Mean Latency (ms)"
+                          fill="#0ea5e9"
+                          radius={[4, 4, 0, 0]}
+                          isAnimationActive={true}
+                          animationDuration={800}
+                          animationEasing="ease-out"
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </Card>
+            </motion.div>
+          )}
+        </AnimatePresence>
           </div>
         </motion.div>
       </AnimatePresence>
@@ -879,8 +995,11 @@ export const DashboardPage: React.FC = () => {
           ========================================================================= */}
       <Card variant="default" padding="none">
         <div
+          role="button"
+          tabIndex={0}
           onClick={() => setShowMistakes(!showMistakes)}
-          className="p-5 flex items-center justify-between cursor-pointer hover:bg-slate-850/40 transition-colors select-none"
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setShowMistakes(!showMistakes); } }}
+          className="p-5 flex items-center justify-between cursor-pointer hover:bg-slate-850/60 hover:scale-[1.005] hover:brightness-105 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-inset transition-all duration-150 select-none"
         >
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20">
@@ -924,89 +1043,121 @@ export const DashboardPage: React.FC = () => {
                       <th className="px-4 py-3">Snippet Preview</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/60 font-sans text-xs">
-                    {mistakes.map((m, idx) => {
-                      const isExpanded = expandedMistakeId === `${m.id}-${m.method}-${idx}`;
-                      const rowKey = `${m.id}-${m.method}-${idx}`;
+                  <AnimatePresence mode="wait" initial={false}>
+                    {isLoading ? (
+                      <motion.tbody
+                        key="mistakes-skeleton"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.2, ease: 'easeInOut' }}
+                        className="divide-y divide-slate-800/60 font-sans text-xs"
+                      >
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <SkeletonTableRow key={i} columns={7} />
+                        ))}
+                      </motion.tbody>
+                    ) : (
+                      <motion.tbody
+                        key="mistakes-rows"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.28, ease: 'easeOut' }}
+                        className="divide-y divide-slate-800/60 font-sans text-xs"
+                      >
+                        {mistakes.map((m, idx) => {
+                        const isExpanded = expandedMistakeId === `${m.id}-${m.method}-${idx}`;
+                        const rowKey = `${m.id}-${m.method}-${idx}`;
 
-                      return (
-                        <React.Fragment key={rowKey}>
-                          <tr
-                            onClick={() =>
-                              setExpandedMistakeId(isExpanded ? null : rowKey)
-                            }
-                            className={`cursor-pointer transition-colors ${
-                              isExpanded
-                                ? 'bg-slate-850 border-l-2 border-teal-400'
-                                : 'hover:bg-slate-850/40'
-                            }`}
-                          >
-                            <td className="px-4 py-3 font-semibold text-white whitespace-nowrap">
-                              {m.method}
-                            </td>
-                            <td className="px-4 py-3 whitespace-nowrap">
-                              <Badge
-                                variant={m.condition.toLowerCase() === 'clean' ? 'neutral' : 'phishing'}
-                                size="sm"
-                              >
-                                {m.condition}
-                              </Badge>
-                            </td>
-                            <td className="px-4 py-3 text-slate-400 font-mono text-[11px] whitespace-nowrap">
-                              {m.model}
-                            </td>
-                            <td className="px-4 py-3 whitespace-nowrap">
-                              <Badge
-                                variant={m.true_label.toLowerCase() === 'phishing' ? 'phishing' : 'legitimate'}
-                                size="sm"
-                              >
-                                {m.true_label}
-                              </Badge>
-                            </td>
-                            <td className="px-4 py-3 whitespace-nowrap">
-                              <Badge
-                                variant={m.predicted_label.toLowerCase() === 'phishing' ? 'phishing' : 'legitimate'}
-                                size="sm"
-                              >
-                                {m.predicted_label}
-                              </Badge>
-                            </td>
-                            <td className="px-4 py-3 text-right font-mono font-bold text-rose-300">
-                              {(m.confidence * 100).toFixed(1)}%
-                            </td>
-                            <td className="px-4 py-3 max-w-xs truncate text-slate-400 font-mono text-[11px]">
-                              {m.snippet}
-                            </td>
-                          </tr>
-
-                          {/* Inline Expanded Full Email Text with smooth height+opacity animation */}
-                          {isExpanded && (
-                            <tr className="bg-slate-950/90 border-b border-slate-800">
-                              <td colSpan={7} className="p-0">
-                                <motion.div
-                                  initial={{ height: 0, opacity: 0 }}
-                                  animate={{ height: 'auto', opacity: 1 }}
-                                  exit={{ height: 0, opacity: 0 }}
-                                  transition={{ duration: 0.25, ease: 'easeInOut' }}
-                                  className="overflow-hidden px-6 py-4"
+                        return (
+                          <React.Fragment key={rowKey}>
+                            <tr
+                              role="button"
+                              tabIndex={0}
+                              onClick={() =>
+                                setExpandedMistakeId(isExpanded ? null : rowKey)
+                              }
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.preventDefault();
+                                  setExpandedMistakeId(isExpanded ? null : rowKey);
+                                }
+                              }}
+                              className={`cursor-pointer transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-inset ${
+                                isExpanded
+                                  ? 'bg-slate-800 border-l-2 border-teal-400'
+                                  : 'hover:bg-slate-800/60 hover:brightness-105'
+                              }`}
+                            >
+                              <td className="px-4 py-3 font-semibold text-white whitespace-nowrap">
+                                {m.method}
+                              </td>
+                              <td className="px-4 py-3 whitespace-nowrap">
+                                <Badge
+                                  variant={m.condition.toLowerCase() === 'clean' ? 'neutral' : 'phishing'}
+                                  size="sm"
                                 >
-                                  <div className="space-y-2 max-w-4xl">
-                                    <div className="flex items-center justify-between text-xs font-mono text-slate-400 pb-2 border-b border-slate-800">
-                                      <span>Email ID: <strong className="text-white">{m.id}</strong></span>
-                                      <span>Ground Truth: <strong className="text-rose-400">{m.true_label}</strong> &bull; Model Output: <strong className="text-teal-400">{m.predicted_label}</strong></span>
-                                    </div>
-                                    <p className="text-xs text-slate-300 font-mono leading-relaxed whitespace-pre-wrap bg-slate-900 p-3 rounded-lg border border-slate-800">
-                                      {m.snippet}
-                                    </p>
-                                  </div>
-                                </motion.div>
+                                  {m.condition}
+                                </Badge>
+                              </td>
+                              <td className="px-4 py-3 text-slate-400 font-mono text-[11px] whitespace-nowrap">
+                                {m.model}
+                              </td>
+                              <td className="px-4 py-3 whitespace-nowrap">
+                                <Badge
+                                  variant={m.true_label.toLowerCase() === 'phishing' ? 'phishing' : 'legitimate'}
+                                  size="sm"
+                                >
+                                  {m.true_label}
+                                </Badge>
+                              </td>
+                              <td className="px-4 py-3 whitespace-nowrap">
+                                <Badge
+                                  variant={m.predicted_label.toLowerCase() === 'phishing' ? 'phishing' : 'legitimate'}
+                                  size="sm"
+                                >
+                                  {m.predicted_label}
+                                </Badge>
+                              </td>
+                              <td className="px-4 py-3 text-right font-mono font-bold text-rose-300">
+                                {(m.confidence * 100).toFixed(1)}%
+                              </td>
+                              <td className="px-4 py-3 max-w-xs truncate text-slate-400 font-mono text-[11px]">
+                                {m.snippet}
                               </td>
                             </tr>
-                          )}
-                        </React.Fragment>
-                      );
-                    })}
-                  </tbody>
+
+                            {/* Inline Expanded Full Email Text with smooth height+opacity animation */}
+                            {isExpanded && (
+                              <tr className="bg-slate-950/85 backdrop-blur-md border-b border-slate-800/80">
+                                <td colSpan={7} className="p-0 bg-slate-950/85 backdrop-blur-md">
+                                  <motion.div
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: 'auto', opacity: 1 }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                    transition={{ duration: 0.25, ease: 'easeInOut' }}
+                                    className="overflow-hidden px-6 py-4"
+                                  >
+                                    <div className="space-y-2 max-w-4xl">
+                                      <div className="flex items-center justify-between text-xs font-mono text-slate-300 pb-2 border-b border-slate-800/80">
+                                        <span>Email ID: <strong className="text-white font-semibold">{m.id}</strong></span>
+                                        <span>Ground Truth: <strong className="text-rose-400 font-semibold">{m.true_label}</strong> &bull; Model Output: <strong className="text-teal-400 font-semibold">{m.predicted_label}</strong></span>
+                                      </div>
+                                      <p className="text-xs text-slate-200 font-mono leading-relaxed whitespace-pre-wrap bg-slate-900/80 backdrop-blur-sm p-3.5 rounded-lg border border-slate-800/80 border-t-slate-700/60 shadow-inner">
+                                        {m.snippet}
+                                      </p>
+                                    </div>
+                                  </motion.div>
+                                </td>
+                              </tr>
+                            )}
+                          </React.Fragment>
+                        );
+                      })}
+                      </motion.tbody>
+                    )}
+                  </AnimatePresence>
                 </table>
               </div>
             </motion.div>
@@ -1019,8 +1170,16 @@ export const DashboardPage: React.FC = () => {
           ========================================================================= */}
       <Card variant="default" padding="none">
         <div
+          role="button"
+          tabIndex={0}
           onClick={() => setShowMcNemar(!showMcNemar)}
-          className="p-5 flex items-center justify-between cursor-pointer hover:bg-slate-850/40 transition-colors select-none"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              setShowMcNemar(!showMcNemar);
+            }
+          }}
+          className="p-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/60 hover:scale-[1.005] hover:brightness-105 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-inset transition-all duration-150 select-none"
         >
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-xl bg-teal-500/10 text-teal-400 border border-teal-500/20">
@@ -1064,8 +1223,31 @@ export const DashboardPage: React.FC = () => {
                       <th className="px-4 py-3 text-center">Decision (α=0.05)</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/60 font-mono text-xs">
-                    {sortedMcNemar.map(([key, test]) => {
+                  <AnimatePresence mode="wait" initial={false}>
+                    {isLoading ? (
+                      <motion.tbody
+                        key="mcnemar-skeleton"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.2, ease: 'easeInOut' }}
+                        className="divide-y divide-slate-800/60 font-mono text-xs"
+                      >
+                        {Array.from({ length: 6 }).map((_, i) => (
+                          <SkeletonTableRow key={i} columns={7} />
+                        ))}
+                      </motion.tbody>
+                    ) : (
+                      <motion.tbody
+                        key="mcnemar-rows"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.28, ease: 'easeOut' }}
+                        className="divide-y divide-slate-800/60 font-mono text-xs"
+                      >
+                        {sortedMcNemar.map(([key, test]) => {
+
                       const isSig = test.significant_after_holm_bonferroni;
                       const rawP = test.raw_p_value ?? test.p_value;
                       const hbP = test.holm_bonferroni_p_value ?? test.p_value;
@@ -1076,7 +1258,8 @@ export const DashboardPage: React.FC = () => {
                       return (
                         <tr
                           key={key}
-                          className="hover:bg-slate-850/40 transition-colors"
+                          tabIndex={0}
+                          className="hover:bg-slate-800/60 hover:brightness-105 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-inset focus-visible:bg-slate-800/50 transition-all duration-150 cursor-pointer"
                         >
                           <td className="px-4 py-3 font-bold text-slate-400 font-sans">
                             #{rank}
@@ -1113,7 +1296,9 @@ export const DashboardPage: React.FC = () => {
                         </tr>
                       );
                     })}
-                  </tbody>
+                      </motion.tbody>
+                    )}
+                  </AnimatePresence>
                 </table>
               </div>
             </motion.div>
@@ -1144,7 +1329,7 @@ const CustomChartTooltip: React.FC<CustomChartTooltipProps> = ({
   if (active && payload && payload.length) {
     const dataItem = payload[0].payload;
     return (
-      <div className="rounded-xl border border-slate-700/80 bg-slate-900/95 p-3.5 shadow-2xl backdrop-blur-md text-xs space-y-1.5 min-w-[200px]">
+      <div className="rounded-xl border border-slate-700/80 bg-slate-900/95 p-3.5 elevation-modal backdrop-blur-md text-xs space-y-1.5 min-w-[200px]">
         <div className="border-b border-slate-800 pb-1.5">
           <p className="font-bold text-white text-xs">{dataItem.fullName || label}</p>
           <p className="text-[10px] text-teal-400 font-mono">

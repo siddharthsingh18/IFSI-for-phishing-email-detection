@@ -1,20 +1,92 @@
 /* IFSI Theme & Utility Classes */
 
-:root {
+/* =========================================================================
+   DUAL-THEME PALETTES: Dark Slate Foundation (Prompt 28) vs Light Slate Foundation
+   ========================================================================= */
+
+:root, html.dark {
   --font-heading: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --font-body: 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
-  --color-canvas: #020617;
-  --color-surface: #0b1120;
-  --color-surface-elevated: #0f172a;
-  --color-border-primary: #1e293b;
-  --color-border-subtle: #334155;
+  /* Surfaces & Canvas: Dark Slate Foundation (Avoid pure black #000, use rich dark slate) */
+  --slate-950: #020617; /* Midnight dark slate canvas base */
+  --slate-900: #0b1120; /* Card / Surface background */
+  --slate-850: #0f172a; /* Elevated surface / modals */
+  --slate-800: #1e293b; /* Primary borders & divider lines */
+  --slate-700: #334155; /* Secondary borders & muted elements */
+  --slate-600: #475569; /* Subtle icons & inactive states */
+  --slate-500: #64748b; /* Secondary body text */
+  --slate-400: #94a3b8; /* Muted headings & subtitles */
+  --slate-300: #cbd5e1; /* Primary body text */
+  --slate-200: #e2e8f0; /* Crisp high-contrast text */
+  --slate-100: #f1f5f9; /* Headings & active labels */
+  --slate-50:  #f8fafc; /* Pure highlights */
 
   --color-accent: #14b8a6;
   --color-accent-hover: #0d9488;
   --color-accent-light: #2dd4bf;
   --color-accent-glow: rgba(20, 184, 166, 0.25);
+
+  /* Unified Depth System: 3 Consistent Multi-Layered Tokens (Light source: top-left -> down-right) */
+  /* Layer 0: 1px inner top edge highlight (Stripe/Linear bevel) */
+  /* Layers 1-3: Tight contact, mid diffusion, deep ambient plume */
+  --shadow-card:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.07),
+    1px 2px 4px rgba(0, 0, 0, 0.35),
+    3px 6px 16px rgba(0, 0, 0, 0.30),
+    6px 16px 36px rgba(0, 0, 0, 0.25);
+
+  --shadow-hover:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.11),
+    2px 4px 8px rgba(0, 0, 0, 0.40),
+    6px 14px 28px rgba(0, 0, 0, 0.35),
+    12px 28px 52px rgba(0, 0, 0, 0.35);
+
+  --shadow-modal:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.14),
+    3px 6px 12px rgba(0, 0, 0, 0.45),
+    10px 20px 40px rgba(0, 0, 0, 0.45),
+    20px 40px 80px rgba(0, 0, 0, 0.55);
+}
+
+html.light {
+  /* Surfaces & Canvas: Light Slate Foundation (Crisp, clean, professional) */
+  --slate-950: #f8fafc; /* Light slate canvas base (slate-50) */
+  --slate-900: #ffffff; /* Card surface (pure crisp white) */
+  --slate-850: #f1f5f9; /* Elevated surface / modals (slate-100) */
+  --slate-800: #e2e8f0; /* Primary borders (slate-200) */
+  --slate-700: #cbd5e1; /* Secondary borders (slate-300) */
+  --slate-600: #94a3b8; /* Subtle icons / inactive (slate-400) */
+  --slate-500: #64748b; /* Secondary body text (slate-500) */
+  --slate-400: #475569; /* Muted headings / subtitles (slate-600) */
+  --slate-300: #334155; /* Primary body text (slate-700) */
+  --slate-200: #1e293b; /* Crisp high-contrast text (slate-800) */
+  --slate-100: #0f172a; /* Headings & active labels (slate-900) */
+  --slate-50:  #020617; /* Highest contrast (slate-950) */
+
+  --color-accent: #0d9488;
+  --color-accent-hover: #0f766e;
+  --color-accent-light: #14b8a6;
+  --color-accent-glow: rgba(13, 148, 136, 0.18);
+
+  --shadow-card:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.9),
+    1px 2px 4px rgba(15, 23, 42, 0.04),
+    3px 6px 14px rgba(15, 23, 42, 0.06),
+    6px 16px 28px rgba(15, 23, 42, 0.04);
+
+  --shadow-hover:
+    inset 0 1px 0 0 rgba(255, 255, 255, 1),
+    2px 4px 8px rgba(15, 23, 42, 0.06),
+    6px 14px 24px rgba(15, 23, 42, 0.08),
+    12px 28px 44px rgba(15, 23, 42, 0.06);
+
+  --shadow-modal:
+    inset 0 1px 0 0 rgba(255, 255, 255, 1),
+    3px 6px 12px rgba(15, 23, 42, 0.08),
+    10px 20px 36px rgba(15, 23, 42, 0.12),
+    20px 40px 72px rgba(15, 23, 42, 0.10);
 }
 
 /* Glassmorphism Surface */
@@ -25,11 +97,34 @@
   border: 1px solid rgba(30, 41, 59, 0.8);
 }
 
+html.light .glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+}
+
 .glass-panel-elevated {
   background: rgba(15, 23, 42, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(51, 65, 85, 0.6);
+}
+
+html.light .glass-panel-elevated {
+  background: rgba(248, 250, 252, 0.95);
+  border: 1px solid rgba(203, 213, 225, 0.8);
+}
+
+/* Elevation System: 3 Canonical Shadow Levels */
+.elevation-card {
+  box-shadow: var(--shadow-card);
+}
+
+.elevation-hover {
+  box-shadow: var(--shadow-hover);
+}
+
+.elevation-modal {
+  box-shadow: var(--shadow-modal);
 }
 
 /* Accent Glow */
@@ -41,6 +136,99 @@
   box-shadow: 0 0 15px -3px rgba(20, 184, 166, 0.2);
 }
 
+/* Micro-interaction Hover & Active Classes (150ms transition, scale 1.00->1.02, active 0.97) */
+.hover-interactive {
+  transition: all 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.hover-interactive:hover {
+  transform: scale(1.02);
+  filter: brightness(1.1);
+}
+.hover-interactive:active {
+  transform: scale(0.97);
+}
+
+/* Global focus-visible ring defaults for keyboard accessibility */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Common interactive button utilities */
+.interactive-press {
+  transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1), filter 150ms ease, background-color 150ms ease;
+}
+.interactive-press:hover {
+  transform: scale(1.02);
+  filter: brightness(1.08);
+}
+.interactive-press:active {
+  transform: scale(0.97);
+}
+.interactive-press:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--slate-950), 0 0 0 4px var(--color-accent);
+}
+
+/* Interactive Dropdown Select Utility */
+.interactive-select {
+  cursor: pointer;
+  transition: border-color 150ms ease, background-color 150ms ease, transform 150ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 150ms ease;
+}
+.interactive-select:hover {
+  border-color: var(--slate-700);
+  background-color: rgba(15, 23, 42, 0.6);
+}
+.interactive-select:active {
+  transform: scale(0.98);
+}
+.interactive-select:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--slate-950), 0 0 0 4px var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+/* Smooth Animated Toggle Switch Thumb & Track */
+.switch-track {
+  cursor: pointer;
+  transition: background-color 300ms cubic-bezier(0.16, 1, 0.3, 1), border-color 200ms ease, transform 150ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 200ms ease;
+}
+.switch-track:hover {
+  filter: brightness(1.1);
+  transform: scale(1.03);
+}
+.switch-track:active {
+  transform: scale(0.97);
+}
+.switch-track:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--slate-950), 0 0 0 4px var(--color-accent);
+}
+
+.switch-thumb {
+  transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1), background-color 200ms ease, width 150ms ease;
+  will-change: transform;
+}
+.switch-track:active .switch-thumb {
+  width: 1.35rem; /* subtle fluid squish during active press */
+}
+
+/* Interactive Table Row Utility */
+.interactive-table-row {
+  cursor: pointer;
+  transition: background-color 150ms ease, transform 150ms cubic-bezier(0.16, 1, 0.3, 1), filter 150ms ease, box-shadow 150ms ease;
+}
+.interactive-table-row:hover {
+  filter: brightness(1.06);
+}
+.interactive-table-row:active {
+  transform: scale(0.985);
+}
+.interactive-table-row:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--color-accent);
+}
+
 /* Subtle Grid Background */
 .bg-grid-pattern {
   background-size: 32px 32px;
@@ -49,8 +237,211 @@
     linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
 }
 
+html.light .bg-grid-pattern {
+  background-image: 
+    linear-gradient(to right, rgba(15, 23, 42, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
+}
+
 /* Smooth Heading Typography */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   letter-spacing: -0.025em;
 }
+
+/* Light Mode Text & Input Normalization */
+html.light .text-white:not(.keep-white):not([class*="bg-teal-"]):not([class*="bg-rose-"]):not([class*="bg-amber-"]):not([class*="bg-emerald-"]) {
+  color: #0f172a;
+}
+
+html.light input, html.light select, html.light textarea {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+html.light input::placeholder, html.light textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* =========================================================================
+   SKELETON SHIMMER LOADER
+   Shimmer animation that sweeps across placeholder elements matching final layout
+   ========================================================================= */
+@keyframes shimmerSweep {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(30, 41, 59, 0.45) 0%,
+    rgba(51, 65, 85, 0.8) 50%,
+    rgba(30, 41, 59, 0.45) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmerSweep 1.6s ease-in-out infinite;
+}
+
+html.light .skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(226, 232, 240, 0.8) 0%,
+    rgba(241, 245, 249, 1) 50%,
+    rgba(226, 232, 240, 0.8) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmerSweep 1.6s ease-in-out infinite;
+}
+
+/* =========================================================================
+   PAGE-WIDE SUBTLE GRAIN / NOISE OVERLAY
+   Pure SVG feTurbulence static tile avoiding flat-vector look (Zero Canvas/WebGL)
+   ========================================================================= */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 40;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+
+html.light .grain-overlay {
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+}
+
+/* =========================================================================
+   HERO ANIMATED GRADIENT MESH
+   Slow-moving CSS-only blurred color blobs drifting on GPU compositor thread
+   ========================================================================= */
+@keyframes meshDrift1 {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(70px, 40px, 0) scale(1.12);
+  }
+  66% {
+    transform: translate3d(-35px, 65px, 0) scale(0.92);
+  }
+  100% {
+    transform: translate3d(55px, -25px, 0) scale(1.06);
+  }
+}
+
+@keyframes meshDrift2 {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(-60px, -45px, 0) scale(0.94);
+  }
+  66% {
+    transform: translate3d(40px, -60px, 0) scale(1.1);
+  }
+  100% {
+    transform: translate3d(-45px, 35px, 0) scale(1.02);
+  }
+}
+
+@keyframes meshDrift3 {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  40% {
+    transform: translate3d(50px, -40px, 0) scale(1.08);
+  }
+  75% {
+    transform: translate3d(-45px, 30px, 0) scale(0.95);
+  }
+  100% {
+    transform: translate3d(25px, 50px, 0) scale(1.04);
+  }
+}
+
+.mesh-blob-1 {
+  animation: meshDrift1 22s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.mesh-blob-2 {
+  animation: meshDrift2 28s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.mesh-blob-3 {
+  animation: meshDrift3 24s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+html.light .mesh-blob-1,
+html.light .mesh-blob-2,
+html.light .mesh-blob-3 {
+  opacity: 0.45;
+}
+
+/* =========================================================================
+   PREFERS-REDUCED-MOTION
+   Disables non-essential movement (gradient mesh drift, shimmers, smooth scroll,
+   hover scales, tilts) while preserving fast opacity/color fade transitions (150ms max).
+   ========================================================================= */
+@media (prefers-reduced-motion: reduce) {
+  /* Disable gradient drift blobs */
+  .mesh-blob-1,
+  .mesh-blob-2,
+  .mesh-blob-3 {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  /* Disable skeleton shimmer animation sweep */
+  .shimmer-animated {
+    animation: none !important;
+    background-position: 0 0 !important;
+  }
+
+  /* Instant scroll without motion */
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  /* Disable all hover/active scale and displacement transforms */
+  *:hover,
+  *:active,
+  *:focus {
+    transform: none !important;
+  }
+
+  /* Shorten general CSS animations to complete immediately */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Preserve ONLY fast opacity, background-color, border-color and color transitions (<= 150ms) */
+  button,
+  a,
+  input,
+  select,
+  [role="button"],
+  [data-state],
+  .transition-all,
+  .transition-colors,
+  .transition-transform,
+  .transition-opacity {
+    transition-property: opacity, background-color, border-color, color !important;
+    transition-duration: 0.15s !important;
+  }
+}
+

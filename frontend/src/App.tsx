@@ -1,24 +1,40 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import React, { Suspense, lazy } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { LandingPage } from './pages/LandingPage';
-import { LiveTestPage } from './pages/LiveTestPage';
-import { DashboardPage } from './pages/DashboardPage';
-import { InjectionLabPage } from './pages/InjectionLabPage';
+
+const LiveTestPage = lazy(() => import('./pages/LiveTestPage').then(m => ({ default: m.LiveTestPage })));
+const DashboardPage = lazy(() => import('./pages/DashboardPage').then(m => ({ default: m.DashboardPage })));
+const InjectionLabPage = lazy(() => import('./pages/InjectionLabPage').then(m => ({ default: m.InjectionLabPage })));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
+
+import { NavigationProgressBar } from './components/NavigationProgressBar';
+import { RouteTitleManager } from './components/RouteTitleManager';
+import { ThemeProvider } from './hooks/useTheme';
+import { AppInitialLoader } from './components/AppInitialLoader';
 
 export const App: React.FC = () => {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<LandingPage />} />
-          <Route path="test" element={<LiveTestPage />} />
-          <Route path="dashboard" element={<DashboardPage />} />
-          <Route path="injection-lab" element={<InjectionLabPage />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <ThemeProvider>
+      <AppInitialLoader>
+        <BrowserRouter>
+          <NavigationProgressBar />
+          <RouteTitleManager />
+          <Suspense fallback={<div className="min-h-screen bg-slate-950" />}>
+            <Routes>
+              <Route path="/" element={<Layout />}>
+                <Route index element={<LandingPage />} />
+                <Route path="test" element={<LiveTestPage />} />
+                <Route path="live-test" element={<LiveTestPage />} />
+                <Route path="dashboard" element={<DashboardPage />} />
+                <Route path="injection-lab" element={<InjectionLabPage />} />
+                <Route path="*" element={<NotFoundPage />} />
+              </Route>
+            </Routes>
+          </Suspense>
+        </BrowserRouter>
+      </AppInitialLoader>
+    </ThemeProvider>
   );
 };
 

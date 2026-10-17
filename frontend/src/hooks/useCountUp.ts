@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { usePrefersReducedMotion } from './usePrefersReducedMotion';
 
 export interface UseCountUpOptions {
   duration?: number;
@@ -12,11 +13,13 @@ export interface UseCountUpOptions {
  * - Uses cubic ease-out for natural deceleration.
  * - Animates once when `start` becomes true (on first appearance in view).
  * - Avoids re-animating on subsequent re-renders once finished.
+ * - If prefers-reduced-motion is active, displays the target number immediately without tick animation.
  */
 export function useCountUp(
   target: number,
   options?: UseCountUpOptions
 ): number {
+  const prefersReduced = usePrefersReducedMotion();
   const duration = options?.duration ?? 800;
   const start = options?.start ?? true;
   const decimals = options?.decimals ?? 0;
@@ -26,11 +29,15 @@ export function useCountUp(
   const frameRef = useRef<number | null>(null);
 
   useEffect(() => {
+    // If user prefers reduced motion, skip requestAnimationFrame loop
+    if (prefersReduced) return;
+
     // If not triggered to start yet, stay at 0
     if (!start) return;
 
     // Handle 0 or NaN target immediately
     if (!target || isNaN(target)) {
+      // oxlint-disable-next-line react/set-state-in-effect
       setCount(0);
       return;
     }
@@ -81,7 +88,11 @@ export function useCountUp(
         cancelAnimationFrame(frameRef.current);
       }
     };
-  }, [start, target, duration, decimals]);
+  }, [start, target, duration, decimals, prefersReduced]);
+
+  if (prefersReduced) {
+    return target;
+  }
 
   return count;
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+import { use3DTilt } from '../hooks/use3DTilt';
 
 export type CardVariant = 'default' | 'elevated' | 'accent' | 'outline' | 'interactive';
 export type CardPadding = 'none' | 'sm' | 'md' | 'lg';
@@ -6,6 +7,8 @@ export type CardPadding = 'none' | 'sm' | 'md' | 'lg';
 export interface CardProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
   variant?: CardVariant;
   padding?: CardPadding;
+  tilt?: boolean;
+  maxTilt?: number;
   title?: React.ReactNode;
   subtitle?: React.ReactNode;
   icon?: React.ReactNode;
@@ -17,6 +20,8 @@ export interface CardProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 't
 export const Card: React.FC<CardProps> = ({
   variant = 'default',
   padding = 'md',
+  tilt = false,
+  maxTilt = 6,
   title,
   subtitle,
   icon,
@@ -24,19 +29,39 @@ export const Card: React.FC<CardProps> = ({
   footer,
   children,
   className = '',
+  style,
+  onMouseMove,
+  onMouseLeave,
   ...props
 }) => {
+  const tiltHook = use3DTilt({ maxTilt });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (tilt) tiltHook.onMouseMove(e);
+    onMouseMove?.(e);
+  };
+
+  const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (tilt) tiltHook.onMouseLeave();
+    onMouseLeave?.(e);
+  };
+
+  const combinedStyle: React.CSSProperties = {
+    ...(tilt ? tiltHook.style : {}),
+    ...style,
+  };
+
   const variantStyles: Record<CardVariant, string> = {
     default:
-      'bg-slate-900/70 border-slate-800/80 shadow-lg shadow-black/40 backdrop-blur-sm',
+      'bg-slate-900/70 border-slate-800/80 border-t-slate-700/70 elevation-card backdrop-blur-sm',
     elevated:
-      'bg-slate-850/80 border-slate-700/60 shadow-xl shadow-black/50 backdrop-blur-md',
+      'bg-slate-850/80 border-slate-700/60 border-t-slate-600/70 elevation-modal backdrop-blur-md',
     accent:
-      'bg-slate-900/90 border-teal-500/30 shadow-xl shadow-teal-500/5 backdrop-blur-md ring-1 ring-teal-500/20',
+      'bg-slate-900/90 border-teal-500/30 border-t-teal-400/40 elevation-card backdrop-blur-md ring-1 ring-teal-500/20',
     outline:
-      'bg-transparent border-slate-800/80',
+      'bg-transparent border-slate-800/80 border-t-slate-700/60',
     interactive:
-      'bg-slate-900/60 border-slate-800/80 hover:border-teal-500/40 hover:bg-slate-900/90 hover:shadow-xl hover:shadow-teal-500/5 transition-all cursor-pointer',
+      'bg-slate-900/60 border-slate-800/80 border-t-slate-700/70 hover:border-teal-500/40 hover:border-t-teal-400/60 hover:bg-slate-900/90 elevation-card hover:elevation-hover hover:scale-[1.01] hover:brightness-105 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-all duration-150 cursor-pointer',
   };
 
   const paddingStyles: Record<CardPadding, string> = {
@@ -50,7 +75,11 @@ export const Card: React.FC<CardProps> = ({
 
   return (
     <div
-      className={`rounded-2xl border text-slate-200 transition-all ${variantStyles[variant]} ${className}`}
+      ref={tilt ? tiltHook.ref : undefined}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={combinedStyle}
+      className={`rounded-2xl border text-slate-200 ${variantStyles[variant]} ${tilt ? '[transform-style:preserve-3d]' : 'transition-all'} ${className}`}
       {...props}
     >
       {/* Optional Card Header */}
