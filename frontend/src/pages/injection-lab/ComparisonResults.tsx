@@ -250,10 +250,7 @@ export const ComparisonResults: React.FC<ComparisonResultsProps> = ({
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
-                  <div className="pt-2 border-t border-slate-800/60 text-[11px] text-slate-400 flex items-center justify-between">
-                    <span>Baseline (Clean): M1 99.2% &bull; M2 88.2% &bull; M3 89.8% &bull; M4 96.1%</span>
-                    <span className="text-rose-400 font-medium">M3 collapses by &minus;68.7%</span>
-                  </div>
+
                 </div>
 
                 {/* CHART 2: FALSE POSITIVE RATE (FALSE ALARMS) */}
@@ -267,9 +264,7 @@ export const ComparisonResults: React.FC<ComparisonResultsProps> = ({
                         Lower is better. Ratio of benign emails erroneously flagged as phishing.
                       </p>
                     </div>
-                    <Badge variant="outline" size="sm">
-                      Lower = Better UX
-                    </Badge>
+
                   </div>
 
                   <div className="h-72 w-full">
@@ -316,10 +311,7 @@ export const ComparisonResults: React.FC<ComparisonResultsProps> = ({
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
-                  <div className="pt-2 border-t border-slate-800/60 text-[11px] text-slate-400 flex items-center justify-between">
-                    <span>M1 Baseline FPR: 0.25% &bull; M2 FPR: 2.96%</span>
-                    <span className="text-amber-400 font-medium">M4 False Alarm Tax: 72.08%</span>
-                  </div>
+
                 </div>
               </div>
 

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { BookOpen, FlaskConical, Copy, Check } from 'lucide-react';
-import { Badge } from '../../components/Badge';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { AttackFamilyMeta } from './types';
 
@@ -143,36 +142,12 @@ export const AttackFamilyExplorer: React.FC<AttackFamilyExplorerProps> = ({
           })}
         </div>
 
-        {/* Active Family Metadata Callout */}
-        <div className="rounded-xl bg-slate-950/80 border border-slate-800/80 p-3.5 overflow-hidden">
-          <AnimatePresence mode="popLayout" initial={false}>
-            <motion.div
-              key={explorerFamily}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.22, ease: 'easeInOut' }}
-              className="space-y-1.5"
-            >
-              <div className="flex flex-wrap items-center gap-2 text-xs">
-                <span className="font-semibold text-white font-['Plus_Jakarta_Sans',sans-serif]">
-                  {currentFamilyMeta.name}:
-                </span>
-                <span className="text-teal-300 font-medium">
-                  {currentFamilyMeta.tagline}
-                </span>
-              </div>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                {currentFamilyMeta.description}
-              </p>
-              <div className="pt-1 text-[11px] font-mono text-slate-500 flex items-center gap-1.5">
-                <span className="text-slate-400 font-semibold">Directive Imperative:</span>
-                <code className="text-teal-400/90 bg-slate-900 px-2 py-0.5 rounded border border-slate-800 truncate max-w-xl">
-                  "{currentFamilyMeta.directiveExample}"
-                </code>
-              </div>
-            </motion.div>
-          </AnimatePresence>
+        {/* Active Family Metadata */}
+        <div className="rounded-xl bg-slate-950/80 border border-slate-800/80 p-3 text-xs text-slate-300 flex items-center justify-between gap-4">
+          <div className="space-y-0.5">
+            <span className="font-bold text-white mr-1.5">{currentFamilyMeta.name}:</span>
+            <span className="text-slate-400">{currentFamilyMeta.description}</span>
+          </div>
         </div>
 
         {/* Side-by-Side Marked vs. Unmarked Comparison Cards */}
@@ -189,9 +164,7 @@ export const AttackFamilyExplorer: React.FC<AttackFamilyExplorerProps> = ({
                     <span>🏷️</span> Marked Injections
                   </h3>
                 </div>
-                <Badge variant="outline" size="sm">
-                  Tags &amp; Brackets
-                </Badge>
+
               </div>
 
               <p className="text-xs text-slate-300 leading-relaxed">
@@ -250,9 +223,7 @@ export const AttackFamilyExplorer: React.FC<AttackFamilyExplorerProps> = ({
                     <span>🎭</span> Unmarked Injections
                   </h3>
                 </div>
-                <Badge variant="injection" size="sm">
-                  Enterprise Camouflage
-                </Badge>
+
               </div>
 
               <p className="text-xs text-slate-300 leading-relaxed">

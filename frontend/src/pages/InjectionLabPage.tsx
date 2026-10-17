@@ -8,7 +8,6 @@ import {
   type InjectResponse,
   type AttackFamilyExample,
 } from '../api/client';
-import { Badge } from '../components/Badge';
 import { OfflineFallbackBanner } from '../components/OfflineFallbackBanner';
 import { motion } from 'framer-motion';
 import { fadeInUp } from '../lib/motion';
@@ -394,14 +393,7 @@ export const InjectionLabPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="accent" size="md">
-              3 Scroll Sections
-            </Badge>
-            <Badge variant="injection" size="md" dot>
-              {attackFamilies.length} Attack Families
-            </Badge>
-          </div>
+
         </div>
       </div>
 

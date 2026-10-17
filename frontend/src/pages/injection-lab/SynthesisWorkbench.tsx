@@ -189,9 +189,7 @@ export const SynthesisWorkbench: React.FC<SynthesisWorkbenchProps> = ({
                 >
                   <span className={`h-1.5 w-1.5 rounded-full ${isPhish ? 'bg-rose-400' : 'bg-emerald-400'}`} />
                   <span className="truncate max-w-[220px]">{pKey}</span>
-                  <Badge variant={isPhish ? 'phishing' : 'legitimate'} size="sm">
-                    {sample.label}
-                  </Badge>
+
                 </button>
               );
             })
@@ -235,9 +233,7 @@ export const SynthesisWorkbench: React.FC<SynthesisWorkbenchProps> = ({
               <label className="text-xs font-semibold text-slate-300">
                 Email Body Text (Clean Baseline):
               </label>
-              <span className="text-[11px] font-mono text-slate-500">
-                {baseBody.length} characters
-              </span>
+
             </div>
             <textarea
               rows={4}
@@ -320,9 +316,7 @@ export const SynthesisWorkbench: React.FC<SynthesisWorkbenchProps> = ({
               <option value="body_middle">Middle of Body</option>
               <option value="body_end">End / Footer (Append)</option>
             </select>
-            <span className="text-[11px] text-slate-500 block leading-tight">
-              Where to place the payload in the email body
-            </span>
+
           </div>
 
           {/* Evaluation Architecture */}
@@ -364,10 +358,7 @@ export const SynthesisWorkbench: React.FC<SynthesisWorkbenchProps> = ({
 
         {/* Action Controls Bar */}
         <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-800">
-          <div className="text-xs text-slate-400 flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-teal-400 animate-pulse" />
-            <span>Executes authentic injection synthesis &amp; live dual evaluation in one pipeline</span>
-          </div>
+
 
           <div className="flex items-center gap-2">
             <button
