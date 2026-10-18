@@ -11,3 +11,5 @@ export * from './AppInitialLoader';
 export * from './OfflineFallbackBanner';
 export * from './InjectedEmailGraphic';
 export * from './ApproachFlowDiagram';
+export * from './KeyFindingShields';
+export * from './SectionTransitionDivider';

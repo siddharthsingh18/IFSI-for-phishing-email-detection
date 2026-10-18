@@ -26,6 +26,12 @@ import { HeroNetworkIllustration } from '../components/HeroNetworkIllustration';
 import { HeroFloatingRecallCard } from '../components/HeroFloatingRecallCard';
 import { InjectedEmailGraphic } from '../components/InjectedEmailGraphic';
 import { ApproachFlowDiagram } from '../components/ApproachFlowDiagram';
+import {
+  KeyFindingShieldComparison,
+  BrokenShieldIcon,
+  StrainedShieldIcon,
+} from '../components/KeyFindingShields';
+import { SectionTransitionDivider } from '../components/SectionTransitionDivider';
 import { MagneticButton } from '../components/MagneticButton';
 import { motion, AnimatePresence, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
@@ -415,6 +421,9 @@ export const LandingPage: React.FC = () => {
         </Card>
       </section>
 
+      {/* Transition Cue: Problem → Approach */}
+      <SectionTransitionDivider shouldReduceMotion={shouldReduceMotion} />
+
       {/* =========================================================================
           SECTION 3: THE APPROACH
           ========================================================================= */}
@@ -539,6 +548,9 @@ export const LandingPage: React.FC = () => {
           </motion.div>
         </div>
       </section>
+
+      {/* Transition Cue: Approach → Methodology */}
+      <SectionTransitionDivider shouldReduceMotion={shouldReduceMotion} />
 
       {/* =========================================================================
           SECTION 4: METHODOLOGY & LIMITATIONS
@@ -799,6 +811,9 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
+      {/* Transition Cue: Methodology → Key Finding */}
+      <SectionTransitionDivider shouldReduceMotion={shouldReduceMotion} />
+
       {/* =========================================================================
           SECTION 5: KEY EMPIRICAL FINDING
           ========================================================================= */}
@@ -844,10 +859,17 @@ export const LandingPage: React.FC = () => {
                 className="rounded-2xl border bg-gradient-to-r from-teal-950/40 via-slate-900/80 to-slate-900/50 p-6 sm:p-8 elevation-card w-full"
               >
                 <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-                  <div className="max-w-2xl">
+                  <div className="max-w-2xl space-y-4">
                     <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight leading-snug">
                       Standard RAG suffers a {m3EvasionRate}% evasion rate under unmarked injection, while IFSI recovers catch rate to {m4UnmarkedRecall}% at a {m4UnmarkedFpr}% false-alarm tradeoff.
                     </h3>
+
+                    {/* Side-by-side pair of animated shield icons: M3 shattered vs M4 strained */}
+                    <KeyFindingShieldComparison
+                      m3EvasionRate={m3EvasionRate}
+                      m4UnmarkedFpr={m4UnmarkedFpr}
+                      shouldReduceMotion={shouldReduceMotion}
+                    />
                   </div>
 
                   {/* 3-Stat Tradeoff Column */}
@@ -860,7 +882,10 @@ export const LandingPage: React.FC = () => {
                     className="flex-shrink-0 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-2.5 w-full lg:w-60"
                   >
                     <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-center">
-                      <div className="text-[11px] font-semibold text-rose-300">M3 Attacker Evasion</div>
+                      <div className="flex items-center justify-center gap-1.5 text-[11px] font-semibold text-rose-300">
+                        <BrokenShieldIcon size="sm" shouldReduceMotion={shouldReduceMotion} />
+                        <span>M3 Attacker Evasion</span>
+                      </div>
                       <div className="text-2xl font-black text-rose-400 mt-0.5">
                         {m3EvasionRate}%
                       </div>
@@ -876,7 +901,10 @@ export const LandingPage: React.FC = () => {
                     </div>
 
                     <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-center">
-                      <div className="text-[11px] font-semibold text-amber-300">M4 False-Alarm Tax</div>
+                      <div className="flex items-center justify-center gap-1.5 text-[11px] font-semibold text-amber-300">
+                        <StrainedShieldIcon size="sm" shouldReduceMotion={shouldReduceMotion} />
+                        <span>M4 False-Alarm Tax</span>
+                      </div>
                       <div className="text-2xl font-black text-amber-400 mt-0.5">
                         {m4UnmarkedFpr}%
                       </div>
