@@ -25,6 +25,7 @@ import { SkeletonCard } from '../components/Skeleton';
 import { HeroNetworkIllustration } from '../components/HeroNetworkIllustration';
 import { HeroFloatingRecallCard } from '../components/HeroFloatingRecallCard';
 import { InjectedEmailGraphic } from '../components/InjectedEmailGraphic';
+import { ApproachFlowDiagram } from '../components/ApproachFlowDiagram';
 import { MagneticButton } from '../components/MagneticButton';
 import { motion, AnimatePresence, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
@@ -34,6 +35,7 @@ export const LandingPage: React.FC = () => {
   const [summary, setSummary] = useState<BenchmarkSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [isUsingFallback, setIsUsingFallback] = useState(false);
+  const [hoveredMethod, setHoveredMethod] = useState<'M1' | 'M2' | 'M3' | 'M4' | null>(null);
   const [expandedMethodology, setExpandedMethodology] = useState<Record<string, boolean>>({});
   const [expandedLimitations, setExpandedLimitations] = useState<Record<string, boolean>>({});
 
@@ -428,9 +430,20 @@ export const LandingPage: React.FC = () => {
           <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">The Approach</h2>
         </motion.div>
 
+        {/* Animated Particle / Line Flow Diagram */}
+        <ApproachFlowDiagram
+          hoveredMethod={hoveredMethod}
+          shouldReduceMotion={shouldReduceMotion}
+        />
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* M1 */}
-          <motion.div style={{ opacity: m1Opacity, y: m1Y }} className="h-full">
+          <motion.div
+            style={{ opacity: m1Opacity, y: m1Y }}
+            className="h-full"
+            onMouseEnter={() => setHoveredMethod('M1')}
+            onMouseLeave={() => setHoveredMethod(null)}
+          >
             <Card variant="default" padding="md" className="h-full flex flex-col justify-between">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -451,7 +464,12 @@ export const LandingPage: React.FC = () => {
           </motion.div>
 
           {/* M2 */}
-          <motion.div style={{ opacity: m2Opacity, y: m2Y }} className="h-full">
+          <motion.div
+            style={{ opacity: m2Opacity, y: m2Y }}
+            className="h-full"
+            onMouseEnter={() => setHoveredMethod('M2')}
+            onMouseLeave={() => setHoveredMethod(null)}
+          >
             <Card variant="default" padding="md" className="h-full flex flex-col justify-between">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -469,7 +487,12 @@ export const LandingPage: React.FC = () => {
           </motion.div>
 
           {/* M3 */}
-          <motion.div style={{ opacity: m3Opacity, y: m3Y }} className="h-full">
+          <motion.div
+            style={{ opacity: m3Opacity, y: m3Y }}
+            className="h-full"
+            onMouseEnter={() => setHoveredMethod('M3')}
+            onMouseLeave={() => setHoveredMethod(null)}
+          >
             <Card variant="default" padding="md" className="h-full flex flex-col justify-between border-rose-500/30">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -490,7 +513,12 @@ export const LandingPage: React.FC = () => {
           </motion.div>
 
           {/* M4 */}
-          <motion.div style={{ opacity: m4Opacity, y: m4Y }} className="h-full">
+          <motion.div
+            style={{ opacity: m4Opacity, y: m4Y }}
+            className="h-full"
+            onMouseEnter={() => setHoveredMethod('M4')}
+            onMouseLeave={() => setHoveredMethod(null)}
+          >
             <Card variant="elevated" padding="md" className="h-full flex flex-col justify-between border-teal-500/40 ring-1 ring-teal-500/20">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
