@@ -15,6 +15,7 @@ import {
   AlertCircle,
   ShieldAlert,
   TrendingDown,
+  ChevronDown,
 } from 'lucide-react';
 import { apiClient, type BenchmarkSummary } from '../api/client';
 import { Card } from '../components/Card';
@@ -32,6 +33,16 @@ export const LandingPage: React.FC = () => {
   const [summary, setSummary] = useState<BenchmarkSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [isUsingFallback, setIsUsingFallback] = useState(false);
+  const [expandedMethodology, setExpandedMethodology] = useState<Record<string, boolean>>({});
+  const [expandedLimitations, setExpandedLimitations] = useState<Record<string, boolean>>({});
+
+  const toggleMethodology = (id: string) => {
+    setExpandedMethodology((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const toggleLimitation = (id: string) => {
+    setExpandedLimitations((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
 
   useEffect(() => {
     let mounted = true;
@@ -510,88 +521,250 @@ export const LandingPage: React.FC = () => {
           </p>
         </div>
 
-        {/* 3 Methodology Pillars */}
+        {/* 3 Methodology Pillars (Accordion Expandable) */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Pillar 1: Dataset Size & Source */}
-          <Card variant="default" padding="md" className="space-y-2.5">
-            <div className="flex items-center gap-2 text-xs font-semibold text-teal-400 uppercase tracking-wider">
-              <Database className="h-3.5 w-3.5" />
-              Dataset &amp; Provenance
+          <Card
+            variant="default"
+            padding="md"
+            className="cursor-pointer transition-all duration-150 hover:border-slate-700 select-none space-y-2.5"
+            onClick={() => toggleMethodology('dataset')}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs font-semibold text-teal-400 uppercase tracking-wider">
+                <Database className="h-3.5 w-3.5" />
+                Dataset &amp; Provenance
+              </div>
+              <button
+                type="button"
+                aria-expanded={Boolean(expandedMethodology['dataset'])}
+                aria-label="Toggle dataset details"
+                className="p-1 rounded-md text-slate-400 hover:text-teal-300 transition-colors"
+              >
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform duration-200 ${
+                    expandedMethodology['dataset'] ? 'rotate-180 text-teal-400' : ''
+                  }`}
+                />
+              </button>
             </div>
+
             <h3 className="text-sm font-bold text-white tracking-tight font-['Plus_Jakarta_Sans',sans-serif]">
               5,223 Emails (N=522 Test Split)
             </h3>
+
             <p className="text-xs text-slate-300 leading-relaxed">
-              Curated from the verified <strong className="text-white font-medium">Nazario Phishing Archive</strong> and CMU <strong className="text-white font-medium">Enron Corporate Corpus</strong> (80/10/10 split). The frozen test split (<em>N</em>=522; 128 phishing, 394 legitimate controls) evaluates all models under identical paired conditions.
+              Curated from Nazario Phishing Archive and Enron Corpus across a frozen 80/10/10 split.
             </p>
+
+            <AnimatePresence initial={false}>
+              {expandedMethodology['dataset'] && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2, ease: 'easeInOut' }}
+                  className="overflow-hidden"
+                >
+                  <div className="pt-3 border-t border-slate-800 text-xs text-slate-300 leading-relaxed">
+                    Curated from the verified <strong className="text-white font-medium">Nazario Phishing Archive</strong> and CMU <strong className="text-white font-medium">Enron Corporate Corpus</strong> (80/10/10 split). The frozen test split (<em>N</em>=522; 128 phishing, 394 legitimate controls) evaluates all models under identical paired conditions.
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </Card>
 
           {/* Pillar 2: Marked vs. Unmarked */}
-          <Card variant="default" padding="md" className="space-y-2.5">
-            <div className="flex items-center gap-2 text-xs font-semibold text-cyan-400 uppercase tracking-wider">
-              <Layers className="h-3.5 w-3.5" />
-              Attack Disguise Modes
+          <Card
+            variant="default"
+            padding="md"
+            className="cursor-pointer transition-all duration-150 hover:border-slate-700 select-none space-y-2.5"
+            onClick={() => toggleMethodology('attack_modes')}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs font-semibold text-cyan-400 uppercase tracking-wider">
+                <Layers className="h-3.5 w-3.5" />
+                Attack Disguise Modes
+              </div>
+              <button
+                type="button"
+                aria-expanded={Boolean(expandedMethodology['attack_modes'])}
+                aria-label="Toggle attack disguise details"
+                className="p-1 rounded-md text-slate-400 hover:text-cyan-300 transition-colors"
+              >
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform duration-200 ${
+                    expandedMethodology['attack_modes'] ? 'rotate-180 text-cyan-400' : ''
+                  }`}
+                />
+              </button>
             </div>
+
             <h3 className="text-sm font-bold text-white tracking-tight font-['Plus_Jakarta_Sans',sans-serif]">
               Delimiters vs. Enterprise Camouflage
             </h3>
+
             <p className="text-xs text-slate-300 leading-relaxed">
-              <strong className="text-cyan-300 font-medium">Marked injections</strong> encapsulate commands within synthetic machine brackets (<code className="text-cyan-300 text-[11px] font-mono">[BEGIN MESSAGE]</code>) easily flagged by rule filters, while <strong className="text-teal-300 font-medium">unmarked injections</strong> disguise instructions as IT forward headers or legal disclaimers that blend naturally into email context.
+              Contrasts synthetic bracketed delimiters against stealthy real-world enterprise camouflage.
             </p>
+
+            <AnimatePresence initial={false}>
+              {expandedMethodology['attack_modes'] && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2, ease: 'easeInOut' }}
+                  className="overflow-hidden"
+                >
+                  <div className="pt-3 border-t border-slate-800 text-xs text-slate-300 leading-relaxed">
+                    <strong className="text-cyan-300 font-medium">Marked injections</strong> encapsulate commands within synthetic machine brackets (<code className="text-cyan-300 text-[11px] font-mono">[BEGIN MESSAGE]</code>) easily flagged by rule filters, while <strong className="text-teal-300 font-medium">unmarked injections</strong> disguise instructions as IT forward headers or legal disclaimers that blend naturally into email context.
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </Card>
 
           {/* Pillar 3: McNemar & Bootstrap */}
-          <Card variant="default" padding="md" className="space-y-2.5">
-            <div className="flex items-center gap-2 text-xs font-semibold text-emerald-400 uppercase tracking-wider">
-              <Scale className="h-3.5 w-3.5" />
-              Statistical Significance
+          <Card
+            variant="default"
+            padding="md"
+            className="cursor-pointer transition-all duration-150 hover:border-slate-700 select-none space-y-2.5"
+            onClick={() => toggleMethodology('statistics')}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs font-semibold text-emerald-400 uppercase tracking-wider">
+                <Scale className="h-3.5 w-3.5" />
+                Statistical Significance
+              </div>
+              <button
+                type="button"
+                aria-expanded={Boolean(expandedMethodology['statistics'])}
+                aria-label="Toggle statistics details"
+                className="p-1 rounded-md text-slate-400 hover:text-emerald-300 transition-colors"
+              >
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform duration-200 ${
+                    expandedMethodology['statistics'] ? 'rotate-180 text-emerald-400' : ''
+                  }`}
+                />
+              </button>
             </div>
+
             <h3 className="text-sm font-bold text-white tracking-tight font-['Plus_Jakarta_Sans',sans-serif]">
               Paired McNemar &amp; Bootstrap CIs
             </h3>
-            <div className="space-y-1.5 text-xs text-slate-300 leading-relaxed">
-              <p>
-                <strong className="text-white font-medium">Paired McNemar test:</strong> Measures whether two models differ significantly on the exact same emails rather than by random variance, with Holm-Bonferroni correction (<em>p</em> &lt; 0.05).
-              </p>
-              <p>
-                <strong className="text-white font-medium">Bootstrap CIs:</strong> Non-parametric 2,000-iteration resampling establishes 95% confidence intervals without assuming normal metric distributions.
-              </p>
-            </div>
+
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Evaluated with Holm-Bonferroni paired McNemar tests and 2,000-resample bootstrap intervals.
+            </p>
+
+            <AnimatePresence initial={false}>
+              {expandedMethodology['statistics'] && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2, ease: 'easeInOut' }}
+                  className="overflow-hidden"
+                >
+                  <div className="pt-3 border-t border-slate-800 space-y-1.5 text-xs text-slate-300 leading-relaxed">
+                    <p>
+                      <strong className="text-white font-medium">Paired McNemar test:</strong> Measures whether two models differ significantly on the exact same emails rather than by random variance, with Holm-Bonferroni correction (<em>p</em> &lt; 0.05).
+                    </p>
+                    <p>
+                      <strong className="text-white font-medium">Bootstrap CIs:</strong> Non-parametric 2,000-iteration resampling establishes 95% confidence intervals without assuming normal metric distributions.
+                    </p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </Card>
         </div>
 
-        {/* Limitations Subsection */}
+        {/* Limitations Subsection (Expandable Tags/Pills) */}
         <div className="rounded-xl border border-slate-800/80 bg-slate-900/50 p-4 sm:p-5 space-y-3">
-          <div className="flex items-center gap-2 text-xs font-semibold text-amber-400 uppercase tracking-wider">
-            <AlertCircle className="h-3.5 w-3.5" />
-            Limitations &amp; Experimental Caveats
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-xs font-semibold text-amber-400 uppercase tracking-wider">
+              <AlertCircle className="h-3.5 w-3.5" />
+              Limitations &amp; Experimental Caveats
+            </div>
+            <span className="text-[11px] text-slate-500 font-medium hidden sm:inline">
+              Click tags to view details
+            </span>
           </div>
-          <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-slate-300 leading-relaxed">
-            <li className="flex items-start gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-amber-400 mt-1.5 flex-shrink-0" />
-              <span>
-                <strong className="text-white font-medium">Small-Model Scope:</strong> Evaluated on lightweight local SLMs (Qwen2.5-0.5B, Llama-3.2-3B); larger frontier models may exhibit stronger instruction adherence, though with significantly higher latency and operational cost.
-              </span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-amber-400 mt-1.5 flex-shrink-0" />
-              <span>
-                <strong className="text-white font-medium">Fixed Attack Templates:</strong> Adversarial injections were generated across five known attack families; real-world adversaries craft polymorphic, multi-turn, or zero-day evasion prompts.
-              </span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-amber-400 mt-1.5 flex-shrink-0" />
-              <span>
-                <strong className="text-white font-medium">Uncalibrated Confidence Scores:</strong> Model confidence outputs reflect raw prompt token heuristics rather than formally calibrated posterior Bayesian probabilities.
-              </span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-amber-400 mt-1.5 flex-shrink-0" />
-              <span>
-                <strong className="text-white font-medium">Inference Latency Overhead:</strong> Decoupled two-stage inference (M4) doubles API request volume per email, requiring high-throughput batching or secondary triage filters in production gateways.
-              </span>
-            </li>
-          </ul>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+            {[
+              {
+                id: 'scope',
+                tag: 'Small-Model Scope',
+                detail:
+                  'Evaluated on lightweight local SLMs (Qwen2.5-0.5B, Llama-3.2-3B); larger frontier models may exhibit stronger instruction adherence, though with significantly higher latency and operational cost.',
+              },
+              {
+                id: 'templates',
+                tag: 'Fixed Attack Templates',
+                detail:
+                  'Adversarial injections were generated across five known attack families; real-world adversaries craft polymorphic, multi-turn, or zero-day evasion prompts.',
+              },
+              {
+                id: 'confidence',
+                tag: 'Uncalibrated Confidence',
+                detail:
+                  'Model confidence outputs reflect raw prompt token heuristics rather than formally calibrated posterior Bayesian probabilities.',
+              },
+              {
+                id: 'latency',
+                tag: 'Latency Overhead',
+                detail:
+                  'Decoupled two-stage inference (M4) doubles API request volume per email, requiring high-throughput batching or secondary triage filters in production gateways.',
+              },
+            ].map((item) => {
+              const isExpanded = Boolean(expandedLimitations[item.id]);
+              return (
+                <div
+                  key={item.id}
+                  onClick={() => toggleLimitation(item.id)}
+                  className={`p-3 rounded-xl border transition-all duration-150 cursor-pointer select-none ${
+                    isExpanded
+                      ? 'border-amber-500/40 bg-amber-500/10 shadow-sm'
+                      : 'border-slate-800/80 hover:border-slate-700 bg-slate-950/60 hover:bg-slate-900/60'
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="h-1.5 w-1.5 rounded-full bg-amber-400 flex-shrink-0" />
+                      <strong className="text-xs font-bold text-slate-200 tracking-tight truncate">
+                        {item.tag}
+                      </strong>
+                    </div>
+                    <ChevronDown
+                      className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-200 flex-shrink-0 ${
+                        isExpanded ? 'rotate-180 text-amber-400' : ''
+                      }`}
+                    />
+                  </div>
+
+                  <AnimatePresence initial={false}>
+                    {isExpanded && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2, ease: 'easeInOut' }}
+                        className="overflow-hidden"
+                      >
+                        <p className="pt-2.5 mt-2 border-t border-slate-800 text-[11px] text-slate-300 leading-relaxed">
+                          {item.detail}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </section>
 
