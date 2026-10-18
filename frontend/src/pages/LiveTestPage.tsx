@@ -255,12 +255,12 @@ export const LiveTestPage: React.FC = () => {
 
       {/* Preset Library Quick Bar */}
       <Card variant="default" padding="sm">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 px-2 py-1">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 px-2 py-1.5">
           <div className="flex items-center gap-2 text-xs font-semibold text-slate-300 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-teal-400 flex-shrink-0" />
             <span>Curated Benchmark Presets:</span>
           </div>
-          <div className="flex flex-wrap items-center gap-1.5 w-full sm:w-auto py-0.5">
+          <div className="w-full lg:w-auto flex-1 flex justify-start lg:justify-end">
             <AnimatePresence mode="popLayout" initial={false}>
               {loadingPresets ? (
                 <motion.div
@@ -282,7 +282,7 @@ export const LiveTestPage: React.FC = () => {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.32, ease: 'easeOut' }}
-                  className="flex flex-wrap items-center gap-1.5"
+                  className="flex flex-wrap items-center gap-1.5 w-full lg:w-auto"
                 >
                   {Object.keys(presets).map((key) => {
                     const sample = presets[key];
@@ -294,13 +294,13 @@ export const LiveTestPage: React.FC = () => {
                         type="button"
                         onClick={() => handleSelectPreset(key)}
                         title={`${key} (Condition: ${sample.condition})`}
-                        className={`px-2.5 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-all duration-150 hover:scale-[1.02] hover:brightness-105 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 ${
+                        className={`px-2.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all duration-150 hover:scale-[1.02] hover:brightness-105 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 ${
                           isSelected
-                            ? 'bg-teal-500/20 text-teal-200 border border-teal-500/50 font-semibold'
+                            ? 'bg-teal-500/20 text-teal-200 border border-teal-500/50 font-semibold shadow-sm'
                             : 'bg-slate-800/80 text-slate-300 border border-slate-700/60 hover:bg-slate-800 hover:text-white'
                         }`}
                       >
-                        {label}
+                        <span>{label}</span>
                         <span className="ml-1 text-[10px] opacity-70">
                           ({sample.condition})
                         </span>
@@ -354,9 +354,17 @@ export const LiveTestPage: React.FC = () => {
               {/* Model & Header Fields */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div className="sm:col-span-2">
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    Target Architecture (Single Mode)
-                  </label>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-semibold text-slate-300">
+                      Target Architecture (Single Mode)
+                    </label>
+                    <span
+                      title={ARCHITECTURE_TOOLTIPS[method] || method}
+                      className="text-[10px] text-slate-400 font-mono hidden sm:inline-block cursor-help max-w-[260px] truncate"
+                    >
+                      {ARCHITECTURE_TOOLTIPS[method]?.split('(')[1]?.replace(')', '') || ''}
+                    </span>
+                  </div>
                   <select
                     value={method}
                     onChange={(e) => setMethod(e.target.value as any)}
@@ -375,7 +383,12 @@ export const LiveTestPage: React.FC = () => {
                     <label className="block text-xs font-semibold text-slate-300">
                       Local LLM &amp; RAG k
                     </label>
-                    <span className="text-[10px] text-teal-400 font-mono">k={topK}</span>
+                    <span
+                      title={MODEL_TOOLTIPS[model] || model}
+                      className="text-[10px] text-teal-400 font-mono cursor-help"
+                    >
+                      k={topK} &bull; {model.split(':')[0]}
+                    </span>
                   </div>
                   <div className="flex gap-2">
                     <select
@@ -390,7 +403,7 @@ export const LiveTestPage: React.FC = () => {
                     <select
                       value={topK}
                       onChange={(e) => setTopK(Number(e.target.value))}
-                      title={`Top-${topK} RAG Exemplars`}
+                      title={`Top-${topK} RAG Exemplars: retrieves ${topK} most similar training emails from the FAISS index`}
                       className="w-20 flex-shrink-0 rounded-xl bg-slate-950 border border-slate-800 px-2 py-2 text-xs text-slate-200 text-center hover:border-slate-700 hover:bg-slate-900/50 active:scale-[0.98] focus:outline-none focus:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-all duration-150 cursor-pointer"
                     >
                       <option value={1} title="k=1 exemplar">k=1</option>
