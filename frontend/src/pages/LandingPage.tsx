@@ -417,9 +417,6 @@ export const LandingPage: React.FC = () => {
             System Architecture
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">The Approach</h2>
-          <p className="text-xs sm:text-sm text-slate-400">
-            Evaluating four distinct classifier paradigms to isolate how prompt injection impacts monolithic vs. decoupled reasoning.
-          </p>
         </motion.div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -435,7 +432,7 @@ export const LandingPage: React.FC = () => {
                   M1: TF-IDF + LogReg
                 </h3>
                 <p className="text-xs text-slate-400 leading-relaxed">
-                  Classical linear model using bag-of-words tokens. Structurally immune to semantic prompt injections ({m1CleanAccuracy}% accuracy), but cannot reason over novel spear-phishing.
+                  Structurally immune to prompt injection ({m1CleanAccuracy}% accuracy), but fails on novel spear-phishing.
                 </p>
               </div>
               <div className="pt-3 border-t border-slate-800 text-[11px] font-mono text-teal-400">
@@ -456,7 +453,7 @@ export const LandingPage: React.FC = () => {
                   M2: Zero-Shot LLM
                 </h3>
                 <p className="text-xs text-slate-400 leading-relaxed">
-                  Direct instruction prompting without context examples. Vulnerable to administrative authority disguises, dropping recall by over 60% under unmarked injection.
+                  Direct prompt instruction without context; recall drops by over 60% under unmarked injection.
                 </p>
               </div>
             </Card>
@@ -474,7 +471,7 @@ export const LandingPage: React.FC = () => {
                   M3: RAG Combined
                 </h3>
                 <p className="text-xs text-slate-400 leading-relaxed">
-                  Monolithic prompt ingests email body alongside retrieved exemplar context. Attacker instructions in the email override classifier decisions, collapsing catch rate to {m3UnmarkedRecall}%.
+                  Standard single-prompt RAG; injected instructions override decisions, collapsing catch rate to {m3UnmarkedRecall}%.
                 </p>
               </div>
               <div className="pt-3 border-t border-slate-800 text-[11px] font-mono text-rose-400 font-semibold">
@@ -495,7 +492,7 @@ export const LandingPage: React.FC = () => {
                   M4: RAG Decoupled
                 </h3>
                 <p className="text-xs text-slate-400 leading-relaxed">
-                  Two-stage architecture isolating untrusted text into a structured schema before validation. Recovers {m4UnmarkedRecall}% catch rate under attack, trading safety for a {m4UnmarkedFpr}% false-alarm tax.
+                  Decoupled two-stage inference; restores catch rate to {m4UnmarkedRecall}% at a {m4UnmarkedFpr}% false-alarm tax.
                 </p>
               </div>
               <div className="pt-3 border-t border-slate-800 text-[11px] font-mono text-teal-300 font-semibold">
@@ -516,9 +513,6 @@ export const LandingPage: React.FC = () => {
             Research Rigor
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Methodology</h2>
-          <p className="text-xs sm:text-sm text-slate-400">
-            Experimental setup, adversarial attack taxonomy, and paired statistical evaluation protocols.
-          </p>
         </div>
 
         {/* 3 Methodology Pillars (Accordion Expandable) */}
@@ -813,14 +807,10 @@ export const LandingPage: React.FC = () => {
                 className="rounded-2xl border bg-gradient-to-r from-teal-950/40 via-slate-900/80 to-slate-900/50 p-6 sm:p-8 elevation-card w-full"
               >
                 <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-                  <div className="space-y-3 max-w-2xl">
-                    <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+                  <div className="max-w-2xl">
+                    <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight leading-snug">
                       Standard RAG suffers a {m3EvasionRate}% evasion rate under unmarked injection, while IFSI recovers catch rate to {m4UnmarkedRecall}% at a {m4UnmarkedFpr}% false-alarm tradeoff.
                     </h3>
-
-                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                      Monolithic context windows give untrusted email tokens equal attention priority to classifier directives, causing M3's catastrophic collapse under natural camouflage. Decoupled two-stage inference (M4) isolates untrusted input into a structured schema before validation, restoring attack resilience at the cost of flagging benign emails containing security notices.
-                    </p>
                   </div>
 
                   {/* 3-Stat Tradeoff Column */}
