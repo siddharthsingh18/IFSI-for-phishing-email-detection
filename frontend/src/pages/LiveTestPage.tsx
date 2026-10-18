@@ -11,6 +11,8 @@ import {
   Inbox,
   FlaskConical,
   Loader2,
+  Zap,
+  ListTree,
 } from 'lucide-react';
 import {
   apiClient,
@@ -69,6 +71,9 @@ export const LiveTestPage: React.FC = () => {
   // Collapsible Accordion State for result details
   const [openDetailsMap, setOpenDetailsMap] = useState<Record<string, boolean>>({});
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+
+  // Result Card Density: 'simple' (default, readable in <3s) or 'detailed' (full diagnostician)
+  const [viewDensity, setViewDensity] = useState<'simple' | 'detailed'>('simple');
 
   // Load curated presets on mount
   useEffect(() => {
@@ -714,7 +719,7 @@ export const LiveTestPage: React.FC = () => {
         {/* Right Column: Inference Output & Model Diagnostician (7 cols on lg) */}
         <div className="lg:col-span-7 space-y-6">
           <section className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="space-y-0.5">
                 <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2 font-['Plus_Jakarta_Sans',sans-serif]">
                   <ShieldCheck className="h-5 w-5 text-teal-400" />
@@ -725,11 +730,71 @@ export const LiveTestPage: React.FC = () => {
                 </p>
               </div>
 
-              {executionMode && !isLoading && (
-                <Badge variant="accent" size="sm">
-                  Mode: {executionMode === 'compare' ? 'M1–M4 Comparison' : `Single Architecture (${method})`}
-                </Badge>
-              )}
+              {/* View Density Segmented Control (Simple vs Detailed) & Execution Mode */}
+              <div className="flex items-center gap-2.5 self-start sm:self-auto">
+                {executionMode && !isLoading && (
+                  <Badge variant="accent" size="sm" className="hidden sm:inline-flex">
+                    {executionMode === 'compare' ? 'M1–M4' : method}
+                  </Badge>
+                )}
+
+                {/* Pill-Style Segmented Control with animated sliding active state */}
+                <div
+                  role="tablist"
+                  aria-label="Result detail view density"
+                  className="inline-flex p-1 rounded-xl bg-slate-900 border border-slate-800/90 shadow-inner"
+                >
+                  <button
+                    type="button"
+                    role="tab"
+                    id="view-toggle-simple"
+                    aria-selected={viewDensity === 'simple'}
+                    onClick={() => setViewDensity('simple')}
+                    className={`relative px-3 py-1 text-xs font-semibold rounded-lg transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 ${
+                      viewDensity === 'simple'
+                        ? 'text-white'
+                        : 'text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    {viewDensity === 'simple' && (
+                      <motion.span
+                        layoutId="active-view-density-pill"
+                        className="absolute inset-0 rounded-lg bg-teal-500/20 border border-teal-500/40 shadow-sm"
+                        transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                      />
+                    )}
+                    <span className="relative z-10 flex items-center gap-1.5">
+                      <Zap className="h-3.5 w-3.5 text-teal-400" />
+                      Simple
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    role="tab"
+                    id="view-toggle-detailed"
+                    aria-selected={viewDensity === 'detailed'}
+                    onClick={() => setViewDensity('detailed')}
+                    className={`relative px-3 py-1 text-xs font-semibold rounded-lg transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 ${
+                      viewDensity === 'detailed'
+                        ? 'text-white'
+                        : 'text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    {viewDensity === 'detailed' && (
+                      <motion.span
+                        layoutId="active-view-density-pill"
+                        className="absolute inset-0 rounded-lg bg-teal-500/20 border border-teal-500/40 shadow-sm"
+                        transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                      />
+                    )}
+                    <span className="relative z-10 flex items-center gap-1.5">
+                      <ListTree className="h-3.5 w-3.5 text-teal-400" />
+                      Detailed
+                    </span>
+                  </button>
+                </div>
+              </div>
             </div>
 
             <div className="relative min-h-[280px]">
@@ -908,6 +973,7 @@ export const LiveTestPage: React.FC = () => {
                           onToggleDetails={() => toggleDetails(res.method)}
                           onCopySnippet={handleCopySnippet}
                           copiedKey={copiedKey}
+                          viewDensity={viewDensity}
                         />
                       </motion.div>
                     );
@@ -932,6 +998,7 @@ export const LiveTestPage: React.FC = () => {
                   onToggleDetails={() => toggleDetails(singleResult.method)}
                   onCopySnippet={handleCopySnippet}
                   copiedKey={copiedKey}
+                  viewDensity={viewDensity}
                 />
               </motion.div>
             )}
