@@ -244,12 +244,20 @@ export const LandingPage: React.FC = () => {
               <span>Adversarial AI Benchmark</span>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-[1.08] font-['Plus_Jakarta_Sans',sans-serif]">
-              Evaluating Indirect Prompt Injections on{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-emerald-300 to-cyan-400">
-                LLM Phishing Classifiers
-              </span>
-            </h1>
+            <div className="space-y-3">
+              <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-[1.08] font-['Plus_Jakarta_Sans',sans-serif]">
+                Evaluating Indirect Prompt Injections on{' '}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-emerald-300 to-cyan-400">
+                  LLM Phishing Classifiers
+                </span>
+              </h1>
+              <p className="text-lg sm:text-2xl text-slate-300 font-normal tracking-tight">
+                <span className="text-slate-400 font-light">By </span>
+                <span className="text-slate-100 font-medium">Siddharth Singh</span>
+                <span className="text-slate-400 font-light"> &amp; </span>
+                <span className="text-slate-100 font-medium">Sanchit Kukreja</span>
+              </p>
+            </div>
 
             <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-normal">
               Empirical evaluation showing how monolithic RAG-combined detection (M3) collapses under natural prompt injection,
