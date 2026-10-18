@@ -101,7 +101,7 @@ export const ComparisonResults: React.FC<ComparisonResultsProps> = ({
       <div className="border-b border-slate-800 pb-4">
         <div className="flex items-center gap-2 text-teal-400 text-xs font-semibold uppercase tracking-wider">
           <BarChart3 className="h-4 w-4" />
-          <span>Section 2 &bull; Empirical Benchmark (N=522)</span>
+          <span>Empirical Benchmark (N=522)</span>
         </div>
         <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight mt-1 font-['Plus_Jakarta_Sans',sans-serif]">
           Marked vs. Unmarked Attack Resilience Across Architectures
@@ -192,18 +192,13 @@ export const ComparisonResults: React.FC<ComparisonResultsProps> = ({
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* CHART 1: RECALL (CATCH RATE) */}
                 <div className="rounded-2xl border border-slate-800/80 bg-slate-900/70 p-5 elevation-card backdrop-blur-sm space-y-4">
-                  <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                    <div>
-                      <h3 className="text-sm font-bold text-white tracking-tight flex items-center gap-2">
-                        <span>🎯</span> Phishing Catch Rate (Recall %)
-                      </h3>
-                      <p className="text-[11px] text-slate-400 mt-0.5">
-                        Higher is better. Comparison of attack detection rate across conditions.
-                      </p>
-                    </div>
-                    <Badge variant="neutral" size="sm">
-                      Higher = Safer
-                    </Badge>
+                  <div className="border-b border-slate-800 pb-3">
+                    <h3 className="text-sm font-bold text-white tracking-tight flex items-center gap-2">
+                      <span>🎯</span> Phishing Catch Rate (Recall %)
+                    </h3>
+                    <p className="text-[11px] text-slate-400 mt-0.5">
+                      Comparison of phishing attack detection rate across architectures under marked vs. unmarked conditions.
+                    </p>
                   </div>
 
                   <div className="h-72 w-full">
@@ -319,35 +314,19 @@ export const ComparisonResults: React.FC<ComparisonResultsProps> = ({
               <div className="rounded-xl bg-slate-950/60 border border-slate-800 p-4 space-y-2 text-xs text-slate-300">
                 <div className="font-semibold text-white flex items-center gap-2">
                   <ShieldCheck className="h-4 w-4 text-teal-400" />
-                  <span>Key Empirical Takeaways from Prompt 8 &amp; 9 Benchmarks:</span>
+                  <span>Key Empirical Takeaways:</span>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1 text-[11px] leading-relaxed">
-                  <div className="space-y-1">
-                    <strong className="text-teal-300 block">1. Linear Models (M1) are structurally immune to semantic overrides:</strong>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1 text-[11px] leading-relaxed">
+                  <div className="space-y-1 rounded-lg bg-slate-900/60 border border-slate-800/80 p-3">
+                    <strong className="text-rose-300 block text-xs">Monolithic RAG (M3) Collapses Under Injection:</strong>
                     <span>
-                      TF-IDF bag-of-words ignores grammar and semantic directives entirely, catching phishing based on vocabulary alone
-                      (99.2% clean recall, 99.2% unmarked recall).
+                      Retrieving context exemplars directly inside the same prompt window causes instruction confusion. Disguised enterprise instructions override the classifier directives, resulting in a 78.9% evasion rate (catch rate plunges from 89.8% to 21.1%).
                     </span>
                   </div>
-                  <div className="space-y-1">
-                    <strong className="text-cyan-300 block">2. Single-Prompt RAG (M3) suffers from instruction confusion:</strong>
+                  <div className="space-y-1 rounded-lg bg-slate-900/60 border border-slate-800/80 p-3">
+                    <strong className="text-teal-300 block text-xs">Decoupled IFSI (M4) Restores Catch Rate at a False-Alarm Cost:</strong>
                     <span>
-                      Retrieving authentic context examples inside the same prompt window gives injected instructions higher priority,
-                      causing massive 78.9% evasion rates.
-                    </span>
-                  </div>
-                  <div className="space-y-1">
-                    <strong className="text-rose-300 block">3. Zero-Shot LLMs (M2) are easily fooled by administrative disguise:</strong>
-                    <span>
-                      When prompt instructions emulate IT routing administrators or legal disclaimers, zero-shot LLM recall drops
-                      from 88.2% to 23.5% (a 64.7% drop).
-                    </span>
-                  </div>
-                  <div className="space-y-1">
-                    <strong className="text-emerald-300 block">4. Decoupled Two-Stage Inference (M4) trades False Alarms for Safety:</strong>
-                    <span>
-                      Restores strong phishing catch rate (89.8% &rarr; 96.1%), but incurs a severe{' '}
-                      <strong>72.08% False Alarm Tax</strong> on clean emails containing defensive notices.
+                      Two-stage schema isolation recovers catch rate to 96.1% under unmarked attack, but incurs a severe 72.08% False Alarm Tax on benign emails containing defensive notices. Linear bag-of-words (M1) remains structurally immune (99.2% recall).
                     </span>
                   </div>
                 </div>

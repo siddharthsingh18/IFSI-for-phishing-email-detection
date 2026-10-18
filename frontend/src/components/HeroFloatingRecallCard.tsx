@@ -40,10 +40,6 @@ export const HeroFloatingRecallCard: React.FC<HeroFloatingRecallCardProps> = ({
             <TrendingDown className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-rose-600" />
             <span>M3 Evasion vs M4 Defense</span>
           </span>
-          <span className="inline-flex items-center gap-1 text-[9px] sm:text-[10px] font-medium text-slate-500">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span>Live Data</span>
-          </span>
         </div>
 
         <div className="pt-1 flex items-baseline justify-between">

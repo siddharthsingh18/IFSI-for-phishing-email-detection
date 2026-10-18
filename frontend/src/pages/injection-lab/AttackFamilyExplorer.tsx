@@ -42,7 +42,7 @@ export const AttackFamilyExplorer: React.FC<AttackFamilyExplorerProps> = ({
       <div className="border-b border-slate-800 pb-4">
         <div className="flex items-center gap-2 text-teal-400 text-xs font-semibold uppercase tracking-wider">
           <BookOpen className="h-4 w-4" />
-          <span>Section 1 &bull; Conceptual Foundation</span>
+          <span>Attack Mechanism &bull; Delimiter vs. Camouflage</span>
         </div>
         <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight mt-1 font-['Plus_Jakarta_Sans',sans-serif]">
           What is the Difference Between "Marked" and "Unmarked" Prompt Injections?
@@ -56,31 +56,9 @@ export const AttackFamilyExplorer: React.FC<AttackFamilyExplorerProps> = ({
       <div className="relative rounded-2xl border border-teal-500/30 bg-gradient-to-br from-teal-950/20 via-slate-900/90 to-slate-900/80 p-6 sm:p-8 elevation-card backdrop-blur-md overflow-hidden">
         <div className="absolute top-0 left-0 h-full w-1.5 bg-gradient-to-b from-teal-400 to-cyan-500" />
 
-        <div className="space-y-4 text-slate-200 text-sm sm:text-base leading-relaxed">
+        <div className="text-slate-200 text-sm sm:text-base leading-relaxed">
           <p>
-            In AI email security, an <strong className="text-white font-semibold">indirect prompt injection</strong> is an
-            attack where cybercriminals hide instructions inside an email to manipulate the AI into declaring malicious phishing
-            as <span className="text-emerald-400 font-semibold font-mono">"safe."</span>
-          </p>
-          <p>
-            In academic benchmarks, attacks are traditionally <strong className="text-cyan-300 font-semibold">marked</strong>
-            —wrapped in obvious, synthetic computer tags like{' '}
-            <code className="px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-cyan-300 font-mono text-xs">
-              [BEGIN EMBEDDED CLASSIFIER MESSAGE]
-            </code>{' '}
-            and{' '}
-            <code className="px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-cyan-300 font-mono text-xs">
-              SYSTEM OVERRIDE:
-            </code>
-            . While convenient for lab testing, real-world cybercriminals don't announce their attacks with machine brackets.
-          </p>
-          <p>
-            Instead, real attackers use <strong className="text-teal-300 font-semibold">unmarked</strong> injections: they
-            stealthily disguise malicious instructions as ordinary workplace correspondence, such as an automated IT gateway
-            forwarded notice (<code className="px-1.5 py-0.5 rounded bg-slate-950 border border-slate-800 text-teal-300 font-mono text-xs">---------- Forwarded message ---------</code>),
-            a corporate confidentiality disclaimer, or an executive compliance signature. Because unmarked attacks blend
-            naturally into legitimate business communication, standard AI models trust them and get tricked into letting
-            dangerous phishing attacks slip directly through to user inboxes.
+            Academic benchmarks traditionally evaluate <strong className="text-cyan-300 font-semibold">marked</strong> injections wrapped in synthetic tags like <code className="px-1.5 py-0.5 rounded bg-slate-950 border border-slate-800 text-cyan-300 font-mono text-xs">[BEGIN EMBEDDED CLASSIFIER MESSAGE]</code>, which heuristic filters can easily intercept. In contrast, real attackers deploy <strong className="text-teal-300 font-semibold">unmarked</strong> injections disguised as corporate IT notices or compliance disclaimers. Because unmarked directives blend seamlessly into normal enterprise email discourse, monolithic RAG architectures (M3) ingest them as legitimate context—triggering catastrophic evasion while decoupled architectures (M4) isolate untrusted input to preserve detection.
           </p>
         </div>
       </div>
@@ -189,8 +167,7 @@ export const AttackFamilyExplorer: React.FC<AttackFamilyExplorerProps> = ({
               </div>
             </div>
 
-            <div className="pt-2 border-t border-slate-800/60 flex items-center justify-between text-xs">
-              <span className="text-slate-400 text-[11px]">Synthetic academic baseline</span>
+            <div className="pt-2 border-t border-slate-800/60 flex items-center justify-end text-xs">
               <button
                 type="button"
                 onClick={() => handleCopy('marked', currentMarkedText)}

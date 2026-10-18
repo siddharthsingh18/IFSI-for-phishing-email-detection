@@ -380,16 +380,13 @@ export const InjectionLabPage: React.FC = () => {
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-teal-400 text-xs font-semibold uppercase tracking-wider">
               <FlaskConical className="h-4 w-4" />
-              <span>Route: /injection-lab</span>
-              <span className="text-slate-600">&bull;</span>
-              <span className="text-slate-400">Adversarial Evaluation Arena</span>
+              <span>Adversarial Evaluation Arena</span>
             </div>
             <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight font-['Plus_Jakarta_Sans',sans-serif]">
               Prompt Injection Lab
             </h1>
             <p className="text-sm sm:text-base text-slate-300 max-w-3xl leading-relaxed">
-              Explore how indirect prompt injections fool LLMs, examine empirical resilience between synthetic marked
-              tags vs. real-world unmarked enterprise camouflage across M1–M4, and test live attacks in a single workbench.
+              Evaluate empirical resilience between synthetic marked tags and real-world unmarked enterprise camouflage, demonstrating why monolithic RAG (M3) collapses under injection while decoupled validation (M4) restores catch rate at a false-alarm cost.
             </p>
           </div>
 

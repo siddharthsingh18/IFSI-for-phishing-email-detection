@@ -143,15 +143,13 @@ export const SynthesisWorkbench: React.FC<SynthesisWorkbenchProps> = ({
       <div className="border-b border-slate-800 pb-4">
         <div className="flex items-center gap-2 text-teal-400 text-xs font-semibold uppercase tracking-wider">
           <FlaskConical className="h-4 w-4" />
-          <span>Section 3 &bull; Live Adversarial Workbench</span>
+          <span>Live Adversarial Workbench</span>
         </div>
         <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight mt-1 font-['Plus_Jakarta_Sans',sans-serif]">
           Try an Attack
         </h2>
         <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
-          Pick a base preset email, choose your attack family, disguise style, and injection placement, then hit{' '}
-          <strong className="text-teal-300 font-semibold">Run Attack</strong>. View the clean baseline versus synthesized
-          injected email results side-by-side using the shared inference card.
+          Synthesize adversarial emails using authentic attack families to compare clean baseline vs. injected classification across M1–M4, testing whether M3 is evaded or M4 triggers false alarms in real time.
         </p>
       </div>
 
@@ -161,7 +159,6 @@ export const SynthesisWorkbench: React.FC<SynthesisWorkbenchProps> = ({
           <span className="font-semibold text-slate-300 flex items-center gap-1.5">
             <span>📚</span> Curated Benchmark Presets:
           </span>
-          <span className="text-[11px] font-mono text-teal-400">Loads real dataset samples</span>
         </div>
 
         <div className="flex flex-wrap gap-2">
@@ -404,14 +401,6 @@ export const SynthesisWorkbench: React.FC<SynthesisWorkbenchProps> = ({
                 {attackRan ? 'Clean Baseline vs. Injected Email' : 'Awaiting Execution'}
               </span>
             </div>
-            {outcome && (
-              <Badge
-                variant={outcome.color === 'emerald' ? 'legitimate' : outcome.color === 'rose' ? 'phishing' : 'accent'}
-                size="md"
-              >
-                {outcome.title}
-              </Badge>
-            )}
           </div>
 
           <div className="relative">
@@ -436,8 +425,8 @@ export const SynthesisWorkbench: React.FC<SynthesisWorkbenchProps> = ({
                   className="rounded-2xl border border-dashed border-slate-800 bg-slate-950/40 p-12 text-center text-xs text-slate-500 space-y-2"
                 >
                   <FlaskConical className="h-8 w-8 mx-auto text-slate-600" />
-                  <p className="font-medium text-slate-400">No attack executed yet.</p>
-                  <p>Choose an attack family and disguise style above, then click "Run Attack &bull; Dual Evaluate".</p>
+                  <p className="font-medium text-slate-400">Awaiting Adversarial Evaluation</p>
+                  <p>Select an attack template and click "Run Attack &bull; Dual Evaluate" to test whether M3 evades or M4 detects the injection.</p>
                 </motion.div>
               ) : (
                 <motion.div

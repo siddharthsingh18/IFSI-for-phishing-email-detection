@@ -370,7 +370,7 @@ export const LandingPage: React.FC = () => {
                 </p>
               </div>
               <div className="pt-3 border-t border-slate-800 text-[11px] font-mono text-teal-400">
-                Linear Immunity &bull; Fast (0.28ms)
+                Linear Structural Immunity
               </div>
             </Card>
           </motion.div>
@@ -389,9 +389,6 @@ export const LandingPage: React.FC = () => {
                 <p className="text-xs text-slate-400 leading-relaxed">
                   Direct instruction prompting without context examples. Vulnerable to administrative authority disguises, dropping recall by over 60% under unmarked injection.
                 </p>
-              </div>
-              <div className="pt-3 border-t border-slate-800 text-[11px] font-mono text-cyan-400">
-                Zero-Shot Prompting
               </div>
             </Card>
           </motion.div>
@@ -486,24 +483,12 @@ export const LandingPage: React.FC = () => {
               >
                 <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
                   <div className="space-y-3 max-w-2xl">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <Badge variant="phishing" size="sm" dot>
-                        M3 Evasion Rate: {m3EvasionRate}%
-                      </Badge>
-                      <Badge variant="legitimate" size="sm" dot>
-                        M4 Catch Rate: {m4UnmarkedRecall}%
-                      </Badge>
-                      <Badge variant="injection" size="sm">
-                        M4 False-Alarm FPR: {m4UnmarkedFpr}%
-                      </Badge>
-                    </div>
-
                     <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
                       Standard RAG suffers a {m3EvasionRate}% evasion rate under unmarked injection, while IFSI recovers catch rate to {m4UnmarkedRecall}% at a {m4UnmarkedFpr}% false-alarm tradeoff.
                     </h3>
 
                     <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                      Under authentic unmarked injections, standard monolithic RAG (M3) collapses from catching phishing emails down to a {m3UnmarkedRecall}% recall—meaning attackers evade detection {m3EvasionRate}% of the time. Decoupling the pipeline into IFSI (M4) successfully restores phishing detection to {m4UnmarkedRecall}%, but introduces a significant false-alarm tax: {m4UnmarkedFpr}% of injected benign corporate emails are flagged.
+                      Monolithic context windows give untrusted email tokens equal attention priority to classifier directives, causing M3's catastrophic collapse under natural camouflage. Decoupled two-stage inference (M4) isolates untrusted input into a structured schema before validation, restoring attack resilience at the cost of flagging benign emails containing security notices.
                     </p>
                   </div>
 
