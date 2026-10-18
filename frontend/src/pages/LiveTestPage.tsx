@@ -1310,9 +1310,10 @@ export const LiveTestPage: React.FC = () => {
                   );
                 })()}
 
-                {/* 4-Card Result Grid */}
+                {/* 4-Card Result Grid: Staggers cards after consensus banner slides down */}
                 <motion.div
                   variants={staggerContainer}
+                  custom={0.28}
                   initial="hidden"
                   animate="visible"
                   className="grid grid-cols-1 sm:grid-cols-2 gap-4"
@@ -1343,10 +1344,10 @@ export const LiveTestPage: React.FC = () => {
             {!isLoading && singleResult && (
               <motion.div
                 key="results-single"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.35, ease: 'easeOut' }}
+                variants={fadeInUp}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
                 className="w-full"
               >
                 <MethodResultCard

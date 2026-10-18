@@ -47,12 +47,14 @@ export const fadeInUp: Variants = {
 
 /**
  * Shared staggerContainer variant:
+ * - Supports optional customDelay for orchestrating staggered lists after parent entrance
  * - Disables child staggering when reduced motion is preferred
  */
 export const staggerContainer: Variants = {
   hidden: {},
-  visible: () => ({
+  visible: (customDelay?: number) => ({
     transition: {
+      delayChildren: isReduced() ? 0 : (typeof customDelay === 'number' ? customDelay : 0),
       staggerChildren: isReduced() ? 0 : 0.08,
     },
   }),

@@ -145,16 +145,26 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
                 </div>
               </div>
 
-              {/* Large, Prominent Verdict Badge */}
+              {/* Large, Prominent Verdict Badge with scale-in pop (1.0 -> 1.08 -> 1.0) */}
               <div className="py-2.5 flex items-center justify-center">
-                <Badge
-                  variant={!result.is_valid ? 'neutral' : isPhishing ? 'phishing' : 'legitimate'}
-                  size="lg"
-                  dot
-                  className="w-full justify-center py-2.5 text-sm font-extrabold tracking-wider shadow-lg"
+                <motion.div
+                  initial={{ scale: 1.0, opacity: 0 }}
+                  animate={{ scale: [1.0, 1.08, 1.0], opacity: 1 }}
+                  transition={{
+                    scale: { duration: 0.42, times: [0, 0.5, 1], ease: [0.16, 1, 0.3, 1], delay: 0.1 },
+                    opacity: { duration: 0.2, ease: 'easeOut' },
+                  }}
+                  className="w-full flex items-center justify-center"
                 >
-                  {!result.is_valid ? 'FALLBACK' : isPhishing ? 'PHISHING' : 'LEGITIMATE'}
-                </Badge>
+                  <Badge
+                    variant={!result.is_valid ? 'neutral' : isPhishing ? 'phishing' : 'legitimate'}
+                    size="lg"
+                    dot
+                    className="w-full justify-center py-2.5 text-sm font-extrabold tracking-wider shadow-lg"
+                  >
+                    {!result.is_valid ? 'FALLBACK' : isPhishing ? 'PHISHING' : 'LEGITIMATE'}
+                  </Badge>
+                </motion.div>
               </div>
 
               {/* One-Line Confidence Bar (no numbers, clean visual bar) */}
@@ -276,13 +286,23 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
                           Fallback
                         </span>
                       )}
-                      <Badge
-                        variant={!result.is_valid ? 'neutral' : isPhishing ? 'phishing' : 'legitimate'}
-                        size="md"
-                        dot
+                      <motion.div
+                        initial={{ scale: 1.0, opacity: 0 }}
+                        animate={{ scale: [1.0, 1.08, 1.0], opacity: 1 }}
+                        transition={{
+                          scale: { duration: 0.42, times: [0, 0.5, 1], ease: [0.16, 1, 0.3, 1], delay: 0.1 },
+                          opacity: { duration: 0.2, ease: 'easeOut' },
+                        }}
+                        className="inline-flex items-center"
                       >
-                        {isPhishing ? 'PHISHING' : 'LEGITIMATE'}
-                      </Badge>
+                        <Badge
+                          variant={!result.is_valid ? 'neutral' : isPhishing ? 'phishing' : 'legitimate'}
+                          size="md"
+                          dot
+                        >
+                          {isPhishing ? 'PHISHING' : 'LEGITIMATE'}
+                        </Badge>
+                      </motion.div>
                     </div>
                   </div>
 
@@ -351,7 +371,7 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
                     <motion.div
                       initial={{ width: '0%' }}
                       animate={{ width: `${Math.max(result.is_valid ? 5 : 0, Math.min(100, Number(confidencePercent)))}%` }}
-                      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                       className={`h-full rounded-full ${
                         !result.is_valid
                           ? 'bg-amber-500/40'
