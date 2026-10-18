@@ -26,6 +26,18 @@ import { Skeleton, SkeletonMethodCard } from '../components/Skeleton';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fadeInUp, staggerContainer } from '../lib/motion';
 
+const ARCHITECTURE_TOOLTIPS: Record<string, string> = {
+  M1: 'M1: TF-IDF + Logistic Regression (Traditional ML Baseline)',
+  M2: 'M2: Zero-Shot LLM (Direct Prompting Baseline)',
+  M3: 'M3: RAG Combined (Standard Single-Call RAG)',
+  M4: 'M4: RAG Decoupled (IFSI Two-Stage Robust Architecture)',
+};
+
+const MODEL_TOOLTIPS: Record<string, string> = {
+  'qwen2.5:0.5b': 'qwen2.5:0.5b (Default Local Model - 0.5B Parameters)',
+  'llama3.2:3b': 'llama3.2:3b (Pilot Local Model - 3B Parameters)',
+};
+
 export const LiveTestPage: React.FC = () => {
   // Input Form States
   const [subject, setSubject] = useState('');
@@ -243,12 +255,12 @@ export const LiveTestPage: React.FC = () => {
 
       {/* Preset Library Quick Bar */}
       <Card variant="default" padding="sm">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 px-2 min-h-[36px]">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 px-2 py-1">
           <div className="flex items-center gap-2 text-xs font-semibold text-slate-300 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-teal-400 flex-shrink-0" />
             <span>Curated Benchmark Presets:</span>
           </div>
-          <div className="relative flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto no-scrollbar py-0.5 min-h-[36px]">
+          <div className="flex flex-wrap items-center gap-1.5 w-full sm:w-auto py-0.5">
             <AnimatePresence mode="popLayout" initial={false}>
               {loadingPresets ? (
                 <motion.div
@@ -257,10 +269,10 @@ export const LiveTestPage: React.FC = () => {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.22, ease: 'easeInOut' }}
-                  className="flex items-center gap-1.5 flex-nowrap"
+                  className="flex flex-wrap items-center gap-1.5"
                 >
                   {[1, 2, 3, 4, 5].map((i) => (
-                    <Skeleton key={i} className="h-7 w-28 rounded-lg flex-shrink-0" />
+                    <Skeleton key={i} className="h-7 w-28 rounded-lg" />
                   ))}
                 </motion.div>
               ) : (
@@ -270,23 +282,25 @@ export const LiveTestPage: React.FC = () => {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.32, ease: 'easeOut' }}
-                  className="flex items-center gap-1.5 flex-nowrap"
+                  className="flex flex-wrap items-center gap-1.5"
                 >
                   {Object.keys(presets).map((key) => {
                     const sample = presets[key];
                     const isSelected = selectedPresetKey === key;
+                    const label = key.split('(')[0].trim();
                     return (
                       <button
                         key={key}
                         type="button"
                         onClick={() => handleSelectPreset(key)}
-                        className={`px-2.5 py-1 rounded-lg text-xs font-medium whitespace-nowrap flex-shrink-0 transition-all duration-150 hover:scale-[1.02] hover:brightness-105 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 ${
+                        title={`${key} (Condition: ${sample.condition})`}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-all duration-150 hover:scale-[1.02] hover:brightness-105 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 ${
                           isSelected
                             ? 'bg-teal-500/20 text-teal-200 border border-teal-500/50 font-semibold'
                             : 'bg-slate-800/80 text-slate-300 border border-slate-700/60 hover:bg-slate-800 hover:text-white'
                         }`}
                       >
-                        {key.split('(')[0].trim()}
+                        {label}
                         <span className="ml-1 text-[10px] opacity-70">
                           ({sample.condition})
                         </span>
@@ -339,23 +353,24 @@ export const LiveTestPage: React.FC = () => {
 
               {/* Model & Header Fields */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                <div>
+                <div className="sm:col-span-2">
                   <label className="block text-xs font-semibold text-slate-300 mb-1.5">
                     Target Architecture (Single Mode)
                   </label>
                   <select
                     value={method}
                     onChange={(e) => setMethod(e.target.value as any)}
-                    className="w-full rounded-xl bg-slate-950 border border-slate-800 px-3.5 py-2 text-xs sm:text-sm text-slate-200 hover:border-slate-700 hover:bg-slate-900/50 active:scale-[0.98] focus:outline-none focus:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-all duration-150 cursor-pointer"
+                    title={ARCHITECTURE_TOOLTIPS[method] || method}
+                    className="w-full rounded-xl bg-slate-950 border border-slate-800 px-3.5 py-2 text-xs sm:text-sm text-slate-200 truncate hover:border-slate-700 hover:bg-slate-900/50 active:scale-[0.98] focus:outline-none focus:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-all duration-150 cursor-pointer"
                   >
-                    <option value="M1">M1: TF-IDF + Logistic Regression</option>
-                    <option value="M2">M2: Zero-Shot LLM</option>
-                    <option value="M3">M3: RAG Combined (Single-Call)</option>
-                    <option value="M4">M4: RAG Decoupled (IFSI Two-Stage)</option>
+                    <option value="M1" title="M1: TF-IDF + Logistic Regression (Traditional ML Baseline)">M1: TF-IDF + Logistic Regression</option>
+                    <option value="M2" title="M2: Zero-Shot LLM (Direct Prompting Baseline)">M2: Zero-Shot LLM</option>
+                    <option value="M3" title="M3: RAG Combined (Standard Single-Call RAG)">M3: RAG Combined (Single-Call)</option>
+                    <option value="M4" title="M4: RAG Decoupled (IFSI Two-Stage Robust Architecture)">M4: RAG Decoupled (IFSI Two-Stage)</option>
                   </select>
                 </div>
 
-                <div>
+                <div className="sm:col-span-2">
                   <div className="flex items-center justify-between mb-1.5">
                     <label className="block text-xs font-semibold text-slate-300">
                       Local LLM &amp; RAG k
@@ -366,20 +381,21 @@ export const LiveTestPage: React.FC = () => {
                     <select
                       value={model}
                       onChange={(e) => setModel(e.target.value)}
-                      className="flex-1 rounded-xl bg-slate-950 border border-slate-800 px-3 py-2 text-xs text-slate-200 hover:border-slate-700 hover:bg-slate-900/50 active:scale-[0.98] focus:outline-none focus:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-all duration-150 cursor-pointer"
+                      title={MODEL_TOOLTIPS[model] || model}
+                      className="flex-1 min-w-0 rounded-xl bg-slate-950 border border-slate-800 px-3 py-2 text-xs sm:text-sm text-slate-200 truncate hover:border-slate-700 hover:bg-slate-900/50 active:scale-[0.98] focus:outline-none focus:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-all duration-150 cursor-pointer"
                     >
-                      <option value="qwen2.5:0.5b">qwen2.5:0.5b (Default)</option>
-                      <option value="llama3.2:3b">llama3.2:3b (Pilot)</option>
+                      <option value="qwen2.5:0.5b" title="qwen2.5:0.5b (Default Local Model - 0.5B Parameters)">qwen2.5:0.5b (Default)</option>
+                      <option value="llama3.2:3b" title="llama3.2:3b (Pilot Local Model - 3B Parameters)">llama3.2:3b (Pilot)</option>
                     </select>
                     <select
                       value={topK}
                       onChange={(e) => setTopK(Number(e.target.value))}
-                      title="Top-k RAG Exemplars"
-                      className="w-16 rounded-xl bg-slate-950 border border-slate-800 px-2 py-2 text-xs text-slate-200 text-center hover:border-slate-700 hover:bg-slate-900/50 active:scale-[0.98] focus:outline-none focus:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-all duration-150 cursor-pointer"
+                      title={`Top-${topK} RAG Exemplars`}
+                      className="w-20 flex-shrink-0 rounded-xl bg-slate-950 border border-slate-800 px-2 py-2 text-xs text-slate-200 text-center hover:border-slate-700 hover:bg-slate-900/50 active:scale-[0.98] focus:outline-none focus:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-all duration-150 cursor-pointer"
                     >
-                      <option value={1}>k=1</option>
-                      <option value={3}>k=3</option>
-                      <option value={5}>k=5</option>
+                      <option value={1} title="k=1 exemplar">k=1</option>
+                      <option value={3} title="k=3 exemplars">k=3</option>
+                      <option value={5} title="k=5 exemplars">k=5</option>
                     </select>
                   </div>
                 </div>
@@ -760,24 +776,7 @@ export const LiveTestPage: React.FC = () => {
                       Choose an architecture and click <strong className="text-slate-300">Classify</strong> for individual evaluation, or click <strong className="text-slate-300">Compare All (M1–M4)</strong> to trigger real-time cross-architecture disagreement detection.
                     </p>
                   </div>
-                  <div className="pt-2">
-                    <span className="text-[11px] text-slate-500 uppercase tracking-wider font-semibold block mb-2">
-                      Quick Test Ideas:
-                    </span>
-                    <div className="flex flex-wrap items-center justify-center gap-2 max-w-xl mx-auto">
-                    {Object.keys(presets).slice(0, 3).map((pKey) => (
-                      <button
-                        key={pKey}
-                        type="button"
-                        onClick={() => handleSelectPreset(pKey)}
-                        className="text-xs px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-teal-300 hover:border-teal-500/40 hover:scale-[1.03] hover:brightness-105 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-all duration-150"
-                      >
-                        Load {pKey.split('(')[0].trim()}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
+                </motion.div>
             )}
 
             {/* 3. STATE: COMPARE ALL RESULTS */}

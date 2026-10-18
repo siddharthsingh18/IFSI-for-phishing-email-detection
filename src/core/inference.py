@@ -242,6 +242,34 @@ def classify_email_m4(
     is_phishing_pred = bool(p2.get("is_phishing", False)) if p2 else False
 
     total_duration = dur1 + dur2
+
+    # Check for execution/connection failures in either decoupled stage
+    if p1 is None or p2 is None:
+        failed_calls: list[str] = []
+        if p1 is None:
+            failed_calls.append("Stage 1 (Injection Detector)")
+        if p2 is None:
+            failed_calls.append("Stage 2 (Classifier)")
+        return {
+            "method": "M4 (RAG Decoupled)",
+            "verdict": "legitimate",
+            "is_phishing": False,
+            "has_injection": False,
+            "has_prompt_injection": False,
+            "has_prompt_injection_display": "NOT FLAGGED (Execution Error)",
+            "is_phishing_only": False,
+            "confidence": 0.0,
+            "latency_ms": total_duration * 1000,
+            "latency_seconds": total_duration,
+            "reasons": [
+                f"Error: Model pipeline failed on {', '.join(failed_calls)}. Verify local LLM service (Ollama) is active.",
+            ],
+            "is_valid": False,
+            "raw_response_call1": raw1,
+            "raw_response_call2": raw2,
+            "retrieved_samples": retrieved_samples,
+        }
+
     overall_malicious = has_injection or is_phishing_pred
 
     reasons: list[str] = []
@@ -267,7 +295,7 @@ def classify_email_m4(
         "latency_ms": total_duration * 1000,
         "latency_seconds": total_duration,
         "reasons": reasons,
-        "is_valid": p1 is not None and p2 is not None,
+        "is_valid": True,
         "raw_response_call1": raw1,
         "raw_response_call2": raw2,
         "retrieved_samples": retrieved_samples,

@@ -10,6 +10,8 @@ import {
   Bot,
   Layers,
   ShieldCheck,
+  Info,
+  AlertTriangle,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { type ClassificationResult } from '../api/client';
@@ -150,13 +152,24 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
               Verdict:
             </span>
-            <Badge
-              variant={isPhishing ? 'phishing' : 'legitimate'}
-              size="md"
-              dot
-            >
-              {isPhishing ? 'PHISHING' : 'LEGITIMATE'}
-            </Badge>
+            <div className="flex items-center gap-1.5">
+              {!result.is_valid && (
+                <span
+                  title="Model response could not be parsed or service was offline; default fallback verdict applied."
+                  className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/40 font-medium inline-flex items-center gap-1"
+                >
+                  <AlertTriangle className="h-2.5 w-2.5 text-amber-400" />
+                  Fallback
+                </span>
+              )}
+              <Badge
+                variant={!result.is_valid ? 'neutral' : isPhishing ? 'phishing' : 'legitimate'}
+                size="md"
+                dot
+              >
+                {isPhishing ? 'PHISHING' : 'LEGITIMATE'}
+              </Badge>
+            </div>
           </div>
 
           <div className="flex items-center justify-between pt-1">
@@ -181,19 +194,54 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
 
         {/* Confidence Progress Bar */}
         <div className="space-y-1.5 pt-1">
-          <div className="flex justify-between text-xs">
-            <span className="text-slate-400">Confidence Score:</span>
-            <span className="font-bold font-mono text-white">
-              {confidencePercent}%
-            </span>
+          <div className="flex justify-between items-center text-xs">
+            <div className="flex items-center gap-1.5 text-slate-400">
+              <span>Confidence Score:</span>
+              <div className="relative group inline-flex items-center">
+                <button
+                  type="button"
+                  tabIndex={0}
+                  aria-label="Confidence score explanation"
+                  className="text-slate-400 hover:text-teal-300 focus:outline-none focus:text-teal-300 transition-colors cursor-help p-0.5 rounded"
+                >
+                  <Info className="h-3 w-3" />
+                </button>
+                <div
+                  role="tooltip"
+                  className="pointer-events-none absolute bottom-full left-0 mb-2 w-72 p-2.5 rounded-xl bg-slate-900 border border-slate-700/90 text-[11px] text-slate-300 shadow-2xl opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-150 z-40 leading-relaxed font-normal"
+                >
+                  <div className="font-semibold text-white mb-1 flex items-center gap-1.5">
+                    <Info className="h-3.5 w-3.5 text-teal-400 flex-shrink-0" />
+                    <span>Verdict Confidence Metric</span>
+                  </div>
+                  <p className="text-slate-300">
+                    Measures estimated posterior certainty for the predicted verdict (<span className="text-slate-100 font-medium">{isPhishing ? 'Phishing' : 'Legitimate'}</span>), not raw phishing likelihood.
+                  </p>
+                  <p className="text-slate-400 mt-1">
+                    M1 uses logistic probability, M2/M3 use self-assessed LLM certainty, and M4 combines isolated pipeline stages. A score of 0.0% reflects model parse failure or offline service fallback.
+                  </p>
+                  <div className="absolute top-full left-3 -mt-1 border-4 border-transparent border-t-slate-700/90" />
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5">
+              {!result.is_valid && (
+                <span className="text-[10px] text-amber-400/90 font-mono">(Fallback)</span>
+              )}
+              <span className="font-bold font-mono text-white">
+                {confidencePercent}%
+              </span>
+            </div>
           </div>
           <div className="h-2 w-full bg-slate-950 rounded-full overflow-hidden border border-slate-800">
             <motion.div
               initial={{ width: '0%' }}
-              animate={{ width: `${Math.max(5, Math.min(100, Number(confidencePercent)))}%` }}
+              animate={{ width: `${Math.max(result.is_valid ? 5 : 0, Math.min(100, Number(confidencePercent)))}%` }}
               transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
               className={`h-full rounded-full ${
-                isPhishing
+                !result.is_valid
+                  ? 'bg-amber-500/40'
+                  : isPhishing
                   ? 'bg-gradient-to-r from-rose-500 to-red-400'
                   : 'bg-gradient-to-r from-teal-500 to-emerald-400'
               }`}
