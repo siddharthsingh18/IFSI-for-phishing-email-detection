@@ -13,6 +13,8 @@ import {
   Loader2,
   Zap,
   ListTree,
+  Edit3,
+  Check,
 } from 'lucide-react';
 import {
   apiClient,
@@ -25,20 +27,128 @@ import { OfflineFallbackBanner } from '../components/OfflineFallbackBanner';
 import { Badge } from '../components/Badge';
 import { MethodResultCard } from '../components/MethodResultCard';
 import { Skeleton, SkeletonMethodCard } from '../components/Skeleton';
+import { Select, type SelectOption } from '../components/Select';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fadeInUp, staggerContainer } from '../lib/motion';
 
-const ARCHITECTURE_TOOLTIPS: Record<string, string> = {
-  M1: 'M1: TF-IDF + Logistic Regression (Traditional ML Baseline)',
-  M2: 'M2: Zero-Shot LLM (Direct Prompting Baseline)',
-  M3: 'M3: RAG Combined (Standard Single-Call RAG)',
-  M4: 'M4: RAG Decoupled (IFSI Two-Stage Robust Architecture)',
-};
+const ARCHITECTURE_OPTIONS: SelectOption<string>[] = [
+  {
+    value: 'M1',
+    label: 'M1: TF-IDF + Logistic Regression',
+    description: 'Traditional ML Baseline (No LLM, zero injection risk)',
+    badge: 'Classical ML',
+  },
+  {
+    value: 'M2',
+    label: 'M2: Zero-Shot LLM',
+    description: 'Direct Prompting Baseline (Vulnerable to injection)',
+    badge: 'Zero-Shot',
+  },
+  {
+    value: 'M3',
+    label: 'M3: RAG Combined (Single-Call)',
+    description: 'Standard RAG (Direct context concatenation)',
+    badge: 'Combined RAG',
+  },
+  {
+    value: 'M4',
+    label: 'M4: RAG Decoupled (IFSI Two-Stage)',
+    description: 'IFSI Defense Architecture (Sanitizer + Isolated classifier)',
+    badge: 'IFSI Decoupled',
+  },
+];
 
-const MODEL_TOOLTIPS: Record<string, string> = {
-  'qwen2.5:0.5b': 'qwen2.5:0.5b (Default Local Model - 0.5B Parameters)',
-  'llama3.2:3b': 'llama3.2:3b (Pilot Local Model - 3B Parameters)',
-};
+const MODEL_OPTIONS: SelectOption<string>[] = [
+  {
+    value: 'qwen2.5:0.5b',
+    label: 'qwen2.5:0.5b (Default Local Model)',
+    description: '0.5B parameters • Fast, lightweight inference',
+    badge: 'Default',
+  },
+  {
+    value: 'llama3.2:3b',
+    label: 'llama3.2:3b (Pilot Local Model)',
+    description: '3B parameters • High-capacity reasoning',
+    badge: 'Pilot',
+  },
+];
+
+const TOP_K_OPTIONS: SelectOption<number>[] = [
+  {
+    value: 1,
+    label: 'k = 1',
+    description: '1 exemplar retrieved from index',
+  },
+  {
+    value: 3,
+    label: 'k = 3',
+    description: '3 exemplars (Recommended default)',
+  },
+  {
+    value: 5,
+    label: 'k = 5',
+    description: '5 exemplars retrieved from index',
+  },
+];
+
+const ATTACK_STYLE_OPTIONS: SelectOption<'unmarked' | 'marked'>[] = [
+  {
+    value: 'unmarked',
+    label: 'Unmarked (Authentic Disguise)',
+    description: 'Administrative disclaimer blended into body',
+  },
+  {
+    value: 'marked',
+    label: 'Marked (Bracketed Override)',
+    description: 'Explicit [SYSTEM OVERRIDE] imperative command',
+  },
+];
+
+const ATTACK_FAMILY_OPTIONS: SelectOption<string>[] = [
+  {
+    value: 'label_override',
+    label: 'Label Override',
+    description: 'Direct imperative command to output legitimate',
+  },
+  {
+    value: 'false_authority',
+    label: 'False Authority',
+    description: 'IT Security Gateway impersonation notice',
+  },
+  {
+    value: 'output_hijack',
+    label: 'Output Hijack',
+    description: 'JSON schema forced override format',
+  },
+  {
+    value: 'rule_redefinition',
+    label: 'Rule Redefinition',
+    description: 'Policy exemption notice disclaimer',
+  },
+  {
+    value: 'light_obfuscation',
+    label: 'Light Obfuscation',
+    description: 'Spaced text character evasion technique',
+  },
+];
+
+const ATTACK_POSITION_OPTIONS: SelectOption<string>[] = [
+  {
+    value: 'body_start',
+    label: 'Body Start',
+    description: 'Prepend notice before email text',
+  },
+  {
+    value: 'body_middle',
+    label: 'Body Middle',
+    description: 'Insert between email paragraphs',
+  },
+  {
+    value: 'body_end',
+    label: 'Body End',
+    description: 'Append disclaimer after email content',
+  },
+];
 
 export const LiveTestPage: React.FC = () => {
   // Input Form States
@@ -75,6 +185,9 @@ export const LiveTestPage: React.FC = () => {
   // Result Card Density: 'simple' (default, readable in <3s) or 'detailed' (full diagnostician)
   const [viewDensity, setViewDensity] = useState<'simple' | 'detailed'>('simple');
 
+  // Email Input Source Mode: 'preset' (benchmark presets) or 'custom' (custom fields)
+  const [emailInputMode, setEmailInputMode] = useState<'preset' | 'custom'>('preset');
+
   // Load curated presets on mount
   useEffect(() => {
     let mounted = true;
@@ -103,6 +216,7 @@ export const LiveTestPage: React.FC = () => {
     const sample = presets[key];
     if (!sample) return;
     setSelectedPresetKey(key);
+    setEmailInputMode('preset');
     setSubject(sample.subject || '');
     setSender(sample.sender || '');
     setEmailText(sample.body || '');
@@ -356,132 +470,320 @@ export const LiveTestPage: React.FC = () => {
                 )}
               </div>
 
-              {/* Model & Header Fields */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                <div className="sm:col-span-2">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <label className="block text-xs font-semibold text-slate-300">
-                      Target Architecture (Single Mode)
-                    </label>
-                    <span
-                      title={ARCHITECTURE_TOOLTIPS[method] || method}
-                      className="text-[10px] text-slate-400 font-mono hidden sm:inline-block cursor-help max-w-[260px] truncate"
-                    >
-                      {ARCHITECTURE_TOOLTIPS[method]?.split('(')[1]?.replace(')', '') || ''}
-                    </span>
-                  </div>
-                  <select
-                    value={method}
-                    onChange={(e) => setMethod(e.target.value as any)}
-                    title={ARCHITECTURE_TOOLTIPS[method] || method}
-                    className="w-full rounded-xl bg-slate-950 border border-slate-800 px-3.5 py-2 text-xs sm:text-sm text-slate-200 truncate hover:border-slate-700 hover:bg-slate-900/50 active:scale-[0.98] focus:outline-none focus:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-all duration-150 cursor-pointer"
-                  >
-                    <option value="M1" title="M1: TF-IDF + Logistic Regression (Traditional ML Baseline)">M1: TF-IDF + Logistic Regression</option>
-                    <option value="M2" title="M2: Zero-Shot LLM (Direct Prompting Baseline)">M2: Zero-Shot LLM</option>
-                    <option value="M3" title="M3: RAG Combined (Standard Single-Call RAG)">M3: RAG Combined (Single-Call)</option>
-                    <option value="M4" title="M4: RAG Decoupled (IFSI Two-Stage Robust Architecture)">M4: RAG Decoupled (IFSI Two-Stage)</option>
-                  </select>
-                </div>
-
-                <div className="sm:col-span-2">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <label className="block text-xs font-semibold text-slate-300">
-                      Local LLM &amp; RAG k
-                    </label>
-                    <span
-                      title={MODEL_TOOLTIPS[model] || model}
-                      className="text-[10px] text-teal-400 font-mono cursor-help"
-                    >
-                      k={topK} &bull; {model.split(':')[0]}
-                    </span>
-                  </div>
-                  <div className="flex gap-2">
-                    <select
-                      value={model}
-                      onChange={(e) => setModel(e.target.value)}
-                      title={MODEL_TOOLTIPS[model] || model}
-                      className="flex-1 min-w-0 rounded-xl bg-slate-950 border border-slate-800 px-3 py-2 text-xs sm:text-sm text-slate-200 truncate hover:border-slate-700 hover:bg-slate-900/50 active:scale-[0.98] focus:outline-none focus:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-all duration-150 cursor-pointer"
-                    >
-                      <option value="qwen2.5:0.5b" title="qwen2.5:0.5b (Default Local Model - 0.5B Parameters)">qwen2.5:0.5b (Default)</option>
-                      <option value="llama3.2:3b" title="llama3.2:3b (Pilot Local Model - 3B Parameters)">llama3.2:3b (Pilot)</option>
-                    </select>
-                    <select
-                      value={topK}
-                      onChange={(e) => setTopK(Number(e.target.value))}
-                      title={`Top-${topK} RAG Exemplars: retrieves ${topK} most similar training emails from the FAISS index`}
-                      className="w-20 flex-shrink-0 rounded-xl bg-slate-950 border border-slate-800 px-2 py-2 text-xs text-slate-200 text-center hover:border-slate-700 hover:bg-slate-900/50 active:scale-[0.98] focus:outline-none focus:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-all duration-150 cursor-pointer"
-                    >
-                      <option value={1} title="k=1 exemplar">k=1</option>
-                      <option value={3} title="k=3 exemplars">k=3</option>
-                      <option value={5} title="k=5 exemplars">k=5</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    Email Subject
-                  </label>
-                  <input
-                    type="text"
-                    value={subject}
-                    onChange={(e) => setSubject(e.target.value)}
-                    placeholder="e.g. Account Security Alert"
-                    className="w-full rounded-xl bg-slate-950 border border-slate-800 px-3.5 py-2 text-xs sm:text-sm text-slate-200 focus:outline-none focus:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-colors"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    Sender / From Address
-                  </label>
-                  <input
-                    type="text"
-                    value={sender}
-                    onChange={(e) => setSender(e.target.value)}
-                    placeholder="e.g. security-alerts@bank.com"
-                    className="w-full rounded-xl bg-slate-950 border border-slate-800 px-3.5 py-2 text-xs sm:text-sm text-slate-200 focus:outline-none focus:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-colors"
-                  />
-                </div>
-              </div>
-
-              {/* Email Body Textarea */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-semibold text-slate-300">
-                    Email Body Text <span className="text-teal-400">*</span>
-                  </label>
-                  <span className="text-[11px] text-slate-500 font-mono">
-                    {emailText.length} characters
+              {/* =========================================================================
+                  SUBSECTION 1: Choose a method (Architecture + Model + k)
+                  ========================================================================= */}
+              <section aria-labelledby="step-1-heading" className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-teal-500/15 text-teal-300 border border-teal-500/30 text-xs font-bold font-mono flex items-center justify-center shadow-sm">
+                    1
                   </span>
+                  <div>
+                    <h3 id="step-1-heading" className="text-sm font-bold text-white tracking-tight flex items-center gap-2">
+                      <span>Choose a method</span>
+                      {executionMode === 'compare' && (
+                        <span className="text-[10px] px-1.5 py-0.2 rounded bg-teal-500/10 text-teal-300 border border-teal-500/20 font-mono">
+                          M1–M4 in Compare Mode
+                        </span>
+                      )}
+                    </h3>
+                    <p className="text-[11px] text-slate-400">
+                      Configure target classifier architecture, local model runtime, and exemplar depth.
+                    </p>
+                  </div>
                 </div>
-                <textarea
-                  rows={6}
-                  value={emailText}
-                  onChange={(e) => setEmailText(e.target.value)}
-                  placeholder="Paste raw email body here, or load a curated preset from the bar above..."
-                  className="w-full rounded-xl bg-slate-950 border border-slate-800 p-4 text-xs sm:text-sm text-slate-200 font-mono leading-relaxed focus:outline-none focus:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-colors resize-y"
-                />
-              </div>
+
+                <div className="space-y-3.5 pl-9">
+                  {/* Target Architecture Custom Select */}
+                  <Select
+                    id="architecture-select"
+                    label="Target Architecture (Single Mode)"
+                    options={ARCHITECTURE_OPTIONS}
+                    value={method}
+                    onChange={(val) => setMethod(val as any)}
+                    ariaLabel="Target Architecture"
+                  />
+
+                  {/* Local LLM & RAG k Side-by-Side Custom Selects */}
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+                    <div className="sm:col-span-7">
+                      <Select
+                        id="model-select"
+                        label="Local LLM Runtime"
+                        options={MODEL_OPTIONS}
+                        value={model}
+                        onChange={(val) => setModel(val as string)}
+                        ariaLabel="Local LLM Model"
+                      />
+                    </div>
+                    <div className="sm:col-span-5">
+                      <Select
+                        id="topk-select"
+                        label="RAG Exemplars"
+                        options={TOP_K_OPTIONS}
+                        value={topK}
+                        onChange={(val) => setTopK(val as number)}
+                        ariaLabel="RAG Exemplar Count k"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              {/* Subtle Section Divider */}
+              <div className="border-t border-slate-800/80 my-2" />
 
               {/* =========================================================================
-                  ADVERSARIAL PROMPT INJECTION TESTBED (Smooth height+opacity reveal)
+                  SUBSECTION 2: Provide the email (Preset Selector OR Custom Fields)
                   ========================================================================= */}
-              <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-3.5 space-y-3">
-                <div className="flex items-center justify-between gap-4">
+              <section aria-labelledby="step-2-heading" className="space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div
-                      className={`p-2 rounded-lg border transition-colors ${
-                        isInjectEnabled
-                          ? 'bg-amber-500/10 text-amber-400 border-amber-500/30'
-                          : 'bg-slate-800/60 text-slate-400 border-slate-700/50'
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-teal-500/15 text-teal-300 border border-teal-500/30 text-xs font-bold font-mono flex items-center justify-center shadow-sm">
+                      2
+                    </span>
+                    <div>
+                      <h3 id="step-2-heading" className="text-sm font-bold text-white tracking-tight">
+                        Provide the email
+                      </h3>
+                      <p className="text-[11px] text-slate-400">
+                        Choose a benchmark preset or write custom email contents.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Preset Selector vs Custom Fields Toggle Pill */}
+                  <div
+                    role="tablist"
+                    aria-label="Email Input Source Mode"
+                    className="inline-flex p-1 rounded-xl bg-slate-900 border border-slate-800/90 shadow-inner self-start sm:self-auto"
+                  >
+                    <button
+                      type="button"
+                      role="tab"
+                      id="email-mode-preset"
+                      aria-selected={emailInputMode === 'preset'}
+                      onClick={() => setEmailInputMode('preset')}
+                      className={`relative px-2.5 py-1 text-xs font-semibold rounded-lg transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 ${
+                        emailInputMode === 'preset'
+                          ? 'text-white'
+                          : 'text-slate-400 hover:text-slate-200'
                       }`}
                     >
-                      <FlaskConical className="h-4 w-4" />
-                    </div>
+                      {emailInputMode === 'preset' && (
+                        <motion.span
+                          layoutId="active-email-mode-pill"
+                          className="absolute inset-0 rounded-lg bg-teal-500/20 border border-teal-500/40 shadow-sm"
+                          transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                        />
+                      )}
+                      <span className="relative z-10 flex items-center gap-1.5">
+                        <Sparkles className="h-3.5 w-3.5 text-teal-400" />
+                        Presets
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      role="tab"
+                      id="email-mode-custom"
+                      aria-selected={emailInputMode === 'custom'}
+                      onClick={() => setEmailInputMode('custom')}
+                      className={`relative px-2.5 py-1 text-xs font-semibold rounded-lg transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 ${
+                        emailInputMode === 'custom'
+                          ? 'text-white'
+                          : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      {emailInputMode === 'custom' && (
+                        <motion.span
+                          layoutId="active-email-mode-pill"
+                          className="absolute inset-0 rounded-lg bg-teal-500/20 border border-teal-500/40 shadow-sm"
+                          transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                        />
+                      )}
+                      <span className="relative z-10 flex items-center gap-1.5">
+                        <Edit3 className="h-3.5 w-3.5 text-teal-400" />
+                        Custom Fields
+                      </span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="pl-9 space-y-3.5">
+                  <AnimatePresence mode="wait" initial={false}>
+                    {emailInputMode === 'preset' ? (
+                      <motion.div
+                        key="email-source-preset"
+                        initial={{ opacity: 0, y: 4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -4 }}
+                        transition={{ duration: 0.18, ease: 'easeOut' }}
+                        className="space-y-3"
+                      >
+                        {/* Preset Chips Grid */}
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between">
+                            <label className="block text-xs font-semibold text-slate-300">
+                              Curated Benchmark Presets
+                            </label>
+                            <span className="text-[10px] text-slate-400 font-mono">
+                              Click to populate
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            {Object.keys(presets).map((key) => {
+                              const sample = presets[key];
+                              const isSelected = selectedPresetKey === key;
+                              const label = key.split('(')[0].trim();
+                              return (
+                                <button
+                                  key={key}
+                                  type="button"
+                                  onClick={() => handleSelectPreset(key)}
+                                  className={`px-3 py-2 rounded-xl text-left transition-all duration-150 border flex items-center justify-between gap-2 active:scale-[0.98] ${
+                                    isSelected
+                                      ? 'bg-teal-500/15 border-teal-500/50 text-teal-200 shadow-sm ring-1 ring-teal-500/20 font-semibold'
+                                      : 'bg-slate-950/80 border-slate-800 text-slate-300 hover:bg-slate-900 hover:border-slate-700'
+                                  }`}
+                                >
+                                  <div className="min-w-0">
+                                    <div className="text-xs truncate font-medium">{label}</div>
+                                    <div className="text-[10px] text-slate-400 font-mono mt-0.5">
+                                      {sample.condition}
+                                    </div>
+                                  </div>
+                                  {isSelected && (
+                                    <span className="flex-shrink-0 text-teal-400">
+                                      <Check className="h-3.5 w-3.5" />
+                                    </span>
+                                  )}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Active Preset Metadata Status Box */}
+                        {selectedSample && (
+                          <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-2.5 flex flex-wrap items-center justify-between gap-2">
+                            <div className="flex items-center gap-2">
+                              <Badge
+                                variant={selectedSample.label === 'phishing' ? 'phishing' : 'legitimate'}
+                                size="sm"
+                                dot
+                              >
+                                Ground Truth: {selectedSample.label.toUpperCase()}
+                              </Badge>
+                              <Badge variant="neutral" size="sm">
+                                Condition: {selectedSample.condition.toUpperCase()}
+                              </Badge>
+                            </div>
+                            <span className="text-[10px] text-slate-500 font-mono">
+                              {emailText.length} chars
+                            </span>
+                          </div>
+                        )}
+
+                        {/* Email Body Preview / Editable Area */}
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between">
+                            <label className="text-xs font-semibold text-slate-300">
+                              Email Body Text
+                            </label>
+                            <span className="text-[11px] text-slate-500 font-mono">
+                              {emailText.length} characters
+                            </span>
+                          </div>
+                          <textarea
+                            rows={5}
+                            value={emailText}
+                            onChange={(e) => setEmailText(e.target.value)}
+                            placeholder="Select a preset above to load email body..."
+                            className="w-full rounded-xl bg-slate-950 border border-slate-800 p-3 text-xs sm:text-sm text-slate-200 font-mono leading-relaxed focus:outline-none focus:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-colors resize-y"
+                          />
+                        </div>
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="email-source-custom"
+                        initial={{ opacity: 0, y: 4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -4 }}
+                        transition={{ duration: 0.18, ease: 'easeOut' }}
+                        className="space-y-3.5"
+                      >
+                        {/* Custom Subject & Sender Fields */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                              Email Subject
+                            </label>
+                            <input
+                              type="text"
+                              value={subject}
+                              onChange={(e) => setSubject(e.target.value)}
+                              placeholder="e.g. Account Security Alert"
+                              className="w-full rounded-xl bg-slate-950 border border-slate-800 px-3.5 py-2 text-xs sm:text-sm text-slate-200 focus:outline-none focus:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-colors"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                              Sender / From Address
+                            </label>
+                            <input
+                              type="text"
+                              value={sender}
+                              onChange={(e) => setSender(e.target.value)}
+                              placeholder="e.g. security-alerts@bank.com"
+                              className="w-full rounded-xl bg-slate-950 border border-slate-800 px-3.5 py-2 text-xs sm:text-sm text-slate-200 focus:outline-none focus:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-colors"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Email Body Textarea */}
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between">
+                            <label className="text-xs font-semibold text-slate-300">
+                              Email Body Text <span className="text-teal-400">*</span>
+                            </label>
+                            <span className="text-[11px] text-slate-500 font-mono">
+                              {emailText.length} characters
+                            </span>
+                          </div>
+                          <textarea
+                            rows={6}
+                            value={emailText}
+                            onChange={(e) => setEmailText(e.target.value)}
+                            placeholder="Paste raw email body here, or draft custom content..."
+                            className="w-full rounded-xl bg-slate-950 border border-slate-800 p-4 text-xs sm:text-sm text-slate-200 font-mono leading-relaxed focus:outline-none focus:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-colors resize-y"
+                          />
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </section>
+
+              {/* Subtle Section Divider */}
+              <div className="border-t border-slate-800/80 my-2" />
+
+              {/* =========================================================================
+                  SUBSECTION 3: Optional: test injection resistance (existing toggle)
+                  ========================================================================= */}
+              <section aria-labelledby="step-3-heading" className="space-y-4">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 text-xs font-bold font-mono flex items-center justify-center shadow-sm">
+                      3
+                    </span>
                     <div>
-                      <div className="text-xs font-bold text-white flex items-center gap-2">
-                        <span>Adversarial Prompt Injection Simulator</span>
+                      <div className="flex items-center gap-2">
+                        <FlaskConical className="h-4 w-4 text-amber-400 flex-shrink-0" />
+                        <h3 id="step-3-heading" className="text-sm font-bold text-white tracking-tight">
+                          Optional: test injection resistance
+                        </h3>
                         {isInjectEnabled && (
                           <Badge variant="injection" size="sm" dot pulse>
                             ACTIVE
@@ -522,55 +824,39 @@ export const LiveTestPage: React.FC = () => {
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.25, ease: 'easeInOut' }}
-                      className="overflow-hidden"
+                      className="overflow-hidden pl-9"
                     >
-                      <div className="pt-2 border-t border-slate-800/60 space-y-3">
+                      <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-3.5 space-y-3">
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                          <div>
-                            <label className="block text-[11px] font-semibold text-amber-200 uppercase tracking-wider mb-1">
-                              Injection Style
-                            </label>
-                            <select
-                              value={attackStyle}
-                              onChange={(e) => setAttackStyle(e.target.value as any)}
-                              className="w-full rounded-lg bg-slate-950 border border-slate-800 px-3 py-1.5 text-xs text-slate-200 hover:border-slate-700 hover:bg-slate-900/50 active:scale-[0.98] focus:outline-none focus:border-amber-500 focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-all duration-150 cursor-pointer"
-                            >
-                              <option value="unmarked">Unmarked (Authentic Disguise)</option>
-                              <option value="marked">Marked (Bracketed Override)</option>
-                            </select>
-                          </div>
+                          <Select
+                            id="attack-style-select"
+                            label="Injection Style"
+                            size="sm"
+                            options={ATTACK_STYLE_OPTIONS}
+                            value={attackStyle}
+                            onChange={(val) => setAttackStyle(val as any)}
+                            ariaLabel="Injection Style"
+                          />
 
-                          <div>
-                            <label className="block text-[11px] font-semibold text-amber-200 uppercase tracking-wider mb-1">
-                              Attack Family
-                            </label>
-                            <select
-                              value={attackFamily}
-                              onChange={(e) => setAttackFamily(e.target.value)}
-                              className="w-full rounded-lg bg-slate-950 border border-slate-800 px-3 py-1.5 text-xs text-slate-200 hover:border-slate-700 hover:bg-slate-900/50 active:scale-[0.98] focus:outline-none focus:border-amber-500 focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-all duration-150 cursor-pointer"
-                            >
-                              <option value="label_override">Label Override (Direct imperative command)</option>
-                              <option value="false_authority">False Authority (IT Security Gateway impersonation)</option>
-                              <option value="output_hijack">Output Hijack (JSON schema forced override)</option>
-                              <option value="rule_redefinition">Rule Redefinition (Policy exemption notice)</option>
-                              <option value="light_obfuscation">Light Obfuscation (Spaced text character evasion)</option>
-                            </select>
-                          </div>
+                          <Select
+                            id="attack-family-select"
+                            label="Attack Family"
+                            size="sm"
+                            options={ATTACK_FAMILY_OPTIONS}
+                            value={attackFamily}
+                            onChange={(val) => setAttackFamily(val as string)}
+                            ariaLabel="Attack Family"
+                          />
 
-                          <div>
-                            <label className="block text-[11px] font-semibold text-amber-200 uppercase tracking-wider mb-1">
-                              Payload Placement
-                            </label>
-                            <select
-                              value={attackPosition}
-                              onChange={(e) => setAttackPosition(e.target.value)}
-                              className="w-full rounded-lg bg-slate-950 border border-slate-800 px-3 py-1.5 text-xs text-slate-200 hover:border-slate-700 hover:bg-slate-900/50 active:scale-[0.98] focus:outline-none focus:border-amber-500 focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-all duration-150 cursor-pointer"
-                            >
-                              <option value="body_start">Body Start (Prepend notice)</option>
-                              <option value="body_middle">Body Middle</option>
-                              <option value="body_end">Body End (Append disclaimer)</option>
-                            </select>
-                          </div>
+                          <Select
+                            id="attack-position-select"
+                            label="Payload Placement"
+                            size="sm"
+                            options={ATTACK_POSITION_OPTIONS}
+                            value={attackPosition}
+                            onChange={(val) => setAttackPosition(val as string)}
+                            ariaLabel="Payload Placement"
+                          />
                         </div>
 
                         <p className="text-[11px] text-amber-300/80 leading-relaxed bg-amber-500/10 border border-amber-500/20 rounded-lg p-2.5">
@@ -582,7 +868,7 @@ export const LiveTestPage: React.FC = () => {
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </div>
+              </section>
 
               {/* Error Message Alert */}
               {errorMessage && (

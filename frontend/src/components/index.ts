@@ -13,3 +13,4 @@ export * from './InjectedEmailGraphic';
 export * from './ApproachFlowDiagram';
 export * from './KeyFindingShields';
 export * from './SectionTransitionDivider';
+export * from './Select';
