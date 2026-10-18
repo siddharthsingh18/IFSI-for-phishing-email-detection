@@ -150,6 +150,35 @@ const ATTACK_POSITION_OPTIONS: SelectOption<string>[] = [
   },
 ];
 
+interface CharacterCounterProps {
+  count: number;
+  suffix?: string;
+  className?: string;
+}
+
+const CharacterCounter: React.FC<CharacterCounterProps> = ({
+  count,
+  suffix = 'characters',
+  className = '',
+}) => {
+  return (
+    <div
+      className={`inline-flex items-center gap-1 font-mono text-slate-400 select-none ${className}`}
+    >
+      <motion.span
+        key={count}
+        initial={{ scale: 1.28, color: '#2dd4bf' }}
+        animate={{ scale: 1, color: '#94a3b8' }}
+        transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+        className="inline-block font-semibold tabular-nums will-change-transform"
+      >
+        {count.toLocaleString()}
+      </motion.span>
+      <span className="text-slate-500">{suffix}</span>
+    </div>
+  );
+};
+
 export const LiveTestPage: React.FC = () => {
   // Input Form States
   const [subject, setSubject] = useState('');
@@ -247,6 +276,8 @@ export const LiveTestPage: React.FC = () => {
     setSingleResult(null);
     setCompareResult(null);
 
+    const minLoadingPromise = new Promise((resolve) => setTimeout(resolve, 450));
+
     try {
       let textToClassify = emailText;
       if (isInjectEnabled) {
@@ -271,10 +302,13 @@ export const LiveTestPage: React.FC = () => {
         model,
         k: topK,
       });
+
+      await minLoadingPromise;
       setSingleResult(res);
       // Auto-expand details for single result
       setOpenDetailsMap({ [method]: true });
     } catch (err: any) {
+      await minLoadingPromise;
       console.error('Inference error:', err);
       setErrorMessage(err.message || 'Classification request failed.');
     } finally {
@@ -293,6 +327,8 @@ export const LiveTestPage: React.FC = () => {
     setExecutionMode('compare');
     setSingleResult(null);
     setCompareResult(null);
+
+    const minLoadingPromise = new Promise((resolve) => setTimeout(resolve, 500));
 
     try {
       let textToClassify = emailText;
@@ -317,10 +353,13 @@ export const LiveTestPage: React.FC = () => {
         model,
         k: topK,
       });
+
+      await minLoadingPromise;
       setCompareResult(res);
       // Default: collapse detail drawers in 4-column compare grid to keep cards compact
       setOpenDetailsMap({});
     } catch (err: any) {
+      await minLoadingPromise;
       console.error('Comparison inference error:', err);
       setErrorMessage(err.message || 'Comparison request failed.');
     } finally {
@@ -610,15 +649,20 @@ export const LiveTestPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="pl-9 space-y-3.5">
+                <motion.div layout className="pl-9 space-y-3.5">
                   <AnimatePresence mode="wait" initial={false}>
                     {emailInputMode === 'preset' ? (
                       <motion.div
                         key="email-source-preset"
-                        initial={{ opacity: 0, y: 4 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -4 }}
-                        transition={{ duration: 0.18, ease: 'easeOut' }}
+                        initial={{ opacity: 0, y: 8, filter: 'blur(3px)' }}
+                        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                        exit={{
+                          opacity: 0,
+                          y: -8,
+                          filter: 'blur(3px)',
+                          transition: { duration: 0.16, ease: 'easeIn' },
+                        }}
+                        transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
                         className="space-y-3"
                       >
                         {/* Preset Chips Grid */}
@@ -679,9 +723,11 @@ export const LiveTestPage: React.FC = () => {
                                 Condition: {selectedSample.condition.toUpperCase()}
                               </Badge>
                             </div>
-                            <span className="text-[10px] text-slate-500 font-mono">
-                              {emailText.length} chars
-                            </span>
+                            <CharacterCounter
+                              count={emailText.length}
+                              suffix="chars"
+                              className="text-[10px]"
+                            />
                           </div>
                         )}
 
@@ -691,9 +737,11 @@ export const LiveTestPage: React.FC = () => {
                             <label className="text-xs font-semibold text-slate-300">
                               Email Body Text
                             </label>
-                            <span className="text-[11px] text-slate-500 font-mono">
-                              {emailText.length} characters
-                            </span>
+                            <CharacterCounter
+                              count={emailText.length}
+                              suffix="characters"
+                              className="text-[11px]"
+                            />
                           </div>
                           <textarea
                             rows={5}
@@ -707,10 +755,15 @@ export const LiveTestPage: React.FC = () => {
                     ) : (
                       <motion.div
                         key="email-source-custom"
-                        initial={{ opacity: 0, y: 4 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -4 }}
-                        transition={{ duration: 0.18, ease: 'easeOut' }}
+                        initial={{ opacity: 0, y: 8, filter: 'blur(3px)' }}
+                        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                        exit={{
+                          opacity: 0,
+                          y: -8,
+                          filter: 'blur(3px)',
+                          transition: { duration: 0.16, ease: 'easeIn' },
+                        }}
+                        transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
                         className="space-y-3.5"
                       >
                         {/* Custom Subject & Sender Fields */}
@@ -748,9 +801,11 @@ export const LiveTestPage: React.FC = () => {
                             <label className="text-xs font-semibold text-slate-300">
                               Email Body Text <span className="text-teal-400">*</span>
                             </label>
-                            <span className="text-[11px] text-slate-500 font-mono">
-                              {emailText.length} characters
-                            </span>
+                            <CharacterCounter
+                              count={emailText.length}
+                              suffix="characters"
+                              className="text-[11px]"
+                            />
                           </div>
                           <textarea
                             rows={6}
@@ -763,7 +818,7 @@ export const LiveTestPage: React.FC = () => {
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </div>
+                </motion.div>
               </section>
 
               {/* Subtle Section Divider */}
@@ -820,11 +875,25 @@ export const LiveTestPage: React.FC = () => {
                 <AnimatePresence initial={false}>
                   {isInjectEnabled && (
                     <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25, ease: 'easeInOut' }}
-                      className="overflow-hidden pl-9"
+                      initial={{ height: 0, opacity: 0, scale: 0.98 }}
+                      animate={{
+                        height: 'auto',
+                        opacity: 1,
+                        scale: 1,
+                        transitionEnd: { overflow: 'visible' },
+                      }}
+                      exit={{
+                        height: 0,
+                        opacity: 0,
+                        scale: 0.98,
+                        overflow: 'hidden',
+                      }}
+                      transition={{
+                        height: { duration: 0.32, ease: [0.16, 1, 0.3, 1] },
+                        opacity: { duration: 0.26, ease: 'easeInOut' },
+                        scale: { duration: 0.26, ease: 'easeOut' },
+                      }}
+                      className="pl-9 overflow-hidden"
                     >
                       <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-3.5 space-y-3">
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -885,7 +954,7 @@ export const LiveTestPage: React.FC = () => {
                     type="button"
                     onClick={handleResetForm}
                     disabled={isLoading}
-                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 transition-all duration-150 hover:scale-[1.02] hover:brightness-105 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 transition-all duration-150 hover:scale-[1.02] hover:brightness-105 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <RotateCcw className="h-3.5 w-3.5" />
                     <span>Reset</span>
@@ -893,34 +962,35 @@ export const LiveTestPage: React.FC = () => {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2.5">
-                  {/* Compare All Button with smooth icon crossfade */}
+                  {/* Compare All Button with smooth rotational icon morph */}
                   <button
                     type="button"
+                    id="compare-all-btn"
                     onClick={handleRunCompare}
                     disabled={isLoading}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-800/90 px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-slate-100 elevation-card hover:elevation-hover hover:bg-slate-700 hover:border-slate-600 transition-all duration-150 hover:scale-[1.02] hover:brightness-110 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:opacity-60 disabled:cursor-not-allowed min-w-[155px]"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-800/90 px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-slate-100 elevation-card hover:elevation-hover hover:bg-slate-700 hover:border-slate-600 transition-all duration-150 hover:scale-[1.02] hover:brightness-110 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:opacity-60 disabled:cursor-not-allowed min-w-[165px]"
                   >
                     <div className="relative w-4 h-4 flex items-center justify-center flex-shrink-0">
                       <AnimatePresence mode="wait" initial={false}>
                         {isLoading && executionMode === 'compare' ? (
                           <motion.span
-                            key="spinner"
-                            initial={{ opacity: 0, scale: 0.6 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.6 }}
-                            transition={{ duration: 0.16, ease: 'easeInOut' }}
-                            className="absolute inset-0 flex items-center justify-center text-cyan-400"
+                            key="spinner-compare"
+                            initial={{ opacity: 0, scale: 0.5, rotate: -90 }}
+                            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                            exit={{ opacity: 0, scale: 0.5, rotate: 90 }}
+                            transition={{ duration: 0.2, ease: 'easeOut' }}
+                            className="absolute inset-0 flex items-center justify-center text-teal-400"
                           >
                             <Loader2 className="h-4 w-4 animate-spin" />
                           </motion.span>
                         ) : (
                           <motion.span
                             key="compare-icon"
-                            initial={{ opacity: 0, scale: 0.6 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.6 }}
-                            transition={{ duration: 0.16, ease: 'easeInOut' }}
-                            className="absolute inset-0 flex items-center justify-center text-cyan-400"
+                            initial={{ opacity: 0, scale: 0.5, rotate: -90 }}
+                            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                            exit={{ opacity: 0, scale: 0.5, rotate: 90 }}
+                            transition={{ duration: 0.2, ease: 'easeOut' }}
+                            className="absolute inset-0 flex items-center justify-center text-teal-400"
                           >
                             <GitCompare className="h-4 w-4" />
                           </motion.span>
@@ -938,48 +1008,49 @@ export const LiveTestPage: React.FC = () => {
                           className="block"
                         >
                           {isLoading && executionMode === 'compare'
-                            ? 'Comparing…'
+                            ? 'Classifying…'
                             : 'Compare All (M1–M4)'}
                         </motion.span>
                       </AnimatePresence>
                     </div>
                   </button>
 
-                  {/* Single Method Classify Button with smooth icon crossfade */}
+                  {/* Single Method Classify Button with smooth rotational icon morph */}
                   <button
                     type="button"
+                    id="classify-single-btn"
                     onClick={handleRunSingle}
                     disabled={isLoading}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-teal-500 px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-950 elevation-card hover:elevation-hover hover:bg-teal-400 transition-all duration-150 hover:scale-[1.02] hover:brightness-110 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:opacity-60 disabled:cursor-not-allowed min-w-[130px]"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-teal-500 px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-950 elevation-card hover:elevation-hover hover:bg-teal-400 transition-all duration-150 hover:scale-[1.02] hover:brightness-110 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:opacity-60 disabled:cursor-not-allowed min-w-[140px]"
                   >
                     <div className="relative w-4 h-4 flex items-center justify-center flex-shrink-0">
                       <AnimatePresence mode="wait" initial={false}>
                         {isLoading && executionMode === 'single' ? (
                           <motion.span
-                            key="spinner"
-                            initial={{ opacity: 0, scale: 0.6 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.6 }}
-                            transition={{ duration: 0.16, ease: 'easeInOut' }}
-                            className="absolute inset-0 flex items-center justify-center"
+                            key="spinner-single"
+                            initial={{ opacity: 0, scale: 0.5, rotate: -90 }}
+                            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                            exit={{ opacity: 0, scale: 0.5, rotate: 90 }}
+                            transition={{ duration: 0.2, ease: 'easeOut' }}
+                            className="absolute inset-0 flex items-center justify-center text-slate-950"
                           >
                             <Loader2 className="h-4 w-4 animate-spin text-slate-950" />
                           </motion.span>
                         ) : (
                           <motion.span
-                            key="play"
-                            initial={{ opacity: 0, scale: 0.6 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.6 }}
-                            transition={{ duration: 0.16, ease: 'easeInOut' }}
-                            className="absolute inset-0 flex items-center justify-center"
+                            key="play-icon"
+                            initial={{ opacity: 0, scale: 0.5, rotate: -90 }}
+                            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                            exit={{ opacity: 0, scale: 0.5, rotate: 90 }}
+                            transition={{ duration: 0.2, ease: 'easeOut' }}
+                            className="absolute inset-0 flex items-center justify-center text-slate-950"
                           >
                             <Play className="h-4 w-4 fill-current" />
                           </motion.span>
                         )}
                       </AnimatePresence>
                     </div>
-                    <div className="relative min-w-[65px] text-center">
+                    <div className="relative min-w-[70px] text-center">
                       <AnimatePresence mode="wait" initial={false}>
                         <motion.span
                           key={isLoading && executionMode === 'single' ? 'loading' : 'idle'}
