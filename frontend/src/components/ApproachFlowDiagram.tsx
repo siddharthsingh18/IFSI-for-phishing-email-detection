@@ -328,70 +328,89 @@ export const ApproachFlowDiagram: React.FC<ApproachFlowDiagramProps> = ({
           </g>
 
           {/* =================================================================
-              5. ANIMATED PARTICLES
+              5. ANIMATED PARTICLES (Single travel on scroll into view, no looping)
               ================================================================= */}
           {!shouldReduceMotion && (
             <>
-              {/* Particle M3 (Travels along upper path, flickers and breaks partway) */}
+              {/* Particle M3 (Travels along upper path once on inView, flickers and breaks partway) */}
               <motion.circle
+                key={isM3Active ? 'm3-active' : 'm3-inview'}
                 r="4.5"
                 fill="#f43f5e"
                 filter="url(#particleGlowRose)"
-                animate={{
-                  cx: [68, 145, 260, 360, 480, 520, 535, 545, 550],
-                  cy: [60, 35, 35, 35, 35, 35, 35, 35, 35],
-                  opacity: [0, 1, 1, 1, 1, 0.9, 0.2, 0.8, 0],
-                  scale: [0.8, 1.2, 1, 1.1, 1, 1.4, 0.4, 0.8, 0],
-                }}
-                transition={{
-                  duration: 2.8,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                  times: [0, 0.15, 0.35, 0.55, 0.72, 0.82, 0.88, 0.94, 1],
-                  repeatDelay: 0.8,
+                variants={{
+                  hidden: {
+                    cx: 68,
+                    cy: 60,
+                    opacity: 0,
+                    scale: 0.8,
+                  },
+                  visible: {
+                    cx: [68, 145, 260, 360, 480, 520, 535, 545, 550],
+                    cy: [60, 35, 35, 35, 35, 35, 35, 35, 35],
+                    opacity: [0, 1, 1, 1, 1, 0.9, 0.2, 0.8, 0],
+                    scale: [0.8, 1.2, 1, 1.1, 1, 1.4, 0.4, 0.8, 0],
+                    transition: {
+                      duration: 2.2,
+                      ease: 'easeInOut',
+                      times: [0, 0.15, 0.35, 0.55, 0.72, 0.82, 0.88, 0.94, 1],
+                      delay: isM3Active ? 0.05 : 0.3,
+                    },
+                  },
                 }}
               />
 
-              {/* Particle M4 (Travels along lower path, pauses at Checkpoint, then proceeds to end) */}
+              {/* Particle M4 (Travels along lower path once on inView, pauses at Checkpoint, then proceeds to end) */}
               <motion.circle
+                key={isM4Active ? 'm4-active' : 'm4-inview'}
                 r="4.5"
                 fill="#2dd4bf"
                 filter="url(#particleGlowTeal)"
-                animate={{
-                  // Starts at Email (68), goes through Extractor (195-330),
-                  // reaches Checkpoint at ~447, PAUSES for 0.7s,
-                  // then resumes through Classifier (565-700) to Verdict (740-790)
-                  cx: [68, 145, 260, 447, 447, 447, 630, 740, 790],
-                  cy: [60, 85, 85, 85, 85, 85, 85, 85, 85],
-                  opacity: [0, 1, 1, 1, 1, 1, 1, 1, 0],
-                  scale: [0.8, 1.2, 1, 1.4, 1.1, 1.3, 1, 1.2, 0.5],
-                }}
-                transition={{
-                  duration: 3.6,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                  times: [0, 0.12, 0.28, 0.45, 0.55, 0.65, 0.8, 0.93, 1],
-                  repeatDelay: 0.8,
+                variants={{
+                  hidden: {
+                    cx: 68,
+                    cy: 60,
+                    opacity: 0,
+                    scale: 0.8,
+                  },
+                  visible: {
+                    cx: [68, 145, 260, 447, 447, 447, 630, 740, 790],
+                    cy: [60, 85, 85, 85, 85, 85, 85, 85, 85],
+                    opacity: [0, 1, 1, 1, 1, 1, 1, 1, 0],
+                    scale: [0.8, 1.2, 1, 1.4, 1.1, 1.3, 1, 1.2, 0.5],
+                    transition: {
+                      duration: 2.8,
+                      ease: 'easeInOut',
+                      times: [0, 0.12, 0.28, 0.45, 0.55, 0.65, 0.8, 0.93, 1],
+                      delay: isM4Active ? 0.05 : 0.3,
+                    },
+                  },
                 }}
               />
 
-              {/* Checkpoint Ring Pulse while M4 dot pauses */}
+              {/* Checkpoint Ring Pulse while M4 dot pauses (animates once) */}
               <motion.circle
+                key={isM4Active ? 'cp-active' : 'cp-inview'}
                 cx="447"
                 cy="85"
                 r="6"
                 stroke="#22d3ee"
                 strokeWidth="1.5"
                 fill="none"
-                animate={{
-                  r: [6, 18, 22],
-                  opacity: [0, 0.8, 0],
-                }}
-                transition={{
-                  duration: 1.2,
-                  repeat: Infinity,
-                  ease: 'easeOut',
-                  delay: 1.6, // Matches particle pause window
+                variants={{
+                  hidden: {
+                    r: 6,
+                    opacity: 0,
+                  },
+                  visible: {
+                    r: [6, 18, 22],
+                    opacity: [0, 0.85, 0],
+                    transition: {
+                      duration: 1.0,
+                      ease: 'easeOut',
+                      delay: isM4Active ? 1.2 : 1.5,
+                    },
+                  },
                 }}
               />
             </>
