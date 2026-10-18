@@ -30,11 +30,18 @@ export const SectionTransitionDivider: React.FC<SectionTransitionDividerProps> =
         preserveAspectRatio="none"
       >
         <defs>
-          <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="0%">
+          <linearGradient
+            id={gradId}
+            gradientUnits="userSpaceOnUse"
+            x1="0"
+            y1="1"
+            x2="1000"
+            y2="1"
+          >
             <stop offset="0%" stopColor="#14b8a6" stopOpacity="0" />
-            <stop offset="12%" stopColor="#14b8a6" stopOpacity="0.25" />
-            <stop offset="50%" stopColor="#2dd4bf" stopOpacity="0.4" />
-            <stop offset="88%" stopColor="#14b8a6" stopOpacity="0.25" />
+            <stop offset="15%" stopColor="#14b8a6" stopOpacity="0.35" />
+            <stop offset="50%" stopColor="#2dd4bf" stopOpacity="0.5" />
+            <stop offset="85%" stopColor="#14b8a6" stopOpacity="0.35" />
             <stop offset="100%" stopColor="#14b8a6" stopOpacity="0" />
           </linearGradient>
         </defs>
@@ -42,7 +49,7 @@ export const SectionTransitionDivider: React.FC<SectionTransitionDividerProps> =
         <motion.path
           d="M 0 1 L 1000 1"
           stroke={`url(#${gradId})`}
-          strokeWidth="1.2"
+          strokeWidth="1.5"
           strokeLinecap="round"
           initial={{ pathLength: 0, opacity: 0 }}
           whileInView={{
@@ -50,15 +57,15 @@ export const SectionTransitionDivider: React.FC<SectionTransitionDividerProps> =
             opacity: 1,
             transition: {
               pathLength: {
-                duration: shouldReduceMotion ? 0.2 : 0.95,
+                duration: shouldReduceMotion ? 0.2 : 0.85,
                 ease: [0.16, 1, 0.3, 1],
               },
               opacity: {
-                duration: shouldReduceMotion ? 0.15 : 0.35,
+                duration: shouldReduceMotion ? 0.15 : 0.3,
               },
             },
           }}
-          viewport={{ once: true, margin: '-50px' }}
+          viewport={{ once: true, margin: '-20px' }}
         />
       </svg>
     </div>
