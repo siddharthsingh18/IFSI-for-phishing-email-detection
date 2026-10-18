@@ -24,6 +24,7 @@ import { Badge } from '../components/Badge';
 import { SkeletonCard } from '../components/Skeleton';
 import { HeroNetworkIllustration } from '../components/HeroNetworkIllustration';
 import { HeroFloatingRecallCard } from '../components/HeroFloatingRecallCard';
+import { InjectedEmailGraphic } from '../components/InjectedEmailGraphic';
 import { MagneticButton } from '../components/MagneticButton';
 import { motion, AnimatePresence, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
@@ -349,56 +350,64 @@ export const LandingPage: React.FC = () => {
         </div>
 
         <Card variant="default" padding="lg">
-          <div className="space-y-5">
-            <p className="text-base sm:text-xl font-medium text-slate-200 leading-snug">
-              Indirect prompt injections trick monolithic LLM classifiers into whitelisting malicious phishing emails.
-            </p>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+            {/* Left Column: Headline and 3 Stat Chips */}
+            <div className="lg:col-span-8 xl:col-span-8 space-y-5">
+              <p className="text-base sm:text-xl font-medium text-slate-200 leading-snug">
+                Indirect prompt injections trick monolithic LLM classifiers into whitelisting malicious phishing emails.
+              </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
-              {/* Stat Chip 1: Evasion Rate */}
-              <div className="flex items-center gap-3.5 p-4 rounded-xl border border-rose-500/30 bg-rose-500/10 backdrop-blur-sm">
-                <div className="p-2.5 rounded-lg bg-rose-500/20 text-rose-400 flex-shrink-0">
-                  <ShieldAlert className="h-5 w-5" />
-                </div>
-                <div>
-                  <div className="text-2xl sm:text-3xl font-black text-rose-400 tracking-tight leading-none">
-                    {m3EvasionRate}%
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
+                {/* Stat Chip 1: Evasion Rate */}
+                <div className="flex items-center gap-3.5 p-4 rounded-xl border border-rose-500/30 bg-rose-500/10 backdrop-blur-sm">
+                  <div className="p-2.5 rounded-lg bg-rose-500/20 text-rose-400 flex-shrink-0">
+                    <ShieldAlert className="h-5 w-5" />
                   </div>
-                  <div className="text-xs sm:text-sm font-semibold text-slate-300 mt-1">
-                    Standard RAG Evasion
+                  <div>
+                    <div className="text-2xl sm:text-3xl font-black text-rose-400 tracking-tight leading-none">
+                      {m3EvasionRate}%
+                    </div>
+                    <div className="text-xs sm:text-sm font-semibold text-slate-300 mt-1">
+                      Standard RAG Evasion
+                    </div>
+                  </div>
+                </div>
+
+                {/* Stat Chip 2: What Causes It (Monolithic Catch Collapse) */}
+                <div className="flex items-center gap-3.5 p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 backdrop-blur-sm">
+                  <div className="p-2.5 rounded-lg bg-amber-500/20 text-amber-400 flex-shrink-0">
+                    <TrendingDown className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <div className="text-2xl sm:text-3xl font-black text-amber-400 tracking-tight leading-none">
+                      {m3UnmarkedRecall}%
+                    </div>
+                    <div className="text-xs sm:text-sm font-semibold text-slate-300 mt-1">
+                      Monolithic Catch Rate
+                    </div>
+                  </div>
+                </div>
+
+                {/* Stat Chip 3: The Fix's Tradeoff */}
+                <div className="flex items-center gap-3.5 p-4 rounded-xl border border-teal-500/30 bg-teal-500/10 backdrop-blur-sm">
+                  <div className="p-2.5 rounded-lg bg-teal-500/20 text-teal-400 flex-shrink-0">
+                    <Scale className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <div className="text-2xl sm:text-3xl font-black text-teal-400 tracking-tight leading-none">
+                      {m4UnmarkedFpr}%
+                    </div>
+                    <div className="text-xs sm:text-sm font-semibold text-slate-300 mt-1">
+                      Operational False-Alarm Tax
+                    </div>
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* Stat Chip 2: What Causes It (Monolithic Catch Collapse) */}
-              <div className="flex items-center gap-3.5 p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 backdrop-blur-sm">
-                <div className="p-2.5 rounded-lg bg-amber-500/20 text-amber-400 flex-shrink-0">
-                  <TrendingDown className="h-5 w-5" />
-                </div>
-                <div>
-                  <div className="text-2xl sm:text-3xl font-black text-amber-400 tracking-tight leading-none">
-                    {m3UnmarkedRecall}%
-                  </div>
-                  <div className="text-xs sm:text-sm font-semibold text-slate-300 mt-1">
-                    Monolithic Catch Rate
-                  </div>
-                </div>
-              </div>
-
-              {/* Stat Chip 3: The Fix's Tradeoff */}
-              <div className="flex items-center gap-3.5 p-4 rounded-xl border border-teal-500/30 bg-teal-500/10 backdrop-blur-sm">
-                <div className="p-2.5 rounded-lg bg-teal-500/20 text-teal-400 flex-shrink-0">
-                  <Scale className="h-5 w-5" />
-                </div>
-                <div>
-                  <div className="text-2xl sm:text-3xl font-black text-teal-400 tracking-tight leading-none">
-                    {m4UnmarkedFpr}%
-                  </div>
-                  <div className="text-xs sm:text-sm font-semibold text-slate-300 mt-1">
-                    Operational False-Alarm Tax
-                  </div>
-                </div>
-              </div>
+            {/* Right Column: Compact SVG Email Graphic with Injected Payload */}
+            <div className="lg:col-span-4 xl:col-span-4 flex items-center justify-center lg:justify-end pt-2 lg:pt-0">
+              <InjectedEmailGraphic shouldReduceMotion={shouldReduceMotion} />
             </div>
           </div>
         </Card>

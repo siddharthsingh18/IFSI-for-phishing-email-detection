@@ -9,3 +9,4 @@ export * from './MotionTest';
 export * from './Skeleton';
 export * from './AppInitialLoader';
 export * from './OfflineFallbackBanner';
+export * from './InjectedEmailGraphic';
