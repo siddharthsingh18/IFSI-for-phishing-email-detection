@@ -9,6 +9,10 @@ import {
   ShieldCheck,
   AlertTriangle,
   Sparkles,
+  BookOpen,
+  Database,
+  Scale,
+  AlertCircle,
 } from 'lucide-react';
 import { apiClient, type BenchmarkSummary } from '../api/client';
 import { Card } from '../components/Card';
@@ -438,7 +442,107 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* =========================================================================
-          SECTION 4: KEY EMPIRICAL FINDING
+          SECTION 4: METHODOLOGY & LIMITATIONS
+          ========================================================================= */}
+      <section className="space-y-6">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2 text-teal-400 text-xs font-semibold uppercase tracking-wider">
+            <BookOpen className="h-4 w-4" />
+            Research Rigor
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Methodology</h2>
+          <p className="text-xs sm:text-sm text-slate-400">
+            Experimental setup, adversarial attack taxonomy, and paired statistical evaluation protocols.
+          </p>
+        </div>
+
+        {/* 3 Methodology Pillars */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Pillar 1: Dataset Size & Source */}
+          <Card variant="default" padding="md" className="space-y-2.5">
+            <div className="flex items-center gap-2 text-xs font-semibold text-teal-400 uppercase tracking-wider">
+              <Database className="h-3.5 w-3.5" />
+              Dataset &amp; Provenance
+            </div>
+            <h3 className="text-sm font-bold text-white tracking-tight font-['Plus_Jakarta_Sans',sans-serif]">
+              5,223 Emails (N=522 Test Split)
+            </h3>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Curated from the verified <strong className="text-white font-medium">Nazario Phishing Archive</strong> and CMU <strong className="text-white font-medium">Enron Corporate Corpus</strong> (80/10/10 split). The frozen test split (<em>N</em>=522; 128 phishing, 394 legitimate controls) evaluates all models under identical paired conditions.
+            </p>
+          </Card>
+
+          {/* Pillar 2: Marked vs. Unmarked */}
+          <Card variant="default" padding="md" className="space-y-2.5">
+            <div className="flex items-center gap-2 text-xs font-semibold text-cyan-400 uppercase tracking-wider">
+              <Layers className="h-3.5 w-3.5" />
+              Attack Disguise Modes
+            </div>
+            <h3 className="text-sm font-bold text-white tracking-tight font-['Plus_Jakarta_Sans',sans-serif]">
+              Delimiters vs. Enterprise Camouflage
+            </h3>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              <strong className="text-cyan-300 font-medium">Marked injections</strong> encapsulate commands within synthetic machine brackets (<code className="text-cyan-300 text-[11px] font-mono">[BEGIN MESSAGE]</code>) easily flagged by rule filters, while <strong className="text-teal-300 font-medium">unmarked injections</strong> disguise instructions as IT forward headers or legal disclaimers that blend naturally into email context.
+            </p>
+          </Card>
+
+          {/* Pillar 3: McNemar & Bootstrap */}
+          <Card variant="default" padding="md" className="space-y-2.5">
+            <div className="flex items-center gap-2 text-xs font-semibold text-emerald-400 uppercase tracking-wider">
+              <Scale className="h-3.5 w-3.5" />
+              Statistical Significance
+            </div>
+            <h3 className="text-sm font-bold text-white tracking-tight font-['Plus_Jakarta_Sans',sans-serif]">
+              Paired McNemar &amp; Bootstrap CIs
+            </h3>
+            <div className="space-y-1.5 text-xs text-slate-300 leading-relaxed">
+              <p>
+                <strong className="text-white font-medium">Paired McNemar test:</strong> Measures whether two models differ significantly on the exact same emails rather than by random variance, with Holm-Bonferroni correction (<em>p</em> &lt; 0.05).
+              </p>
+              <p>
+                <strong className="text-white font-medium">Bootstrap CIs:</strong> Non-parametric 2,000-iteration resampling establishes 95% confidence intervals without assuming normal metric distributions.
+              </p>
+            </div>
+          </Card>
+        </div>
+
+        {/* Limitations Subsection */}
+        <div className="rounded-xl border border-slate-800/80 bg-slate-900/50 p-4 sm:p-5 space-y-3">
+          <div className="flex items-center gap-2 text-xs font-semibold text-amber-400 uppercase tracking-wider">
+            <AlertCircle className="h-3.5 w-3.5" />
+            Limitations &amp; Experimental Caveats
+          </div>
+          <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-slate-300 leading-relaxed">
+            <li className="flex items-start gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-amber-400 mt-1.5 flex-shrink-0" />
+              <span>
+                <strong className="text-white font-medium">Small-Model Scope:</strong> Evaluated on lightweight local SLMs (Qwen2.5-0.5B, Llama-3.2-3B); larger frontier models may exhibit stronger instruction adherence, though with significantly higher latency and operational cost.
+              </span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-amber-400 mt-1.5 flex-shrink-0" />
+              <span>
+                <strong className="text-white font-medium">Fixed Attack Templates:</strong> Adversarial injections were generated across five known attack families; real-world adversaries craft polymorphic, multi-turn, or zero-day evasion prompts.
+              </span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-amber-400 mt-1.5 flex-shrink-0" />
+              <span>
+                <strong className="text-white font-medium">Uncalibrated Confidence Scores:</strong> Model confidence outputs reflect raw prompt token heuristics rather than formally calibrated posterior Bayesian probabilities.
+              </span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-amber-400 mt-1.5 flex-shrink-0" />
+              <span>
+                <strong className="text-white font-medium">Inference Latency Overhead:</strong> Decoupled two-stage inference (M4) doubles API request volume per email, requiring high-throughput batching or secondary triage filters in production gateways.
+              </span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      {/* =========================================================================
+          SECTION 5: KEY EMPIRICAL FINDING
           ========================================================================= */}
       <section ref={keyFindingSectionRef} className="space-y-4">
         <motion.div
