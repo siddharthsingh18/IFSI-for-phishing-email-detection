@@ -14,3 +14,4 @@ export * from './ApproachFlowDiagram';
 export * from './KeyFindingShields';
 export * from './SectionTransitionDivider';
 export * from './Select';
+export * from './DisagreementConnector';

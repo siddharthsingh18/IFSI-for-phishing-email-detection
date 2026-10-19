@@ -7,7 +7,7 @@ import {
   Copy,
   Check,
   Cpu,
-  Bot,
+  MessageSquare,
   Layers,
   ShieldCheck,
   ShieldAlert,
@@ -19,10 +19,75 @@ import { type ClassificationResult } from '../api/client';
 import { Card, type CardVariant } from './Card';
 import { Badge } from './Badge';
 
+export interface MethodVisualMeta {
+  code: 'M1' | 'M2' | 'M3' | 'M4';
+  name: string;
+  badgeLabel: string;
+  icon: (props?: { className?: string }) => React.ReactNode;
+  iconContainerClass: string;
+  badgeClass: string;
+  cardBorderClass: string;
+  accentGlowClass: string;
+  tagClass: string;
+}
+
+const METHOD_VISUAL_CONFIG: Record<string, MethodVisualMeta> = {
+  M1: {
+    code: 'M1',
+    name: 'TF-IDF + Logistic Regression',
+    badgeLabel: 'Classical ML',
+    icon: (props) => <Cpu className={props?.className || 'h-4 w-4'} />,
+    iconContainerClass: 'bg-slate-800/90 text-slate-300 border-slate-700/80 shadow-sm shadow-slate-950/60',
+    badgeClass: 'bg-slate-800/80 text-slate-300 border-slate-700/70',
+    cardBorderClass: 'border-slate-800/80 hover:border-slate-700',
+    accentGlowClass: 'from-slate-700/15 via-slate-800/10 to-transparent',
+    tagClass: 'text-slate-400',
+  },
+  M2: {
+    code: 'M2',
+    name: 'Zero-Shot LLM',
+    badgeLabel: 'Zero-Shot',
+    icon: (props) => <MessageSquare className={props?.className || 'h-4 w-4'} />,
+    iconContainerClass: 'bg-sky-500/15 text-sky-400 border-sky-500/30 shadow-sm shadow-sky-500/10',
+    badgeClass: 'bg-sky-500/10 text-sky-300 border-sky-500/25',
+    cardBorderClass: 'border-slate-800/80 hover:border-sky-500/40',
+    accentGlowClass: 'from-sky-500/10 via-sky-500/5 to-transparent',
+    tagClass: 'text-sky-400/80',
+  },
+  M3: {
+    code: 'M3',
+    name: 'RAG Combined (Single-Call)',
+    badgeLabel: 'Combined RAG',
+    icon: (props) => <Layers className={props?.className || 'h-4 w-4'} />,
+    iconContainerClass: 'bg-rose-500/15 text-rose-400 border-rose-500/30 shadow-sm shadow-rose-500/10',
+    badgeClass: 'bg-rose-500/10 text-rose-300 border-rose-500/25',
+    cardBorderClass: 'border-slate-800/80 hover:border-rose-500/40',
+    accentGlowClass: 'from-rose-500/10 via-rose-500/5 to-transparent',
+    tagClass: 'text-rose-400/80',
+  },
+  M4: {
+    code: 'M4',
+    name: 'RAG Decoupled (IFSI Two-Stage)',
+    badgeLabel: 'IFSI Defense',
+    icon: (props) => <ShieldCheck className={props?.className || 'h-4 w-4'} />,
+    iconContainerClass: 'bg-teal-500/15 text-teal-400 border-teal-500/30 shadow-sm shadow-teal-500/10 ring-1 ring-teal-500/20',
+    badgeClass: 'bg-teal-500/10 text-teal-300 border-teal-500/25',
+    cardBorderClass: 'border-teal-500/30 ring-1 ring-teal-500/20 hover:border-teal-400/50',
+    accentGlowClass: 'from-teal-500/15 via-teal-500/5 to-transparent',
+    tagClass: 'text-teal-400/80',
+  },
+};
+
+const getMethodMeta = (methodStr: string): MethodVisualMeta => {
+  const code = (methodStr.match(/\bM[1-4]\b/i)?.[0] || 'M1').toUpperCase();
+  return METHOD_VISUAL_CONFIG[code] || METHOD_VISUAL_CONFIG.M1;
+};
+
 export interface MethodResultCardProps {
   result: ClassificationResult;
   consensusNote?: string;
   consensusStatusLabel?: string;
+  isDissenting?: boolean;
   isOpenDetails?: boolean;
   onToggleDetails?: () => void;
   onCopySnippet?: (key: string, text: string) => void;
@@ -38,6 +103,7 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
   result,
   consensusNote,
   consensusStatusLabel,
+  isDissenting = false,
   isOpenDetails: controlledIsOpen,
   onToggleDetails: controlledOnToggle,
   onCopySnippet,
@@ -71,14 +137,7 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
   const isSimple = viewDensity === 'simple';
   const shortMethodMatch = result.method.match(/\bM[1-4]\b/i);
   const shortMethodName = shortMethodMatch ? shortMethodMatch[0].toUpperCase() : result.method.split(/[:(]/)[0].trim();
-
-  // Method Icon
-  const getMethodIcon = () => {
-    if (result.method.startsWith('M1')) return <Cpu className="h-4 w-4" />;
-    if (result.method.startsWith('M2')) return <Bot className="h-4 w-4" />;
-    if (result.method.startsWith('M3')) return <Layers className="h-4 w-4" />;
-    return <ShieldCheck className="h-4 w-4" />;
-  };
+  const methodMeta = getMethodMeta(result.method);
 
   const chosenVariant = cardVariant || (isDecoupledM4 ? 'accent' : 'default');
 
@@ -87,17 +146,23 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
       variant={chosenVariant}
       padding="none"
       tilt={true}
-      className="flex flex-col justify-between overflow-hidden"
+      className={`flex flex-col justify-between overflow-hidden transition-all duration-200 ${
+        methodMeta.cardBorderClass
+      } ${
+        isDissenting
+          ? 'ring-2 ring-amber-500/50 border-amber-500/50 shadow-xl shadow-amber-500/10'
+          : ''
+      }`}
     >
       <motion.div layout transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}>
         <AnimatePresence mode="wait" initial={false}>
           {isSimple ? (
             /* =========================================================
                SIMPLE VIEW: High-density, readable in under 3 seconds
+               - Distinct M1-M4 icon badge with method role pill
                - Verdict badge (large, prominent)
                - One-line confidence bar
                - Injection-detected status icon only (nothing else)
-               - No latency, no accordion, no method subtitle
                ========================================================= */
             <motion.div
               key="simple-view"
@@ -107,19 +172,35 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
               transition={{ duration: 0.18, ease: 'easeOut' }}
               className="p-5 space-y-4"
             >
-              {/* Header: Short method name + Injection status icon only */}
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800/80">
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-lg bg-slate-800 text-teal-400">
-                    {getMethodIcon()}
+              {/* Header: Distinct Method Icon Badge + Method Name + Role Pill + Status */}
+              <div className="flex items-center justify-between pb-3 border-b border-slate-800/80 gap-2">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div
+                    className={`p-1.5 rounded-lg border flex items-center justify-center shrink-0 shadow-sm ${methodMeta.iconContainerClass}`}
+                    title={`${methodMeta.code}: ${methodMeta.name} (${methodMeta.badgeLabel})`}
+                  >
+                    {methodMeta.icon({ className: 'h-4 w-4' })}
                   </div>
-                  <div className="text-sm font-bold text-white tracking-tight">
-                    {shortMethodName}
+                  <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+                    <span className="text-sm font-bold text-white tracking-tight truncate">
+                      {shortMethodName}
+                    </span>
+                    <span
+                      className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-md border tracking-tight ${methodMeta.badgeClass}`}
+                    >
+                      {methodMeta.badgeLabel}
+                    </span>
+                    {isDissenting && (
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/40 inline-flex items-center gap-1 shadow-sm animate-pulse">
+                        <AlertTriangle className="h-2.5 w-2.5 text-amber-400" />
+                        Dissenting
+                      </span>
+                    )}
                   </div>
                 </div>
 
                 {/* Injection-detected status icon only */}
-                <div className="flex items-center">
+                <div className="flex items-center shrink-0">
                   {result.has_prompt_injection ? (
                     <div
                       title="Prompt Injection DETECTED"
@@ -208,22 +289,36 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
               transition={{ duration: 0.18, ease: 'easeOut' }}
             >
               <div className="p-5 space-y-4">
-                {/* Method Title Header with Latency Badge and Subtitle */}
-                <div className="flex items-center justify-between pb-3 border-b border-slate-800/80">
-                  <div className="flex items-center gap-2">
-                    <div className="p-1.5 rounded-lg bg-slate-800 text-teal-400">
-                      {getMethodIcon()}
+                {/* Method Title Header with Distinct Icon Badge, Type Badge, Latency Badge and Subtitle */}
+                <div className="flex items-center justify-between pb-3 border-b border-slate-800/80 gap-3">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div
+                      className={`p-1.5 rounded-lg border flex items-center justify-center shrink-0 shadow-sm ${methodMeta.iconContainerClass}`}
+                      title={`${methodMeta.code}: ${methodMeta.name} (${methodMeta.badgeLabel})`}
+                    >
+                      {methodMeta.icon({ className: 'h-4 w-4' })}
                     </div>
-                    <div>
-                      <div className="text-sm font-bold text-white tracking-tight flex items-center gap-2">
-                        <span>{result.method.split('(')[0].trim()}</span>
+                    <div className="min-w-0">
+                      <div className="text-sm font-bold text-white tracking-tight flex items-center gap-1.5 flex-wrap">
+                        <span className="truncate">{result.method.split('(')[0].trim()}</span>
+                        <span
+                          className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-md border tracking-tight ${methodMeta.badgeClass}`}
+                        >
+                          {methodMeta.badgeLabel}
+                        </span>
+                        {isDissenting && (
+                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/40 inline-flex items-center gap-1 shadow-sm animate-pulse">
+                            <AlertTriangle className="h-2.5 w-2.5 text-amber-400" />
+                            Dissenting
+                          </span>
+                        )}
                         {headerTag && (
                           <span className="text-[10px] px-1.5 py-0.5 rounded bg-teal-500/10 text-teal-300 border border-teal-500/20 font-semibold">
                             {headerTag}
                           </span>
                         )}
                       </div>
-                      <div className="text-[11px] text-slate-400 font-mono">
+                      <div className="text-[11px] text-slate-400 font-mono truncate">
                         {result.method.includes('(')
                           ? result.method.split('(')[1].replace(')', '')
                           : result.method}

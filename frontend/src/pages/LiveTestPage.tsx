@@ -26,6 +26,7 @@ import { Card } from '../components/Card';
 import { OfflineFallbackBanner } from '../components/OfflineFallbackBanner';
 import { Badge } from '../components/Badge';
 import { MethodResultCard } from '../components/MethodResultCard';
+import { DisagreementConnector } from '../components/DisagreementConnector';
 import { Skeleton, SkeletonMethodCard } from '../components/Skeleton';
 import { Select, type SelectOption } from '../components/Select';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -213,6 +214,10 @@ export const LiveTestPage: React.FC = () => {
 
   // Result Card Density: 'simple' (default, readable in <3s) or 'detailed' (full diagnostician)
   const [viewDensity, setViewDensity] = useState<'simple' | 'detailed'>('simple');
+
+  // DOM Refs for positioning disagreement connectors
+  const compareGridContainerRef = React.useRef<HTMLDivElement>(null);
+  const compareCardRefs = React.useRef<Record<string, HTMLDivElement | null>>({});
 
   // Email Input Source Mode: 'preset' (benchmark presets) or 'custom' (custom fields)
   const [emailInputMode, setEmailInputMode] = useState<'preset' | 'custom'>('preset');
@@ -1310,33 +1315,57 @@ export const LiveTestPage: React.FC = () => {
                   );
                 })()}
 
-                {/* 4-Card Result Grid: Staggers cards after consensus banner slides down */}
-                <motion.div
-                  variants={staggerContainer}
-                  custom={0.28}
-                  initial="hidden"
-                  animate="visible"
-                  className="grid grid-cols-1 sm:grid-cols-2 gap-4"
-                >
-                  {compareResult.results.map((res) => {
-                    const methodCode = res.method.split(' ')[0]; // M1, M2, M3, M4
-                    const styleMeta = compareResult.consensus.method_styles[methodCode];
-                    return (
-                      <motion.div key={res.method} variants={fadeInUp} className="h-full">
-                        <MethodResultCard
-                          result={res}
-                          consensusNote={styleMeta?.note}
-                          consensusStatusLabel={styleMeta?.status_label}
-                          isOpenDetails={Boolean(openDetailsMap[res.method])}
-                          onToggleDetails={() => toggleDetails(res.method)}
-                          onCopySnippet={handleCopySnippet}
-                          copiedKey={copiedKey}
-                          viewDensity={viewDensity}
-                        />
-                      </motion.div>
-                    );
-                  })}
-                </motion.div>
+                {/* 4-Card Result Grid with SVG Disagreement Connector */}
+                <div ref={compareGridContainerRef} className="relative w-full">
+                  {compareResult.consensus.has_disagreement && (
+                    <DisagreementConnector
+                      containerRef={compareGridContainerRef}
+                      cardRefs={compareCardRefs}
+                      compareResult={compareResult}
+                      viewDensity={viewDensity}
+                    />
+                  )}
+
+                  <motion.div
+                    variants={staggerContainer}
+                    custom={0.28}
+                    initial="hidden"
+                    animate="visible"
+                    className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+                  >
+                    {compareResult.results.map((res) => {
+                      const methodCode = res.method.split(' ')[0]; // M1, M2, M3, M4
+                      const styleMeta = compareResult.consensus.method_styles[methodCode];
+                      const isDissenting = Boolean(
+                        compareResult.consensus.has_disagreement &&
+                          (styleMeta?.card_class?.includes('disagreement') ||
+                            styleMeta?.status_label?.toLowerCase().includes('dissenting'))
+                      );
+                      return (
+                        <motion.div
+                          key={res.method}
+                          ref={(el) => {
+                            compareCardRefs.current[methodCode] = el;
+                          }}
+                          variants={fadeInUp}
+                          className="h-full"
+                        >
+                          <MethodResultCard
+                            result={res}
+                            consensusNote={styleMeta?.note}
+                            consensusStatusLabel={styleMeta?.status_label}
+                            isDissenting={isDissenting}
+                            isOpenDetails={Boolean(openDetailsMap[res.method])}
+                            onToggleDetails={() => toggleDetails(res.method)}
+                            onCopySnippet={handleCopySnippet}
+                            copiedKey={copiedKey}
+                            viewDensity={viewDensity}
+                          />
+                        </motion.div>
+                      );
+                    })}
+                  </motion.div>
+                </div>
               </motion.div>
             )}
 
