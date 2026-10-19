@@ -5,6 +5,7 @@ import {
   ChevronDown,
   ChevronUp,
   CheckCircle2,
+  Table,
 } from 'lucide-react';
 import { Card } from '../../components/Card';
 import { Badge } from '../../components/Badge';
@@ -12,6 +13,7 @@ import { SkeletonTableRow } from '../../components/Skeleton';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { MistakeRecord, McNemarResponse, McNemarTestResult } from '../../api/client';
 import { COMPARISON_LABELS } from './types';
+import { SignificanceStripChart } from './SignificanceStripChart';
 
 export interface MistakesAndHypothesisTestsProps {
   isLoading: boolean;
@@ -38,6 +40,7 @@ export const MistakesAndHypothesisTests: React.FC<MistakesAndHypothesisTestsProp
   sortedMcNemar,
 }) => {
   const [showAllMistakes, setShowAllMistakes] = React.useState(false);
+  const [showFullTable, setShowFullTable] = React.useState(false);
   const displayedMistakes = showAllMistakes ? mistakes : mistakes.slice(0, 10);
 
   return (
@@ -294,96 +297,142 @@ export const MistakesAndHypothesisTests: React.FC<MistakesAndHypothesisTestsProp
               transition={{ duration: 0.25, ease: 'easeInOut' }}
               className="overflow-hidden border-t border-slate-800"
             >
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs text-slate-300">
-                  <thead className="bg-slate-950/70 border-b border-slate-800 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                    <tr>
-                      <th className="px-4 py-3">Rank (k)</th>
-                      <th className="px-4 py-3">Hypothesis Comparison</th>
-                      <th className="px-4 py-3 text-right">Discordant (b / c)</th>
-                      <th className="px-4 py-3 text-right">Raw p-value</th>
-                      <th className="px-4 py-3 text-right">Multiplier</th>
-                      <th className="px-4 py-3 text-right">Corrected p-value</th>
-                      <th className="px-4 py-3 text-center">Decision (α=0.05)</th>
-                    </tr>
-                  </thead>
-                  <AnimatePresence mode="wait" initial={false}>
-                    {isLoading ? (
-                      <motion.tbody
-                        key="mcnemar-skeleton"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.2, ease: 'easeInOut' }}
-                        className="divide-y divide-slate-800/60 font-mono text-xs"
-                      >
-                        {Array.from({ length: 6 }).map((_, i) => (
-                          <SkeletonTableRow key={i} columns={7} />
-                        ))}
-                      </motion.tbody>
-                    ) : (
-                      <motion.tbody
-                        key="mcnemar-rows"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.28, ease: 'easeOut' }}
-                        className="divide-y divide-slate-800/60 font-mono text-xs"
-                      >
-                        {sortedMcNemar.map(([key, test]) => {
-                          const isSig = test.significant_after_holm_bonferroni;
-                          const rawP = test.raw_p_value ?? test.p_value;
-                          const hbP = test.holm_bonferroni_p_value ?? test.p_value;
-                          const rank = test.holm_bonferroni_rank ?? '-';
-                          const factor = test.holm_bonferroni_factor ?? '-';
-                          const compLabel = COMPARISON_LABELS[key] || key;
+              {/* 1. Horizontal Significance Strip Chart (Visible at a Glance) */}
+              <SignificanceStripChart
+                sortedMcNemar={sortedMcNemar}
+                isLoading={isLoading}
+              />
 
-                          return (
-                            <tr
-                              key={key}
-                              tabIndex={0}
-                              className="hover:bg-slate-800/60 hover:brightness-105 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-inset focus-visible:bg-slate-800/50 transition-all duration-150 cursor-pointer"
-                            >
-                              <td className="px-4 py-3 font-bold text-slate-400 font-sans">
-                                #{rank}
-                              </td>
-                              <td className="px-4 py-3 font-sans font-medium text-white whitespace-nowrap">
-                                {compLabel}
-                              </td>
-                              <td className="px-4 py-3 text-right text-slate-300">
-                                {test['a_correct_b_wrong (b)']} / {test['a_wrong_b_correct (c)']}
-                              </td>
-                              <td className="px-4 py-3 text-right text-slate-400">
-                                {rawP < 0.0001 ? rawP.toExponential(3) : rawP.toFixed(4)}
-                              </td>
-                              <td className="px-4 py-3 text-right text-slate-400">
-                                {factor}
-                              </td>
-                              <td className="px-4 py-3 text-right font-bold">
-                                <span className={isSig ? 'text-teal-300' : 'text-slate-400'}>
-                                  {hbP < 0.0001 ? hbP.toExponential(3) : hbP.toFixed(4)}
-                                </span>
-                              </td>
-                              <td className="px-4 py-3 text-center">
-                                {isSig ? (
-                                  <Badge variant="legitimate" size="sm" dot>
-                                    <CheckCircle2 className="h-3 w-3 mr-1 inline" />
-                                    Reject H0 (Significant)
-                                  </Badge>
-                                ) : (
-                                  <Badge variant="neutral" size="sm">
-                                    Fail to Reject
-                                  </Badge>
-                                )}
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </motion.tbody>
-                    )}
-                  </AnimatePresence>
-                </table>
+              {/* 2. Full Table Toggle Control */}
+              <div className="px-5 sm:px-6 py-3.5 bg-slate-950/70 border-t border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-2 text-xs text-slate-400">
+                  <Table className="w-4 h-4 text-teal-400 shrink-0" />
+                  <span>
+                    Detailed hypothesis metrics (raw discordant pairs, raw p, multipliers, exact thresholds)
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowFullTable(!showFullTable)}
+                  className="self-start sm:self-auto px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-slate-900 hover:bg-slate-800 text-teal-300 hover:text-teal-200 border border-slate-800 hover:border-slate-700 transition-all flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400"
+                >
+                  {showFullTable ? (
+                    <>
+                      <span>Hide details table</span>
+                      <ChevronUp className="h-3.5 w-3.5" />
+                    </>
+                  ) : (
+                    <>
+                      <span>Show full table ({sortedMcNemar.length} comparisons)</span>
+                      <ChevronDown className="h-3.5 w-3.5" />
+                    </>
+                  )}
+                </button>
               </div>
+
+              {/* 3. Collapsible Full Details Table (Collapsed by Default) */}
+              <AnimatePresence initial={false}>
+                {showFullTable && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.25, ease: 'easeInOut' }}
+                    className="overflow-hidden border-t border-slate-800"
+                  >
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left text-xs text-slate-300">
+                        <thead className="bg-slate-950/70 border-b border-slate-800 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                          <tr>
+                            <th className="px-4 py-3">Rank (k)</th>
+                            <th className="px-4 py-3">Hypothesis Comparison</th>
+                            <th className="px-4 py-3 text-right">Discordant (b / c)</th>
+                            <th className="px-4 py-3 text-right">Raw p-value</th>
+                            <th className="px-4 py-3 text-right">Multiplier</th>
+                            <th className="px-4 py-3 text-right">Corrected p-value</th>
+                            <th className="px-4 py-3 text-center">Decision (α=0.05)</th>
+                          </tr>
+                        </thead>
+                        <AnimatePresence mode="wait" initial={false}>
+                          {isLoading ? (
+                            <motion.tbody
+                              key="mcnemar-skeleton"
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              exit={{ opacity: 0 }}
+                              transition={{ duration: 0.2, ease: 'easeInOut' }}
+                              className="divide-y divide-slate-800/60 font-mono text-xs"
+                            >
+                              {Array.from({ length: 6 }).map((_, i) => (
+                                <SkeletonTableRow key={i} columns={7} />
+                              ))}
+                            </motion.tbody>
+                          ) : (
+                            <motion.tbody
+                              key="mcnemar-rows"
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              exit={{ opacity: 0 }}
+                              transition={{ duration: 0.28, ease: 'easeOut' }}
+                              className="divide-y divide-slate-800/60 font-mono text-xs"
+                            >
+                              {sortedMcNemar.map(([key, test]) => {
+                                const isSig = test.significant_after_holm_bonferroni;
+                                const rawP = test.raw_p_value ?? test.p_value;
+                                const hbP = test.holm_bonferroni_p_value ?? test.p_value;
+                                const rank = test.holm_bonferroni_rank ?? '-';
+                                const factor = test.holm_bonferroni_factor ?? '-';
+                                const compLabel = COMPARISON_LABELS[key] || key;
+
+                                return (
+                                  <tr
+                                    key={key}
+                                    tabIndex={0}
+                                    className="hover:bg-slate-800/60 hover:brightness-105 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-inset focus-visible:bg-slate-800/50 transition-all duration-150 cursor-pointer"
+                                  >
+                                    <td className="px-4 py-3 font-bold text-slate-400 font-sans">
+                                      #{rank}
+                                    </td>
+                                    <td className="px-4 py-3 font-sans font-medium text-white whitespace-nowrap">
+                                      {compLabel}
+                                    </td>
+                                    <td className="px-4 py-3 text-right text-slate-300">
+                                      {test['a_correct_b_wrong (b)']} / {test['a_wrong_b_correct (c)']}
+                                    </td>
+                                    <td className="px-4 py-3 text-right text-slate-400">
+                                      {rawP < 0.0001 ? rawP.toExponential(3) : rawP.toFixed(4)}
+                                    </td>
+                                    <td className="px-4 py-3 text-right text-slate-400">
+                                      {factor}
+                                    </td>
+                                    <td className="px-4 py-3 text-right font-bold">
+                                      <span className={isSig ? 'text-teal-300' : 'text-slate-400'}>
+                                        {hbP < 0.0001 ? hbP.toExponential(3) : hbP.toFixed(4)}
+                                      </span>
+                                    </td>
+                                    <td className="px-4 py-3 text-center">
+                                      {isSig ? (
+                                        <Badge variant="legitimate" size="sm" dot>
+                                          <CheckCircle2 className="h-3 w-3 mr-1 inline" />
+                                          Reject H0 (Significant)
+                                        </Badge>
+                                      ) : (
+                                        <Badge variant="neutral" size="sm">
+                                          Fail to Reject
+                                        </Badge>
+                                      )}
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </motion.tbody>
+                          )}
+                        </AnimatePresence>
+                      </table>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
           )}
         </AnimatePresence>
