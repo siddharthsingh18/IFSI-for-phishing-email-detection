@@ -18,6 +18,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { type ClassificationResult } from '../api/client';
 import { Card, type CardVariant } from './Card';
 import { Badge } from './Badge';
+import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 
 export interface MethodVisualMeta {
   code: 'M1' | 'M2' | 'M3' | 'M4';
@@ -138,6 +139,7 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
   const shortMethodMatch = result.method.match(/\bM[1-4]\b/i);
   const shortMethodName = shortMethodMatch ? shortMethodMatch[0].toUpperCase() : result.method.split(/[:(]/)[0].trim();
   const methodMeta = getMethodMeta(result.method);
+  const shouldReduceMotion = usePrefersReducedMotion();
 
   const chosenVariant = cardVariant || (isDecoupledM4 ? 'accent' : 'default');
 
@@ -191,7 +193,7 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
                       {methodMeta.badgeLabel}
                     </span>
                     {isDissenting && (
-                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/40 inline-flex items-center gap-1 shadow-sm animate-pulse">
+                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/40 inline-flex items-center gap-1 shadow-sm ${shouldReduceMotion ? '' : 'animate-pulse'}`}>
                         <AlertTriangle className="h-2.5 w-2.5 text-amber-400" />
                         Dissenting
                       </span>
@@ -206,7 +208,7 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
                       title="Prompt Injection DETECTED"
                       className="p-1 rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/50 shadow-sm shadow-amber-500/20"
                     >
-                      <ShieldAlert className="h-4 w-4 animate-pulse" />
+                      <ShieldAlert className={`h-4 w-4 ${shouldReduceMotion ? '' : 'animate-pulse'}`} />
                     </div>
                   ) : result.method.startsWith('M1') ? (
                     <span
@@ -229,9 +231,9 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
               {/* Large, Prominent Verdict Badge with scale-in pop (1.0 -> 1.08 -> 1.0) */}
               <div className="py-2.5 flex items-center justify-center">
                 <motion.div
-                  initial={{ scale: 1.0, opacity: 0 }}
-                  animate={{ scale: [1.0, 1.08, 1.0], opacity: 1 }}
-                  transition={{
+                  initial={shouldReduceMotion ? { scale: 1, opacity: 1 } : { scale: 1.0, opacity: 0 }}
+                  animate={shouldReduceMotion ? { scale: 1, opacity: 1 } : { scale: [1.0, 1.08, 1.0], opacity: 1 }}
+                  transition={shouldReduceMotion ? { duration: 0 } : {
                     scale: { duration: 0.42, times: [0, 0.5, 1], ease: [0.16, 1, 0.3, 1], delay: 0.1 },
                     opacity: { duration: 0.2, ease: 'easeOut' },
                   }}
@@ -262,7 +264,7 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
                         Math.min(100, Number(confidencePercent))
                       )}%`,
                     }}
-                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                     className={`h-full rounded-full ${
                       !result.is_valid
                         ? 'bg-amber-500/40'
@@ -307,7 +309,7 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
                           {methodMeta.badgeLabel}
                         </span>
                         {isDissenting && (
-                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/40 inline-flex items-center gap-1 shadow-sm animate-pulse">
+                          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/40 inline-flex items-center gap-1 shadow-sm ${shouldReduceMotion ? '' : 'animate-pulse'}`}>
                             <AlertTriangle className="h-2.5 w-2.5 text-amber-400" />
                             Dissenting
                           </span>
@@ -382,9 +384,9 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
                         </span>
                       )}
                       <motion.div
-                        initial={{ scale: 1.0, opacity: 0 }}
-                        animate={{ scale: [1.0, 1.08, 1.0], opacity: 1 }}
-                        transition={{
+                        initial={shouldReduceMotion ? { scale: 1, opacity: 1 } : { scale: 1.0, opacity: 0 }}
+                        animate={shouldReduceMotion ? { scale: 1, opacity: 1 } : { scale: [1.0, 1.08, 1.0], opacity: 1 }}
+                        transition={shouldReduceMotion ? { duration: 0 } : {
                           scale: { duration: 0.42, times: [0, 0.5, 1], ease: [0.16, 1, 0.3, 1], delay: 0.1 },
                           opacity: { duration: 0.2, ease: 'easeOut' },
                         }}

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useLayoutEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertTriangle, GitCompare } from 'lucide-react';
 import { type CompareResponse } from '../api/client';
+import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 
 export interface DisagreementConnectorProps {
   containerRef: React.RefObject<HTMLDivElement | null>;
@@ -28,6 +29,7 @@ export const DisagreementConnector: React.FC<DisagreementConnectorProps> = ({
   compareResult,
   viewDensity = 'simple',
 }) => {
+  const shouldReduceMotion = usePrefersReducedMotion();
   const [boxes, setBoxes] = useState<Record<string, CardBox>>({});
   const [containerDimensions, setContainerDimensions] = useState<{ width: number; height: number }>({
     width: 0,
@@ -165,9 +167,9 @@ export const DisagreementConnector: React.FC<DisagreementConnectorProps> = ({
             strokeWidth={2}
             strokeDasharray="6 4"
             filter="url(#splitGlow)"
-            initial={{ pathLength: 0, opacity: 0 }}
+            initial={shouldReduceMotion ? { pathLength: 1, opacity: 0.85 } : { pathLength: 0, opacity: 0 }}
             animate={{ pathLength: 1, opacity: 0.85 }}
-            transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+            transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.65, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
           />
 
           {/* Group Nodes */}
@@ -177,9 +179,9 @@ export const DisagreementConnector: React.FC<DisagreementConnectorProps> = ({
 
         {/* Center Pill */}
         <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
+          initial={shouldReduceMotion ? { opacity: 0 } : { scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.35, delay: 0.4 }}
+          transition={shouldReduceMotion ? { duration: 0.1 } : { duration: 0.35, delay: 0.4 }}
           style={{
             position: 'absolute',
             left: midX,
@@ -227,8 +229,8 @@ export const DisagreementConnector: React.FC<DisagreementConnectorProps> = ({
     const row1Top = row1Cards.length > 0 ? Math.min(...row1Cards.map((b) => b.top)) : containerDimensions.height / 2 + 8;
     centerJunctionY = (row0Bottom + row1Top) / 2;
   } else {
-    // Single column: center line along right or left edge
-    centerJunctionX = dissentBox.right - 4;
+    // Single column: gutter line along right inner edge
+    centerJunctionX = dissentBox.right - 10;
     centerJunctionY = dissentBox.centerY;
   }
 
@@ -238,7 +240,7 @@ export const DisagreementConnector: React.FC<DisagreementConnectorProps> = ({
       ? dissentBox.centerX < centerJunctionX
         ? dissentBox.right
         : dissentBox.left
-      : dissentBox.right - 10,
+      : dissentBox.right - 14,
     y: isTwoColumn
       ? dissentBox.centerY < centerJunctionY
         ? dissentBox.bottom - Math.min(28, dissentBox.height / 3)
@@ -254,7 +256,7 @@ export const DisagreementConnector: React.FC<DisagreementConnectorProps> = ({
         ? mBox.centerX < centerJunctionX
           ? mBox.right
           : mBox.left
-        : mBox.right - 10,
+        : mBox.right - 14,
       y: isTwoColumn
         ? mBox.centerY < centerJunctionY
           ? mBox.bottom - Math.min(28, mBox.height / 3)
@@ -270,8 +272,8 @@ export const DisagreementConnector: React.FC<DisagreementConnectorProps> = ({
 
   // Bracket spine path coordinates
   // Generates an SVG bracket grouping the majority cards and pointing to the dissenting card
-  const bracketOffsetX = isTwoColumn ? (centerJunctionX - dissentAnchor.x) * 0.35 : 12;
-  const bracketSpineX = centerJunctionX + bracketOffsetX;
+  const bracketOffsetX = isTwoColumn ? (centerJunctionX - dissentAnchor.x) * 0.35 : 6;
+  const bracketSpineX = isTwoColumn ? centerJunctionX + bracketOffsetX : dissentBox.right - 6;
 
   // Bracket Path: An elegant bracket spanning majority nodes with a center cusp pointing to dissenting card
   const bracketPath = `M ${majorityAnchors[0].x} ${majorityAnchors[0].y} Q ${bracketSpineX} ${majorityAnchors[0].y}, ${bracketSpineX} ${(majorityAnchors[0].y + bracketMidY) / 2} T ${bracketSpineX} ${bracketMidY} L ${dissentAnchor.x} ${dissentAnchor.y}`;
@@ -279,10 +281,10 @@ export const DisagreementConnector: React.FC<DisagreementConnectorProps> = ({
   // Midpoint for floating badge
   const calloutX = isTwoColumn
     ? (dissentAnchor.x + centerJunctionX) / 2
-    : dissentAnchor.x - 40;
+    : dissentBox.centerX;
   const calloutY = isTwoColumn
     ? (dissentAnchor.y + centerJunctionY) / 2
-    : dissentAnchor.y;
+    : dissentBox.bottom + 8;
 
   return (
     <div className="absolute inset-0 pointer-events-none z-20 overflow-visible">
@@ -340,9 +342,9 @@ export const DisagreementConnector: React.FC<DisagreementConnectorProps> = ({
                 strokeWidth={3.5}
                 strokeOpacity={0.25}
                 filter="url(#dissentGlow)"
-                initial={{ pathLength: 0, opacity: 0 }}
+                initial={shouldReduceMotion ? { pathLength: 1, opacity: 0.25 } : { pathLength: 0, opacity: 0 }}
                 animate={{ pathLength: 1, opacity: 0.35 }}
-                transition={{
+                transition={shouldReduceMotion ? { duration: 0 } : {
                   duration: 0.7,
                   ease: [0.16, 1, 0.3, 1],
                   delay: 0.15,
@@ -356,9 +358,9 @@ export const DisagreementConnector: React.FC<DisagreementConnectorProps> = ({
                 stroke="url(#dissentLineGradient)"
                 strokeWidth={2}
                 strokeDasharray="6 3.5"
-                initial={{ pathLength: 0, opacity: 0 }}
+                initial={shouldReduceMotion ? { pathLength: 1, opacity: 0.9 } : { pathLength: 0, opacity: 0 }}
                 animate={{ pathLength: 1, opacity: 0.9 }}
-                transition={{
+                transition={shouldReduceMotion ? { duration: 0 } : {
                   duration: 0.75,
                   ease: [0.16, 1, 0.3, 1],
                   delay: 0.2,
@@ -373,9 +375,9 @@ export const DisagreementConnector: React.FC<DisagreementConnectorProps> = ({
                 fill="#14b8a6"
                 stroke="#0f172a"
                 strokeWidth={1.5}
-                initial={{ scale: 0, opacity: 0 }}
+                initial={shouldReduceMotion ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.3, delay: 0.55 }}
+                transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.3, delay: 0.55 }}
               />
             </g>
           );
@@ -390,15 +392,15 @@ export const DisagreementConnector: React.FC<DisagreementConnectorProps> = ({
             strokeWidth={1.5}
             strokeOpacity={0.4}
             strokeDasharray="4 2"
-            initial={{ pathLength: 0, opacity: 0 }}
+            initial={shouldReduceMotion ? { pathLength: 1, opacity: 0.5 } : { pathLength: 0, opacity: 0 }}
             animate={{ pathLength: 1, opacity: 0.5 }}
-            transition={{ duration: 0.6, delay: 0.35 }}
+            transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.6, delay: 0.35 }}
           />
         )}
 
         {/* 3. Dissenting Card Origin Node: Glowing pulse ring & core */}
         <g>
-          {/* Pulsing ripple ring */}
+          {/* Pulsing ripple ring (static when reduced motion preferred) */}
           <motion.circle
             cx={dissentAnchor.x}
             cy={dissentAnchor.y}
@@ -407,8 +409,8 @@ export const DisagreementConnector: React.FC<DisagreementConnectorProps> = ({
             stroke="#f59e0b"
             strokeWidth={1.5}
             initial={{ scale: 0.8, opacity: 0.8 }}
-            animate={{ scale: [1, 1.45, 1], opacity: [0.7, 0.15, 0.7] }}
-            transition={{
+            animate={shouldReduceMotion ? { scale: 1, opacity: 0.4 } : { scale: [1, 1.45, 1], opacity: [0.7, 0.15, 0.7] }}
+            transition={shouldReduceMotion ? { duration: 0 } : {
               duration: 2.2,
               repeat: Infinity,
               ease: 'easeInOut',
@@ -423,9 +425,9 @@ export const DisagreementConnector: React.FC<DisagreementConnectorProps> = ({
             fill="#f59e0b"
             stroke="#0f172a"
             strokeWidth={2}
-            initial={{ scale: 0 }}
+            initial={shouldReduceMotion ? { scale: 1 } : { scale: 0 }}
             animate={{ scale: 1 }}
-            transition={{ type: 'spring', stiffness: 350, damping: 20, delay: 0.2 }}
+            transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 350, damping: 20, delay: 0.2 }}
           />
 
           <circle cx={dissentAnchor.x} cy={dissentAnchor.y} r={2} fill="#ffffff" />
@@ -435,10 +437,10 @@ export const DisagreementConnector: React.FC<DisagreementConnectorProps> = ({
       {/* 4. Glassmorphic Connecting Callout Pill */}
       <AnimatePresence>
         <motion.div
-          initial={{ scale: 0.85, opacity: 0, y: -6 }}
+          initial={shouldReduceMotion ? { opacity: 0 } : { scale: 0.85, opacity: 0, y: -6 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
-          exit={{ scale: 0.85, opacity: 0 }}
-          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
+          exit={{ scale: shouldReduceMotion ? 1 : 0.85, opacity: 0 }}
+          transition={shouldReduceMotion ? { duration: 0.1 } : { duration: 0.35, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
           style={{
             position: 'absolute',
             left: calloutX,
@@ -448,7 +450,9 @@ export const DisagreementConnector: React.FC<DisagreementConnectorProps> = ({
           className="pointer-events-auto flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900/95 border border-amber-500/40 shadow-xl shadow-amber-500/15 text-[11px] font-bold text-amber-300 backdrop-blur-md select-none will-change-transform"
         >
           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+            {!shouldReduceMotion && (
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+            )}
             <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
           </span>
           <AlertTriangle className="h-3 w-3 text-amber-400 shrink-0" />

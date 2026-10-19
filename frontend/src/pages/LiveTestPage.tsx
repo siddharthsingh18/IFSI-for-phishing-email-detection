@@ -31,6 +31,7 @@ import { Skeleton, SkeletonMethodCard } from '../components/Skeleton';
 import { Select, type SelectOption } from '../components/Select';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fadeInUp, staggerContainer } from '../lib/motion';
+import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 
 const ARCHITECTURE_OPTIONS: SelectOption<string>[] = [
   {
@@ -213,7 +214,31 @@ export const LiveTestPage: React.FC = () => {
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   // Result Card Density: 'simple' (default, readable in <3s) or 'detailed' (full diagnostician)
-  const [viewDensity, setViewDensity] = useState<'simple' | 'detailed'>('simple');
+  // Persists across switches between single-method and Compare All modes, and page reloads
+  const [viewDensity, setViewDensity] = useState<'simple' | 'detailed'>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('ifsi_view_density');
+        if (saved === 'simple' || saved === 'detailed') return saved;
+      } catch {
+        // ignore storage errors
+      }
+    }
+    return 'simple';
+  });
+
+  const handleSetViewDensity = (density: 'simple' | 'detailed') => {
+    setViewDensity(density);
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('ifsi_view_density', density);
+      } catch {
+        // ignore storage errors
+      }
+    }
+  };
+
+  const shouldReduceMotion = usePrefersReducedMotion();
 
   // DOM Refs for positioning disagreement connectors
   const compareGridContainerRef = React.useRef<HTMLDivElement>(null);
@@ -484,7 +509,7 @@ export const LiveTestPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Column: Email Composer & Configuration Workspace (5 cols on lg) */}
         <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-24">
-          <Card variant="elevated" padding="lg">
+          <Card variant="elevated" padding="none" className="p-4 sm:p-6 lg:p-7">
             <div className="space-y-6">
               {/* Header & Preset Status Badge */}
               <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800/80">
@@ -537,7 +562,7 @@ export const LiveTestPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="space-y-3.5 pl-9">
+                <div className="space-y-3.5 pl-0 sm:pl-9 pt-1 sm:pt-0">
                   {/* Target Architecture Custom Select */}
                   <Select
                     id="architecture-select"
@@ -898,7 +923,7 @@ export const LiveTestPage: React.FC = () => {
                         opacity: { duration: 0.26, ease: 'easeInOut' },
                         scale: { duration: 0.26, ease: 'easeOut' },
                       }}
-                      className="pl-9 overflow-hidden"
+                      className="pl-0 sm:pl-9 pt-1 sm:pt-0 overflow-hidden"
                     >
                       <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-3.5 space-y-3">
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -952,28 +977,28 @@ export const LiveTestPage: React.FC = () => {
                 </div>
               )}
 
-              {/* Primary Action Buttons */}
-              <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-slate-800/80">
+              {/* Primary Action Buttons: Stack cleanly on mobile (<640px) */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-4 border-t border-slate-800/80">
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
                     onClick={handleResetForm}
                     disabled={isLoading}
-                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 transition-all duration-150 hover:scale-[1.02] hover:brightness-105 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 transition-all duration-150 hover:scale-[1.02] hover:brightness-105 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <RotateCcw className="h-3.5 w-3.5" />
                     <span>Reset</span>
                   </button>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-2.5">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full sm:w-auto">
                   {/* Compare All Button with smooth rotational icon morph */}
                   <button
                     type="button"
                     id="compare-all-btn"
                     onClick={handleRunCompare}
                     disabled={isLoading}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-800/90 px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-slate-100 elevation-card hover:elevation-hover hover:bg-slate-700 hover:border-slate-600 transition-all duration-150 hover:scale-[1.02] hover:brightness-110 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:opacity-60 disabled:cursor-not-allowed min-w-[165px]"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-800/90 px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-slate-100 elevation-card hover:elevation-hover hover:bg-slate-700 hover:border-slate-600 transition-all duration-150 hover:scale-[1.02] hover:brightness-110 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:opacity-60 disabled:cursor-not-allowed min-w-0 sm:min-w-[165px]"
                   >
                     <div className="relative w-4 h-4 flex items-center justify-center flex-shrink-0">
                       <AnimatePresence mode="wait" initial={false}>
@@ -1026,7 +1051,7 @@ export const LiveTestPage: React.FC = () => {
                     id="classify-single-btn"
                     onClick={handleRunSingle}
                     disabled={isLoading}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-teal-500 px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-950 elevation-card hover:elevation-hover hover:bg-teal-400 transition-all duration-150 hover:scale-[1.02] hover:brightness-110 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:opacity-60 disabled:cursor-not-allowed min-w-[140px]"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-teal-500 px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-950 elevation-card hover:elevation-hover hover:bg-teal-400 transition-all duration-150 hover:scale-[1.02] hover:brightness-110 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:opacity-60 disabled:cursor-not-allowed min-w-0 sm:min-w-[140px]"
                   >
                     <div className="relative w-4 h-4 flex items-center justify-center flex-shrink-0">
                       <AnimatePresence mode="wait" initial={false}>
@@ -1100,19 +1125,19 @@ export const LiveTestPage: React.FC = () => {
                   </Badge>
                 )}
 
-                {/* Pill-Style Segmented Control with animated sliding active state */}
+                {/* Pill-Style Segmented Control with accessible touch target at 375px */}
                 <div
                   role="tablist"
                   aria-label="Result detail view density"
-                  className="inline-flex p-1 rounded-xl bg-slate-900 border border-slate-800/90 shadow-inner"
+                  className="inline-flex p-1 rounded-xl bg-slate-900 border border-slate-800/90 shadow-inner w-full sm:w-auto"
                 >
                   <button
                     type="button"
                     role="tab"
                     id="view-toggle-simple"
                     aria-selected={viewDensity === 'simple'}
-                    onClick={() => setViewDensity('simple')}
-                    className={`relative px-3 py-1 text-xs font-semibold rounded-lg transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 ${
+                    onClick={() => handleSetViewDensity('simple')}
+                    className={`relative flex-1 sm:flex-initial px-3.5 py-2 sm:py-1.5 min-h-[38px] sm:min-h-0 flex items-center justify-center text-xs font-semibold rounded-lg transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 touch-manipulation ${
                       viewDensity === 'simple'
                         ? 'text-white'
                         : 'text-slate-400 hover:text-slate-200'
@@ -1122,7 +1147,7 @@ export const LiveTestPage: React.FC = () => {
                       <motion.span
                         layoutId="active-view-density-pill"
                         className="absolute inset-0 rounded-lg bg-teal-500/20 border border-teal-500/40 shadow-sm"
-                        transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                        transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 500, damping: 35 }}
                       />
                     )}
                     <span className="relative z-10 flex items-center gap-1.5">
@@ -1136,8 +1161,8 @@ export const LiveTestPage: React.FC = () => {
                     role="tab"
                     id="view-toggle-detailed"
                     aria-selected={viewDensity === 'detailed'}
-                    onClick={() => setViewDensity('detailed')}
-                    className={`relative px-3 py-1 text-xs font-semibold rounded-lg transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 ${
+                    onClick={() => handleSetViewDensity('detailed')}
+                    className={`relative flex-1 sm:flex-initial px-3.5 py-2 sm:py-1.5 min-h-[38px] sm:min-h-0 flex items-center justify-center text-xs font-semibold rounded-lg transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 touch-manipulation ${
                       viewDensity === 'detailed'
                         ? 'text-white'
                         : 'text-slate-400 hover:text-slate-200'
@@ -1147,7 +1172,7 @@ export const LiveTestPage: React.FC = () => {
                       <motion.span
                         layoutId="active-view-density-pill"
                         className="absolute inset-0 rounded-lg bg-teal-500/20 border border-teal-500/40 shadow-sm"
-                        transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                        transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 500, damping: 35 }}
                       />
                     )}
                     <span className="relative z-10 flex items-center gap-1.5">
