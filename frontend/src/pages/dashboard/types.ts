@@ -35,6 +35,10 @@ export interface MetricTableRow {
   invalidRate: number;
   latencySeconds: number;
   latencyDisplay: string;
+  tp: number;
+  fp: number;
+  tn: number;
+  fn: number;
 }
 
 export type SortField =
@@ -66,6 +70,10 @@ export const PILOT_ROWS: MetricTableRow[] = [
     invalidRate: 0.0,
     latencySeconds: 1.150,
     latencyDisplay: '1.150 s',
+    tp: 15,
+    fp: 1,
+    tn: 32,
+    fn: 2,
   },
   {
     id: 'pilot_m2_unmarked_llama',
@@ -84,6 +92,10 @@ export const PILOT_ROWS: MetricTableRow[] = [
     invalidRate: 0.0,
     latencySeconds: 1.190,
     latencyDisplay: '1.190 s',
+    tp: 4,
+    fp: 15,
+    tn: 18,
+    fn: 13,
   },
   {
     id: 'pilot_m3_unmarked_llama',
@@ -102,6 +114,10 @@ export const PILOT_ROWS: MetricTableRow[] = [
     invalidRate: 0.0,
     latencySeconds: 2.140,
     latencyDisplay: '2.140 s',
+    tp: 3,
+    fp: 17,
+    tn: 16,
+    fn: 14,
   },
   {
     id: 'pilot_m4_unmarked_llama',
@@ -120,6 +136,10 @@ export const PILOT_ROWS: MetricTableRow[] = [
     invalidRate: 0.0,
     latencySeconds: 2.650,
     latencyDisplay: '2.650 s',
+    tp: 16,
+    fp: 13,
+    tn: 20,
+    fn: 1,
   },
 ];
 

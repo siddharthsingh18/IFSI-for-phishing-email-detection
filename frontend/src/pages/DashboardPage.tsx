@@ -23,6 +23,7 @@ import {
 } from './dashboard/types';
 import { DashboardKpiTiles } from './dashboard/DashboardKpiTiles';
 import { DashboardFilters } from './dashboard/DashboardFilters';
+import { ConfusionMatrixHeatmap } from './dashboard/ConfusionMatrixHeatmap';
 import { MetricsTable } from './dashboard/MetricsTable';
 import { PerformanceCharts } from './dashboard/PerformanceCharts';
 import { MistakesAndHypothesisTests } from './dashboard/MistakesAndHypothesisTests';
@@ -109,6 +110,10 @@ export const DashboardPage: React.FC = () => {
         invalidRate: Number((met as any).invalid_schema_rate || 0),
         latencySeconds: latSec,
         latencyDisplay: latStr,
+        tp: met.true_positives ?? 0,
+        fp: met.false_positives ?? 0,
+        tn: met.true_negatives ?? 0,
+        fn: met.false_negatives ?? 0,
       });
     });
 
@@ -328,7 +333,18 @@ export const DashboardPage: React.FC = () => {
         onResetFilters={handleResetFilters}
       />
 
-      {/* SECTIONS 3 & 4: DATA-DEPENDENT TABLE & CHARTS (Cross-fades on filter change) */}
+      {/* SECTION 3: CONFUSION MATRIX HEATMAP */}
+      <ConfusionMatrixHeatmap
+        isLoading={isLoading}
+        filteredRows={filteredRows}
+        filterMethod={filterMethod}
+        setFilterMethod={setFilterMethod}
+        filterCondition={filterCondition}
+        setFilterCondition={setFilterCondition}
+        filterModel={filterModel}
+      />
+
+      {/* SECTIONS 4 & 5: DATA-DEPENDENT TABLE & CHARTS (Cross-fades on filter change) */}
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={filterKey}
