@@ -30,6 +30,7 @@ export interface MetricTableRow {
   recall: number;
   fpr: number;
   precision: number;
+  specificity: number;
   f1: number;
   invalidRate: number;
   latencySeconds: number;
@@ -60,6 +61,7 @@ export const PILOT_ROWS: MetricTableRow[] = [
     recall: 0.882,
     fpr: 0.030,
     precision: 0.938,
+    specificity: 0.970,
     f1: 0.909,
     invalidRate: 0.0,
     latencySeconds: 1.150,
@@ -77,6 +79,7 @@ export const PILOT_ROWS: MetricTableRow[] = [
     recall: 0.235,
     fpr: 0.455,
     precision: 0.211,
+    specificity: 0.545,
     f1: 0.222,
     invalidRate: 0.0,
     latencySeconds: 1.190,
@@ -94,6 +97,7 @@ export const PILOT_ROWS: MetricTableRow[] = [
     recall: 0.176,
     fpr: 0.515,
     precision: 0.158,
+    specificity: 0.485,
     f1: 0.167,
     invalidRate: 0.0,
     latencySeconds: 2.140,
@@ -111,6 +115,7 @@ export const PILOT_ROWS: MetricTableRow[] = [
     recall: 0.941,
     fpr: 0.394,
     precision: 0.552,
+    specificity: 0.606,
     f1: 0.696,
     invalidRate: 0.0,
     latencySeconds: 2.650,

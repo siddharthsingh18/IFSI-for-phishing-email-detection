@@ -102,6 +102,7 @@ export const DashboardPage: React.FC = () => {
         recall: met.recall,
         fpr: met.fpr,
         precision: met.precision,
+        specificity: met.specificity ?? (1 - met.fpr),
         f1: met.f1,
         invalidRate: Number((met as any).invalid_schema_rate || 0),
         latencySeconds: latSec,

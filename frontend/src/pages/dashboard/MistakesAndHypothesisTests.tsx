@@ -37,6 +37,9 @@ export const MistakesAndHypothesisTests: React.FC<MistakesAndHypothesisTestsProp
   setShowMcNemar,
   sortedMcNemar,
 }) => {
+  const [showAllMistakes, setShowAllMistakes] = React.useState(false);
+  const displayedMistakes = showAllMistakes ? mistakes : mistakes.slice(0, 10);
+
   return (
     <>
       {/* =========================================================================
@@ -61,10 +64,10 @@ export const MistakesAndHypothesisTests: React.FC<MistakesAndHypothesisTestsProp
             </div>
             <div>
               <h3 className="text-base font-bold text-white tracking-tight">
-                Worst High-Confidence Misclassifications ({mistakes.length} cases)
+                Worst High-Confidence Misclassifications ({displayedMistakes.length} of {mistakes.length} cases)
               </h3>
               <p className="text-xs text-slate-400">
-                Table only. Click any row to expand the full email text inline.
+                Top high-confidence model errors. Click any row to expand the full email text inline.
               </p>
             </div>
           </div>
@@ -120,7 +123,7 @@ export const MistakesAndHypothesisTests: React.FC<MistakesAndHypothesisTestsProp
                         transition={{ duration: 0.28, ease: 'easeOut' }}
                         className="divide-y divide-slate-800/60 font-sans text-xs"
                       >
-                        {mistakes.map((m, idx) => {
+                        {displayedMistakes.map((m, idx) => {
                           const isExpanded = expandedMistakeId === `${m.id}-${m.method}-${idx}`;
                           const rowKey = `${m.id}-${m.method}-${idx}`;
 
@@ -213,6 +216,33 @@ export const MistakesAndHypothesisTests: React.FC<MistakesAndHypothesisTestsProp
                     )}
                   </AnimatePresence>
                 </table>
+
+                {/* Show All / Show Top 10 Expand Control */}
+                {mistakes.length > 10 && (
+                  <div className="p-3 bg-slate-950/60 border-t border-slate-800 flex items-center justify-between gap-4">
+                    <span className="text-xs text-slate-400">
+                      Showing <strong className="text-white font-semibold">{displayedMistakes.length}</strong> of{' '}
+                      <strong className="text-white font-semibold">{mistakes.length}</strong> worst misclassifications
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setShowAllMistakes(!showAllMistakes)}
+                      className="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-slate-900 hover:bg-slate-800 text-teal-300 hover:text-teal-200 border border-slate-800 hover:border-slate-700 transition-all flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400"
+                    >
+                      {showAllMistakes ? (
+                        <>
+                          <span>Show top 10 only</span>
+                          <ChevronUp className="h-3.5 w-3.5" />
+                        </>
+                      ) : (
+                        <>
+                          <span>Show all {mistakes.length} cases</span>
+                          <ChevronDown className="h-3.5 w-3.5" />
+                        </>
+                      )}
+                    </button>
+                  </div>
+                )}
               </div>
             </motion.div>
           )}
