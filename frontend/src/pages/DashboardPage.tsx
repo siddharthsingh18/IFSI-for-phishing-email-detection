@@ -18,6 +18,8 @@ import {
   PILOT_ROWS,
   type MetricTableRow,
   type SortField,
+  type GroupedBarPair,
+  buildGroupedChartData,
 } from './dashboard/types';
 import { DashboardKpiTiles } from './dashboard/DashboardKpiTiles';
 import { DashboardFilters } from './dashboard/DashboardFilters';
@@ -175,7 +177,7 @@ export const DashboardPage: React.FC = () => {
     setFilterModel('all');
   };
 
-  // Recharts Data Transformation
+  // Recharts Data Transformation (Operational Latency)
   const chartData = useMemo(() => {
     return sortedRows.map((r) => ({
       name: `${r.methodCode} (${r.condition})`,
@@ -188,6 +190,11 @@ export const DashboardPage: React.FC = () => {
       latencyMs: Number((r.latencySeconds * 1000).toFixed(1)),
     }));
   }, [sortedRows]);
+
+  // Grouped Bar Chart Data (Recall vs FPR grouped by method M1-M4 with 3 bar-pairs Clean/Marked/Unmarked)
+  const groupedChartData: GroupedBarPair[] = useMemo(() => {
+    return buildGroupedChartData(allRows, filterMethod, filterCondition, filterModel);
+  }, [allRows, filterMethod, filterCondition, filterModel]);
 
   // Top KPI calculations
   const topStats = useMemo(() => {
@@ -344,7 +351,9 @@ export const DashboardPage: React.FC = () => {
           <PerformanceCharts
             isLoading={isLoading}
             chartData={chartData}
+            groupedChartData={groupedChartData}
             chartColors={chartColors}
+            filterModel={filterModel}
           />
         </motion.div>
       </AnimatePresence>

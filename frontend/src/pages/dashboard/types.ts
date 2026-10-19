@@ -122,3 +122,106 @@ export const PILOT_ROWS: MetricTableRow[] = [
     latencyDisplay: '2.650 s',
   },
 ];
+
+export interface GroupedBarPair {
+  id: string;
+  methodCode: string;
+  methodLabel: string;
+  methodFullName: string;
+  condition: string;
+  recallPct: number;
+  fprPct: number;
+  accuracyPct: number;
+  f1: number;
+  model: string;
+  sampleSize: string;
+  isGroupStart: boolean;
+  isGroupCenter: boolean;
+  isGroupEnd: boolean;
+  groupIndex: number;
+  groupLength: number;
+  methodIndex: number;
+}
+
+export function buildGroupedChartData(
+  allRows: MetricTableRow[],
+  filterMethod: string,
+  filterCondition: string,
+  filterModel: string
+): GroupedBarPair[] {
+  const methodKeys = filterMethod === 'all' ? ['M1', 'M2', 'M3', 'M4'] : [filterMethod];
+  const conditions =
+    filterCondition === 'all'
+      ? ['Clean', 'Marked', 'Unmarked']
+      : [filterCondition.charAt(0).toUpperCase() + filterCondition.slice(1).toLowerCase()];
+
+  const shortMethodNames: Record<string, string> = {
+    M1: 'M1: TF-IDF',
+    M2: 'M2: Zero-Shot',
+    M3: 'M3: RAG Comb.',
+    M4: 'M4: IFSI',
+  };
+
+  const results: GroupedBarPair[] = [];
+
+  methodKeys.forEach((mKey, methodIdx) => {
+    const methodItems: GroupedBarPair[] = [];
+
+    conditions.forEach((cond) => {
+      const matchingRows = allRows.filter((r) => {
+        if (r.methodCode !== mKey) return false;
+        if (r.condition.toLowerCase() !== cond.toLowerCase()) return false;
+        if (filterModel !== 'all') {
+          if (filterModel === 'qwen' && !r.model.includes('qwen')) return false;
+          if (filterModel === 'llama' && !r.model.includes('llama')) return false;
+          if (filterModel === 'tfidf' && !r.model.includes('TF-IDF')) return false;
+        }
+        return true;
+      });
+
+      if (matchingRows.length === 0) return;
+
+      let chosenRow = matchingRows[0];
+      if (filterModel === 'all') {
+        const fullRow = matchingRows.find((r) => r.sampleSize === 'N=522');
+        if (fullRow) chosenRow = fullRow;
+      }
+
+      methodItems.push({
+        id: `${mKey}_${cond}`,
+        methodCode: mKey,
+        methodLabel: shortMethodNames[mKey] || mKey,
+        methodFullName: METHOD_LABELS[mKey] || mKey,
+        condition: cond,
+        recallPct: Number((chosenRow.recall * 100).toFixed(1)),
+        fprPct: Number((chosenRow.fpr * 100).toFixed(1)),
+        accuracyPct: Number((chosenRow.accuracy * 100).toFixed(1)),
+        f1: chosenRow.f1,
+        model: chosenRow.model,
+        sampleSize: chosenRow.sampleSize,
+        isGroupStart: false,
+        isGroupCenter: false,
+        isGroupEnd: false,
+        groupIndex: 0,
+        groupLength: 0,
+        methodIndex: methodIdx,
+      });
+    });
+
+    const groupLen = methodItems.length;
+    if (groupLen > 0) {
+      const centerIdx = Math.floor(groupLen / 2);
+      methodItems.forEach((item, idx) => {
+        item.groupIndex = idx;
+        item.groupLength = groupLen;
+        item.isGroupStart = idx === 0;
+        item.isGroupCenter = idx === centerIdx;
+        item.isGroupEnd = idx === groupLen - 1;
+        results.push(item);
+      });
+    }
+  });
+
+  return results;
+}
+
