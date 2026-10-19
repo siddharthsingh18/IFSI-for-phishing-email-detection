@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { BarChart3 } from 'lucide-react';
 import {
   apiClient,
@@ -8,7 +8,7 @@ import {
   type McNemarTestResult,
 } from '../api/client';
 import { OfflineFallbackBanner } from '../components/OfflineFallbackBanner';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { fadeInUp } from '../lib/motion';
 import { useCountUp } from '../hooks/useCountUp';
 import { useTheme } from '../hooks/useTheme';
@@ -253,24 +253,29 @@ export const DashboardPage: React.FC = () => {
     };
   }, [allRows]);
 
-  // Count-up hooks for KPI stat tiles on mount
+  // Reference and scroll-in-view detection for KPI stat tiles
+  const kpiRef = useRef<HTMLDivElement>(null);
+  const isKpiInView = useInView(kpiRef, { once: true, amount: 0.1 });
+  const startCountUp = !isLoading && isKpiInView;
+
+  // Count-up hooks for KPI stat tiles on scroll into view
   const animatedBestF1 = useCountUp(topStats.bestF1Num, {
-    start: !isLoading,
+    start: startCountUp,
     duration: 800,
     decimals: 4,
   });
   const animatedLowestFpr = useCountUp(topStats.lowestFprNum, {
-    start: !isLoading,
+    start: startCountUp,
     duration: 800,
     decimals: 2,
   });
   const animatedFastestLat = useCountUp(topStats.fastestLatNum, {
-    start: !isLoading,
+    start: startCountUp,
     duration: 800,
     decimals: 2,
   });
   const animatedTotalEmails = useCountUp(topStats.totalEmailsNum, {
-    start: !isLoading,
+    start: startCountUp,
     duration: 800,
     decimals: 0,
   });
@@ -312,8 +317,9 @@ export const DashboardPage: React.FC = () => {
         </p>
       </div>
 
-      {/* SECTION 1: TOP 4 STAT TILES */}
+      {/* SECTION 1: TOP 4 STAT TILES (Count-up on scroll into view) */}
       <DashboardKpiTiles
+        ref={kpiRef}
         isLoading={isLoading}
         animatedBestF1={animatedBestF1}
         animatedLowestFpr={animatedLowestFpr}
@@ -333,18 +339,7 @@ export const DashboardPage: React.FC = () => {
         onResetFilters={handleResetFilters}
       />
 
-      {/* SECTION 3: CONFUSION MATRIX HEATMAP */}
-      <ConfusionMatrixHeatmap
-        isLoading={isLoading}
-        filteredRows={filteredRows}
-        filterMethod={filterMethod}
-        setFilterMethod={setFilterMethod}
-        filterCondition={filterCondition}
-        setFilterCondition={setFilterCondition}
-        filterModel={filterModel}
-      />
-
-      {/* SECTIONS 4 & 5: DATA-DEPENDENT TABLE & CHARTS (Cross-fades on filter change) */}
+      {/* SECTIONS 3, 4 & 5: HEATMAP, METRICS TABLE & CHARTS (Cross-fades ~200ms on filter change) */}
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={filterKey}
@@ -354,7 +349,18 @@ export const DashboardPage: React.FC = () => {
           transition={{ duration: 0.2, ease: 'easeInOut' }}
           className="space-y-10"
         >
-          {/* SECTION 3: METRICS TABLE */}
+          {/* SECTION 3: CONFUSION MATRIX HEATMAP */}
+          <ConfusionMatrixHeatmap
+            isLoading={isLoading}
+            filteredRows={filteredRows}
+            filterMethod={filterMethod}
+            setFilterMethod={setFilterMethod}
+            filterCondition={filterCondition}
+            setFilterCondition={setFilterCondition}
+            filterModel={filterModel}
+          />
+
+          {/* SECTION 4: METRICS TABLE */}
           <MetricsTable
             isLoading={isLoading}
             sortedRows={sortedRows}
@@ -363,7 +369,7 @@ export const DashboardPage: React.FC = () => {
             onSort={handleSort}
           />
 
-          {/* SECTION 4: RECHARTS BAR CHARTS */}
+          {/* SECTION 5: RECHARTS BAR CHARTS */}
           <PerformanceCharts
             isLoading={isLoading}
             chartData={chartData}

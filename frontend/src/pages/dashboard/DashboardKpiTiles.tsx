@@ -18,16 +18,20 @@ export interface DashboardKpiTilesProps {
   };
 }
 
-export const DashboardKpiTiles: React.FC<DashboardKpiTilesProps> = ({
-  isLoading,
-  animatedBestF1,
-  animatedLowestFpr,
-  animatedFastestLat,
-  animatedTotalEmails,
-  topStats,
-}) => {
-  return (
-    <div className="relative">
+export const DashboardKpiTiles = React.forwardRef<HTMLDivElement, DashboardKpiTilesProps>(
+  (
+    {
+      isLoading,
+      animatedBestF1,
+      animatedLowestFpr,
+      animatedFastestLat,
+      animatedTotalEmails,
+      topStats,
+    },
+    ref
+  ) => {
+    return (
+      <div ref={ref} className="relative">
       <AnimatePresence mode="popLayout" initial={false}>
         {isLoading ? (
           <motion.div
@@ -88,6 +92,8 @@ export const DashboardKpiTiles: React.FC<DashboardKpiTilesProps> = ({
       </AnimatePresence>
     </div>
   );
-};
+});
+
+DashboardKpiTiles.displayName = 'DashboardKpiTiles';
 
 export default DashboardKpiTiles;
