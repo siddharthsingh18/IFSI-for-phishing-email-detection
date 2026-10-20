@@ -3,6 +3,56 @@ import { BookOpen, FlaskConical, Copy, Check, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { AttackFamilyMeta } from './types';
 
+const MarkedUnmarkedEnvelopeGraphic: React.FC = () => (
+  <div className="w-full max-w-[330px] shrink-0" aria-label="Marked envelope with warning sticker compared with an unmarked envelope">
+    <svg viewBox="0 0 330 150" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
+      <defs>
+        <filter id="markedEnvelopeGlow" x="-30%" y="-30%" width="160%" height="160%">
+          <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#ef4444" floodOpacity="0.7" />
+        </filter>
+      </defs>
+
+      <text x="82" y="16" textAnchor="middle" fill="#fda4af" fontSize="10" fontWeight="700" fontFamily="ui-sans-serif, system-ui">
+        MARKED
+      </text>
+      <text x="248" y="16" textAnchor="middle" fill="#5eead4" fontSize="10" fontWeight="700" fontFamily="ui-sans-serif, system-ui">
+        UNMARKED
+      </text>
+
+      <g transform="translate(18 30)">
+        <rect width="128" height="84" rx="8" fill="#172033" stroke="#475569" strokeWidth="1.5" />
+        <path d="M3 5L64 51L125 5" stroke="#94a3b8" strokeWidth="2" />
+        <path d="M3 79L48 39M125 79L80 39" stroke="#64748b" strokeWidth="1.5" />
+        <motion.g
+          initial={{ scale: 1, opacity: 1 }}
+          whileInView={{ scale: [1, 1.14, 1], opacity: [1, 1, 1] }}
+          viewport={{ once: true, amount: 0.8 }}
+          transition={{ duration: 0.55, delay: 0.15, ease: 'easeInOut' }}
+          style={{ transformOrigin: '64px 42px' }}
+          filter="url(#markedEnvelopeGlow)"
+        >
+          <circle cx="64" cy="42" r="19" fill="#991b1b" stroke="#f87171" strokeWidth="1.5" />
+          <path d="M64 30V45" stroke="#fff1f2" strokeWidth="3" strokeLinecap="round" />
+          <circle cx="64" cy="52" r="2" fill="#fff1f2" />
+        </motion.g>
+      </g>
+
+      <g transform="translate(184 30)">
+        <rect width="128" height="84" rx="8" fill="#172033" stroke="#475569" strokeWidth="1.5" />
+        <path d="M3 5L64 51L125 5" stroke="#94a3b8" strokeWidth="2" />
+        <path d="M3 79L48 39M125 79L80 39" stroke="#64748b" strokeWidth="1.5" />
+      </g>
+
+      <text x="82" y="133" textAnchor="middle" fill="#fda4af" fontSize="9" fontFamily="ui-sans-serif, system-ui">
+        obvious warning marker
+      </text>
+      <text x="248" y="133" textAnchor="middle" fill="#94a3b8" fontSize="9" fontFamily="ui-sans-serif, system-ui">
+        blends into normal mail
+      </text>
+    </svg>
+  </div>
+);
+
 interface TypingCodeBlockProps {
   content: string;
   className: string;
@@ -135,47 +185,50 @@ export const AttackFamilyExplorer: React.FC<AttackFamilyExplorerProps> = ({
       <div className="relative rounded-2xl border border-teal-500/30 bg-gradient-to-br from-teal-950/20 via-slate-900/90 to-slate-900/80 p-6 sm:p-8 elevation-card backdrop-blur-md overflow-hidden">
         <div className="absolute top-0 left-0 h-full w-1.5 bg-gradient-to-b from-teal-400 to-cyan-500" />
 
-        <div className="text-slate-200 text-sm sm:text-base leading-relaxed">
-          <p>
-            <strong className="text-cyan-300 font-semibold">Marked</strong> injections use synthetic delimiters, while <strong className="text-teal-300 font-semibold">unmarked</strong> injections disguise directives as ordinary enterprise email.
-            Unmarked attacks can trigger catastrophic evasion in monolithic RAG (M3), while decoupled IFSI (M4) preserves detection.
-          </p>
+        <div className="flex flex-col lg:flex-row lg:items-center gap-6">
+          <div className="text-slate-200 text-sm sm:text-base leading-relaxed flex-1 min-w-0">
+            <p>
+              <strong className="text-cyan-300 font-semibold">Marked</strong> injections use synthetic delimiters, while <strong className="text-teal-300 font-semibold">unmarked</strong> injections disguise directives as ordinary enterprise email.
+              Unmarked attacks can trigger catastrophic evasion in monolithic RAG (M3), while decoupled IFSI (M4) preserves detection.
+            </p>
 
-          <button
-            type="button"
-            onClick={() => setIsDifferenceExpanded((expanded) => !expanded)}
-            aria-expanded={isDifferenceExpanded}
-            className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-teal-300 hover:text-teal-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded"
-          >
-            Read more
-            <ChevronDown
-              className={`h-3.5 w-3.5 transition-transform duration-200 ${
-                isDifferenceExpanded ? 'rotate-180' : ''
-              }`}
-            />
-          </button>
+            <button
+              type="button"
+              onClick={() => setIsDifferenceExpanded((expanded) => !expanded)}
+              aria-expanded={isDifferenceExpanded}
+              className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-teal-300 hover:text-teal-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded"
+            >
+              Read more
+              <ChevronDown
+                className={`h-3.5 w-3.5 transition-transform duration-200 ${
+                  isDifferenceExpanded ? 'rotate-180' : ''
+                }`}
+              />
+            </button>
 
-          <AnimatePresence initial={false}>
-            {isDifferenceExpanded && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2, ease: 'easeInOut' }}
-                className="overflow-hidden"
-              >
-                <div className="pt-3 mt-3 border-t border-slate-800 text-xs sm:text-sm text-slate-300">
-                  Marked payloads often include tags such as{' '}
-                  <code className="px-1.5 py-0.5 rounded bg-slate-950 border border-slate-800 text-cyan-300 font-mono text-xs">
-                    [BEGIN EMBEDDED CLASSIFIER MESSAGE]
-                  </code>
-                  , making them easier for structural heuristic filters to intercept. Unmarked payloads instead blend into
-                  forwarded notices, IT instructions, or compliance disclaimers, so M3 can ingest them as legitimate context;
-                  M4 isolates untrusted input before classification.
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+            <AnimatePresence initial={false}>
+              {isDifferenceExpanded && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2, ease: 'easeInOut' }}
+                  className="overflow-hidden"
+                >
+                  <div className="pt-3 mt-3 border-t border-slate-800 text-xs sm:text-sm text-slate-300">
+                    Marked payloads often include tags such as{' '}
+                    <code className="px-1.5 py-0.5 rounded bg-slate-950 border border-slate-800 text-cyan-300 font-mono text-xs">
+                      [BEGIN EMBEDDED CLASSIFIER MESSAGE]
+                    </code>
+                    , making them easier for structural heuristic filters to intercept. Unmarked payloads instead blend into
+                    forwarded notices, IT instructions, or compliance disclaimers, so M3 can ingest them as legitimate context;
+                    M4 isolates untrusted input before classification.
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+          <MarkedUnmarkedEnvelopeGraphic />
         </div>
       </div>
 
