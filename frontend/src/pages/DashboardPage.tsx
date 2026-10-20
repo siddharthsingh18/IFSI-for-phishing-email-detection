@@ -8,7 +8,7 @@ import {
   type McNemarTestResult,
 } from '../api/client';
 import { OfflineFallbackBanner } from '../components/OfflineFallbackBanner';
-import { motion, AnimatePresence, useInView } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { fadeInUp } from '../lib/motion';
 import { useCountUp } from '../hooks/useCountUp';
 import { useTheme } from '../hooks/useTheme';
@@ -26,7 +26,10 @@ import { DashboardFilters } from './dashboard/DashboardFilters';
 import { ConfusionMatrixHeatmap } from './dashboard/ConfusionMatrixHeatmap';
 import { MetricsTable } from './dashboard/MetricsTable';
 import { PerformanceCharts } from './dashboard/PerformanceCharts';
-import { MistakesAndHypothesisTests } from './dashboard/MistakesAndHypothesisTests';
+import {
+  WorstMistakesCard,
+  HypothesisTestsCard,
+} from './dashboard/MistakesAndHypothesisTests';
 
 export const DashboardPage: React.FC = () => {
   const { chartColors } = useTheme();
@@ -184,16 +187,21 @@ export const DashboardPage: React.FC = () => {
 
   // Recharts Data Transformation (Operational Latency)
   const chartData = useMemo(() => {
-    return sortedRows.map((r) => ({
-      name: `${r.methodCode} (${r.condition})`,
-      fullName: `${r.method} - ${r.condition}`,
-      model: r.model,
-      sampleSize: r.sampleSize,
-      recallPct: Number((r.recall * 100).toFixed(1)),
-      fprPct: Number((r.fpr * 100).toFixed(1)),
-      accuracyPct: Number((r.accuracy * 100).toFixed(1)),
-      latencyMs: Number((r.latencySeconds * 1000).toFixed(1)),
-    }));
+    return sortedRows.map((r) => {
+      const isPilot = r.sampleSize.includes('Pilot');
+      return {
+        id: r.id,
+        name: isPilot ? `${r.methodCode} (${r.condition}) [Pilot]` : `${r.methodCode} (${r.condition})`,
+        fullName: `${r.method} - ${r.condition}`,
+        model: r.model,
+        sampleSize: r.sampleSize,
+        recallPct: Number((r.recall * 100).toFixed(1)),
+        fprPct: Number((r.fpr * 100).toFixed(1)),
+        accuracyPct: Number((r.accuracy * 100).toFixed(1)),
+        latencyMs: Number((r.latencySeconds * 1000).toFixed(1)),
+        isPilot,
+      };
+    });
   }, [sortedRows]);
 
   // Grouped Bar Chart Data (Recall vs FPR grouped by method M1-M4 with 3 bar-pairs Clean/Marked/Unmarked)
@@ -317,39 +325,86 @@ export const DashboardPage: React.FC = () => {
         </p>
       </div>
 
-      {/* SECTION 1: TOP 4 STAT TILES (Count-up on scroll into view) */}
-      <DashboardKpiTiles
-        ref={kpiRef}
-        isLoading={isLoading}
-        animatedBestF1={animatedBestF1}
-        animatedLowestFpr={animatedLowestFpr}
-        animatedFastestLat={animatedFastestLat}
-        animatedTotalEmails={animatedTotalEmails}
-        topStats={topStats}
-      />
+      {/* SECTION 1: TOP 4 STAT TILES (Staggered count-up on scroll into view) */}
+      <motion.section
+        variants={fadeInUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.15 }}
+      >
+        <DashboardKpiTiles
+          ref={kpiRef}
+          isLoading={isLoading}
+          animatedBestF1={animatedBestF1}
+          animatedLowestFpr={animatedLowestFpr}
+          animatedFastestLat={animatedFastestLat}
+          animatedTotalEmails={animatedTotalEmails}
+          topStats={topStats}
+        />
+      </motion.section>
 
       {/* SECTION 2: FILTERS ROW */}
-      <DashboardFilters
-        filterMethod={filterMethod}
-        setFilterMethod={setFilterMethod}
-        filterCondition={filterCondition}
-        setFilterCondition={setFilterCondition}
-        filterModel={filterModel}
-        setFilterModel={setFilterModel}
-        onResetFilters={handleResetFilters}
-      />
+      <motion.section
+        variants={fadeInUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.15 }}
+      >
+        <DashboardFilters
+          filterMethod={filterMethod}
+          setFilterMethod={setFilterMethod}
+          filterCondition={filterCondition}
+          setFilterCondition={setFilterCondition}
+          filterModel={filterModel}
+          setFilterModel={setFilterModel}
+          onResetFilters={handleResetFilters}
+        />
+      </motion.section>
 
-      {/* SECTIONS 3, 4 & 5: HEATMAP, METRICS TABLE & CHARTS (Cross-fades ~200ms on filter change) */}
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.div
-          key={filterKey}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2, ease: 'easeInOut' }}
-          className="space-y-10"
-        >
-          {/* SECTION 3: CONFUSION MATRIX HEATMAP */}
+      {/* SECTION 3: METRICS TABLE */}
+      <motion.section
+        variants={fadeInUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.08, margin: "-20px" }}
+      >
+        <div key={`table-${filterKey}`} className="transition-opacity duration-200">
+          <MetricsTable
+            isLoading={isLoading}
+            sortedRows={sortedRows}
+            sortField={sortField}
+            sortDirection={sortDirection}
+            onSort={handleSort}
+          />
+        </div>
+      </motion.section>
+
+      {/* SECTION 4: PERFORMANCE CHARTS (With Visible On-Chart Latency Pilot Spike Callout) */}
+      <motion.section
+        variants={fadeInUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.08, margin: "-20px" }}
+      >
+        <div key={`charts-${filterKey}`} className="transition-opacity duration-200">
+          <PerformanceCharts
+            isLoading={isLoading}
+            chartData={chartData}
+            groupedChartData={groupedChartData}
+            chartColors={chartColors}
+            filterModel={filterModel}
+          />
+        </div>
+      </motion.section>
+
+      {/* SECTION 5: CONFUSION MATRIX HEATMAP */}
+      <motion.section
+        variants={fadeInUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.08, margin: "-20px" }}
+      >
+        <div key={`heatmap-${filterKey}`} className="transition-opacity duration-200">
           <ConfusionMatrixHeatmap
             isLoading={isLoading}
             filteredRows={filteredRows}
@@ -359,40 +414,40 @@ export const DashboardPage: React.FC = () => {
             setFilterCondition={setFilterCondition}
             filterModel={filterModel}
           />
+        </div>
+      </motion.section>
 
-          {/* SECTION 4: METRICS TABLE */}
-          <MetricsTable
-            isLoading={isLoading}
-            sortedRows={sortedRows}
-            sortField={sortField}
-            sortDirection={sortDirection}
-            onSort={handleSort}
-          />
+      {/* SECTION 6: COLLAPSIBLE WORST MISTAKES */}
+      <motion.section
+        variants={fadeInUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.08, margin: "-20px" }}
+      >
+        <WorstMistakesCard
+          isLoading={isLoading}
+          mistakes={mistakes}
+          showMistakes={showMistakes}
+          setShowMistakes={setShowMistakes}
+          expandedMistakeId={expandedMistakeId}
+          setExpandedMistakeId={setExpandedMistakeId}
+        />
+      </motion.section>
 
-          {/* SECTION 5: RECHARTS BAR CHARTS */}
-          <PerformanceCharts
-            isLoading={isLoading}
-            chartData={chartData}
-            groupedChartData={groupedChartData}
-            chartColors={chartColors}
-            filterModel={filterModel}
-          />
-        </motion.div>
-      </AnimatePresence>
-
-      {/* SECTIONS 5 & 6: MISTAKES & HYPOTHESIS TESTS */}
-      <MistakesAndHypothesisTests
-        isLoading={isLoading}
-        mistakes={mistakes}
-        showMistakes={showMistakes}
-        setShowMistakes={setShowMistakes}
-        expandedMistakeId={expandedMistakeId}
-        setExpandedMistakeId={setExpandedMistakeId}
-        mcnemar={mcnemar}
-        showMcNemar={showMcNemar}
-        setShowMcNemar={setShowMcNemar}
-        sortedMcNemar={sortedMcNemar}
-      />
+      {/* SECTION 7: SIGNIFICANCE STRIP & MCNEMAR HYPOTHESIS TESTS */}
+      <motion.section
+        variants={fadeInUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.08, margin: "-20px" }}
+      >
+        <HypothesisTestsCard
+          isLoading={isLoading}
+          showMcNemar={showMcNemar}
+          setShowMcNemar={setShowMcNemar}
+          sortedMcNemar={sortedMcNemar}
+        />
+      </motion.section>
     </motion.div>
   );
 };

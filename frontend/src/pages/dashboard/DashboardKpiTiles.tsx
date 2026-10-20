@@ -3,6 +3,7 @@ import { Target, ShieldAlert, Zap, Database } from 'lucide-react';
 import { StatTile } from '../../components/StatTile';
 import { SkeletonStatTile } from '../../components/Skeleton';
 import { motion, AnimatePresence } from 'framer-motion';
+import { fadeInUp, staggerContainer } from '../../lib/motion';
 
 export interface DashboardKpiTilesProps {
   isLoading: boolean;
@@ -49,44 +50,52 @@ export const DashboardKpiTiles = React.forwardRef<HTMLDivElement, DashboardKpiTi
         ) : (
           <motion.div
             key="stats-content"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.35, ease: 'easeOut' }}
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.15 }}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full"
           >
-            <StatTile
-              label="Best F1 Score"
-              value={animatedBestF1.toFixed(4)}
-              subtext={`${topStats.bestF1.sub} • [${topStats.bestF1.sample}]`}
-              variant="legitimate"
-              icon={<Target className="h-5 w-5" />}
-            />
+            <motion.div variants={fadeInUp}>
+              <StatTile
+                label="Best F1 Score"
+                value={animatedBestF1.toFixed(4)}
+                subtext={`${topStats.bestF1.sub} • [${topStats.bestF1.sample}]`}
+                variant="legitimate"
+                icon={<Target className="h-5 w-5" />}
+              />
+            </motion.div>
 
-            <StatTile
-              label="Lowest False Alarm (FPR)"
-              value={`${animatedLowestFpr.toFixed(2)}%`}
-              subtext={`${topStats.lowestFpr.sub} • [${topStats.lowestFpr.sample}]`}
-              variant="accent"
-              icon={<ShieldAlert className="h-5 w-5" />}
-            />
+            <motion.div variants={fadeInUp}>
+              <StatTile
+                label="Lowest False Alarm (FPR)"
+                value={`${animatedLowestFpr.toFixed(2)}%`}
+                subtext={`${topStats.lowestFpr.sub} • [${topStats.lowestFpr.sample}]`}
+                variant="accent"
+                icon={<ShieldAlert className="h-5 w-5" />}
+              />
+            </motion.div>
 
-            <StatTile
-              label="Fastest Inference"
-              value={`${animatedFastestLat.toFixed(2)} ms`}
-              subtext={`${topStats.fastestLatency.sub} • [${topStats.fastestLatency.sample}]`}
-              variant="default"
-              icon={<Zap className="h-5 w-5" />}
-            />
+            <motion.div variants={fadeInUp}>
+              <StatTile
+                label="Fastest Inference"
+                value={`${animatedFastestLat.toFixed(2)} ms`}
+                subtext={`${topStats.fastestLatency.sub} • [${topStats.fastestLatency.sample}]`}
+                variant="default"
+                icon={<Zap className="h-5 w-5" />}
+              />
+            </motion.div>
 
-            <StatTile
-              label="Benchmark Test Emails"
-              value={Math.round(animatedTotalEmails).toLocaleString()}
-              unit="emails"
-              subtext={`[${topStats.totalEmails.sample}]`}
-              variant="default"
-              icon={<Database className="h-5 w-5" />}
-            />
+            <motion.div variants={fadeInUp}>
+              <StatTile
+                label="Benchmark Test Emails"
+                value={Math.round(animatedTotalEmails).toLocaleString()}
+                unit="emails"
+                subtext={`[${topStats.totalEmails.sample}]`}
+                variant="default"
+                icon={<Database className="h-5 w-5" />}
+              />
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

@@ -15,6 +15,22 @@ import type { MistakeRecord, McNemarResponse, McNemarTestResult } from '../../ap
 import { COMPARISON_LABELS } from './types';
 import { SignificanceStripChart } from './SignificanceStripChart';
 
+export interface WorstMistakesCardProps {
+  isLoading: boolean;
+  mistakes: MistakeRecord[];
+  showMistakes: boolean;
+  setShowMistakes: React.Dispatch<React.SetStateAction<boolean>>;
+  expandedMistakeId: string | null;
+  setExpandedMistakeId: React.Dispatch<React.SetStateAction<string | null>>;
+}
+
+export interface HypothesisTestsCardProps {
+  isLoading: boolean;
+  showMcNemar: boolean;
+  setShowMcNemar: React.Dispatch<React.SetStateAction<boolean>>;
+  sortedMcNemar: Array<[string, McNemarTestResult]>;
+}
+
 export interface MistakesAndHypothesisTestsProps {
   isLoading: boolean;
   mistakes: MistakeRecord[];
@@ -22,33 +38,25 @@ export interface MistakesAndHypothesisTestsProps {
   setShowMistakes: React.Dispatch<React.SetStateAction<boolean>>;
   expandedMistakeId: string | null;
   setExpandedMistakeId: React.Dispatch<React.SetStateAction<string | null>>;
-  mcnemar: McNemarResponse | null;
+  mcnemar?: McNemarResponse | null;
   showMcNemar: boolean;
   setShowMcNemar: React.Dispatch<React.SetStateAction<boolean>>;
   sortedMcNemar: Array<[string, McNemarTestResult]>;
 }
 
-export const MistakesAndHypothesisTests: React.FC<MistakesAndHypothesisTestsProps> = ({
+export const WorstMistakesCard: React.FC<WorstMistakesCardProps> = ({
   isLoading,
   mistakes,
   showMistakes,
   setShowMistakes,
   expandedMistakeId,
   setExpandedMistakeId,
-  showMcNemar,
-  setShowMcNemar,
-  sortedMcNemar,
 }) => {
   const [showAllMistakes, setShowAllMistakes] = React.useState(false);
-  const [showFullTable, setShowFullTable] = React.useState(false);
   const displayedMistakes = showAllMistakes ? mistakes : mistakes.slice(0, 10);
 
   return (
-    <>
-      {/* =========================================================================
-          SECTION 5: COLLAPSIBLE WORST MISTAKES (Animated Height+Opacity & Inline Row)
-          ========================================================================= */}
-      <Card variant="default" padding="none">
+    <Card variant="default" padding="none">
         <div
           role="button"
           tabIndex={0}
@@ -251,11 +259,19 @@ export const MistakesAndHypothesisTests: React.FC<MistakesAndHypothesisTestsProp
           )}
         </AnimatePresence>
       </Card>
+  );
+};
 
-      {/* =========================================================================
-          SECTION 6: COLLAPSIBLE STATISTICAL TESTS (Animated Height+Opacity)
-          ========================================================================= */}
-      <Card variant="default" padding="none">
+export const HypothesisTestsCard: React.FC<HypothesisTestsCardProps> = ({
+  isLoading,
+  showMcNemar,
+  setShowMcNemar,
+  sortedMcNemar,
+}) => {
+  const [showFullTable, setShowFullTable] = React.useState(false);
+
+  return (
+    <Card variant="default" padding="none">
         <div
           role="button"
           tabIndex={0}
@@ -437,6 +453,26 @@ export const MistakesAndHypothesisTests: React.FC<MistakesAndHypothesisTestsProp
           )}
         </AnimatePresence>
       </Card>
+  );
+};
+
+export const MistakesAndHypothesisTests: React.FC<MistakesAndHypothesisTestsProps> = (props) => {
+  return (
+    <>
+      <WorstMistakesCard
+        isLoading={props.isLoading}
+        mistakes={props.mistakes}
+        showMistakes={props.showMistakes}
+        setShowMistakes={props.setShowMistakes}
+        expandedMistakeId={props.expandedMistakeId}
+        setExpandedMistakeId={props.setExpandedMistakeId}
+      />
+      <HypothesisTestsCard
+        isLoading={props.isLoading}
+        showMcNemar={props.showMcNemar}
+        setShowMcNemar={props.setShowMcNemar}
+        sortedMcNemar={props.sortedMcNemar}
+      />
     </>
   );
 };
