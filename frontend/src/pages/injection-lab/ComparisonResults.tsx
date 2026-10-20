@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { BarChart3, AlertTriangle, ShieldCheck } from 'lucide-react';
 import {
   BarChart,
@@ -13,6 +13,7 @@ import {
 import { Badge } from '../../components/Badge';
 import { SkeletonChart } from '../../components/Skeleton';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useInView } from 'framer-motion';
 import type { BenchmarkSummary } from '../../api/client';
 import type { ChartThemeColors } from '../../hooks/useTheme';
 import type { ChartGroupRow } from './types';
@@ -81,6 +82,85 @@ const CustomGroupedTooltip: React.FC<CustomGroupedTooltipProps> = ({
   return null;
 };
 
+interface ChartAnnotationProps {
+  x?: string | number;
+  y?: string | number;
+  width?: string | number;
+  payload?: ChartGroupRow;
+  metric: 'recall' | 'fpr';
+  dataKey: string;
+}
+
+const ChartAnnotation: React.FC<ChartAnnotationProps> = ({ x = 0, y = 0, width = 0, payload, metric, dataKey }) => {
+  const xPosition = Number(x);
+  const yPosition = Number(y);
+  const barWidth = Number(width);
+  if (!payload || dataKey !== 'unmarkedRecall' && dataKey !== 'unmarkedFpr') return null;
+
+  const annotation =
+    metric === 'recall' && payload.methodCode === 'M3'
+      ? { label: '−68.7% recall', color: '#fb7185' }
+      : metric === 'recall' && payload.methodCode === 'M4'
+      ? { label: '96.1% retained', color: '#2dd4bf' }
+      : metric === 'fpr' && payload.methodCode === 'M4'
+      ? { label: '72.1% false alarm', color: '#fb7185' }
+      : null;
+
+  if (!annotation) return null;
+
+  return (
+    <g pointerEvents="none">
+      <rect
+        x={xPosition + barWidth / 2 - 45}
+        y={yPosition - 24}
+        width={90}
+        height={17}
+        rx={4}
+        fill="#0f172a"
+        stroke={annotation.color}
+        strokeOpacity={0.65}
+      />
+      <text
+        x={xPosition + barWidth / 2}
+        y={yPosition - 12}
+        textAnchor="middle"
+        fill={annotation.color}
+        fontSize={8.5}
+        fontWeight={700}
+        fontFamily="ui-monospace, monospace"
+      >
+        {annotation.label}
+      </text>
+    </g>
+  );
+};
+
+interface AnnotatedBarProps extends ChartAnnotationProps {
+  height?: string | number;
+  fill?: string;
+}
+
+const AnnotatedBar: React.FC<AnnotatedBarProps> = ({ x = 0, y = 0, width = 0, height = 0, fill, payload, metric, dataKey }) => {
+  const xPosition = Number(x);
+  const yPosition = Number(y);
+  const barWidth = Number(width);
+  const barHeight = Number(height);
+
+  return (
+    <g>
+      <rect x={xPosition} y={yPosition} width={barWidth} height={barHeight} fill={fill} rx={4} ry={4} />
+      <ChartAnnotation
+        x={xPosition}
+        y={yPosition}
+        width={barWidth}
+        payload={payload}
+        metric={metric}
+        dataKey={dataKey}
+      />
+    </g>
+  );
+};
+
 export interface ComparisonResultsProps {
   chartData: ChartGroupRow[];
   loadingSummary: boolean;
@@ -96,6 +176,9 @@ export const ComparisonResults: React.FC<ComparisonResultsProps> = ({
   summary: _summary,
   chartColors,
 }) => {
+  const chartRef = useRef<HTMLDivElement>(null);
+  const isChartInView = useInView(chartRef, { once: true, amount: 0.2 });
+
   return (
     <section id="benchmark-charts-section" className="space-y-6 scroll-mt-20">
       <div className="border-b border-slate-800 pb-4">
@@ -189,7 +272,7 @@ export const ComparisonResults: React.FC<ComparisonResultsProps> = ({
               </div>
 
               {/* Grouped Bar Charts Grid */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div ref={chartRef} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* CHART 1: RECALL (CATCH RATE) */}
                 <div className="rounded-2xl border border-slate-800/80 bg-slate-900/70 p-5 elevation-card backdrop-blur-sm space-y-4">
                   <div className="border-b border-slate-800 pb-3">
@@ -234,6 +317,9 @@ export const ComparisonResults: React.FC<ComparisonResultsProps> = ({
                           fill="#06b6d4"
                           radius={[4, 4, 0, 0]}
                           maxBarSize={32}
+                          animationBegin={isChartInView ? 0 : 999999}
+                          animationDuration={700}
+                          animationEasing="ease-out"
                         />
                         <Bar
                           dataKey="unmarkedRecall"
@@ -241,6 +327,12 @@ export const ComparisonResults: React.FC<ComparisonResultsProps> = ({
                           fill="#f43f5e"
                           radius={[4, 4, 0, 0]}
                           maxBarSize={32}
+                          animationBegin={isChartInView ? 0 : 999999}
+                          animationDuration={700}
+                          animationEasing="ease-out"
+                          shape={(props) => (
+                            <AnnotatedBar {...props} metric="recall" dataKey="unmarkedRecall" />
+                          )}
                         />
                       </BarChart>
                     </ResponsiveContainer>
@@ -295,6 +387,9 @@ export const ComparisonResults: React.FC<ComparisonResultsProps> = ({
                           fill="#f59e0b"
                           radius={[4, 4, 0, 0]}
                           maxBarSize={32}
+                          animationBegin={isChartInView ? 0 : 999999}
+                          animationDuration={700}
+                          animationEasing="ease-out"
                         />
                         <Bar
                           dataKey="unmarkedFpr"
@@ -302,6 +397,12 @@ export const ComparisonResults: React.FC<ComparisonResultsProps> = ({
                           fill="#f43f5e"
                           radius={[4, 4, 0, 0]}
                           maxBarSize={32}
+                          animationBegin={isChartInView ? 0 : 999999}
+                          animationDuration={700}
+                          animationEasing="ease-out"
+                          shape={(props) => (
+                            <AnnotatedBar {...props} metric="fpr" dataKey="unmarkedFpr" />
+                          )}
                         />
                       </BarChart>
                     </ResponsiveContainer>
