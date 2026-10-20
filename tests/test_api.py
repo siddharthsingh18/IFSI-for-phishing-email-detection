@@ -55,6 +55,10 @@ def test_cors_headers() -> None:
     assert resp.status_code == 200
     assert resp.headers.get("access-control-allow-origin") == "http://localhost:5173"
 
+    fallback_port_resp = client.get("/health", headers={"Origin": "http://localhost:5174"})
+    assert fallback_port_resp.status_code == 200
+    assert fallback_port_resp.headers.get("access-control-allow-origin") == "http://localhost:5174"
+
 
 def test_docs_endpoint() -> None:
     resp = client.get("/docs")
