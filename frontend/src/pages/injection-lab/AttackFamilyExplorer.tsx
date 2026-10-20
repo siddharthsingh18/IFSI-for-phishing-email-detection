@@ -1,7 +1,84 @@
-import React, { useState } from 'react';
-import { BookOpen, FlaskConical, Copy, Check } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { BookOpen, FlaskConical, Copy, Check, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { AttackFamilyMeta } from './types';
+
+interface TypingCodeBlockProps {
+  content: string;
+  className: string;
+  seenCodeBlocks: React.MutableRefObject<Set<string>>;
+}
+
+const TypingCodeBlock: React.FC<TypingCodeBlockProps> = ({ content, className, seenCodeBlocks }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const intervalRef = useRef<number | null>(null);
+  const [displayedContent, setDisplayedContent] = useState(() =>
+    seenCodeBlocks.current.has(content) ? content : ''
+  );
+  const hasStartedTyping = useRef(seenCodeBlocks.current.has(content));
+
+  useEffect(() => {
+    if (seenCodeBlocks.current.has(content)) {
+      setDisplayedContent(content);
+      hasStartedTyping.current = true;
+      return;
+    }
+
+    setDisplayedContent('');
+    hasStartedTyping.current = false;
+  }, [content, seenCodeBlocks]);
+
+  useEffect(() => {
+    const node = containerRef.current;
+    if (!node || hasStartedTyping.current) return;
+
+    const startTyping = () => {
+      if (hasStartedTyping.current) return;
+      hasStartedTyping.current = true;
+      const intervalMs = content.length > 0 ? Math.max(4, 400 / content.length) : 4;
+      let index = 0;
+      intervalRef.current = window.setInterval(() => {
+        index += 1;
+        setDisplayedContent(content.slice(0, index));
+        if (index >= content.length) {
+          if (intervalRef.current !== null) window.clearInterval(intervalRef.current);
+          intervalRef.current = null;
+          seenCodeBlocks.current.add(content);
+        }
+      }, intervalMs);
+    };
+
+    if (!('IntersectionObserver' in window)) {
+      return startTyping();
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          const cleanup = startTyping();
+          observer.disconnect();
+          return cleanup;
+        }
+        return undefined;
+      },
+      { threshold: 0.2 }
+    );
+    observer.observe(node);
+    return () => {
+      observer.disconnect();
+      if (intervalRef.current !== null) {
+        window.clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [content, seenCodeBlocks]);
+
+  return (
+    <div ref={containerRef} className={className}>
+      {displayedContent}
+    </div>
+  );
+};
 
 export interface AttackFamilyExplorerProps {
   attackFamilies: AttackFamilyMeta[];
@@ -27,6 +104,8 @@ export const AttackFamilyExplorer: React.FC<AttackFamilyExplorerProps> = ({
   currentUnmarkedText,
 }) => {
   const [copiedSnippetKey, setCopiedSnippetKey] = useState<'marked' | 'unmarked' | null>(null);
+  const [isDifferenceExpanded, setIsDifferenceExpanded] = useState(false);
+  const seenCodeBlocks = useRef<Set<string>>(new Set());
 
   const handleCopy = (key: 'marked' | 'unmarked', text: string) => {
     if (!text) return;
@@ -58,8 +137,45 @@ export const AttackFamilyExplorer: React.FC<AttackFamilyExplorerProps> = ({
 
         <div className="text-slate-200 text-sm sm:text-base leading-relaxed">
           <p>
-            Academic benchmarks traditionally evaluate <strong className="text-cyan-300 font-semibold">marked</strong> injections wrapped in synthetic tags like <code className="px-1.5 py-0.5 rounded bg-slate-950 border border-slate-800 text-cyan-300 font-mono text-xs">[BEGIN EMBEDDED CLASSIFIER MESSAGE]</code>, which heuristic filters can easily intercept. In contrast, real attackers deploy <strong className="text-teal-300 font-semibold">unmarked</strong> injections disguised as corporate IT notices or compliance disclaimers. Because unmarked directives blend seamlessly into normal enterprise email discourse, monolithic RAG architectures (M3) ingest them as legitimate context—triggering catastrophic evasion while decoupled architectures (M4) isolate untrusted input to preserve detection.
+            <strong className="text-cyan-300 font-semibold">Marked</strong> injections use synthetic delimiters, while <strong className="text-teal-300 font-semibold">unmarked</strong> injections disguise directives as ordinary enterprise email.
+            Unmarked attacks can trigger catastrophic evasion in monolithic RAG (M3), while decoupled IFSI (M4) preserves detection.
           </p>
+
+          <button
+            type="button"
+            onClick={() => setIsDifferenceExpanded((expanded) => !expanded)}
+            aria-expanded={isDifferenceExpanded}
+            className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-teal-300 hover:text-teal-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded"
+          >
+            Read more
+            <ChevronDown
+              className={`h-3.5 w-3.5 transition-transform duration-200 ${
+                isDifferenceExpanded ? 'rotate-180' : ''
+              }`}
+            />
+          </button>
+
+          <AnimatePresence initial={false}>
+            {isDifferenceExpanded && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.2, ease: 'easeInOut' }}
+                className="overflow-hidden"
+              >
+                <div className="pt-3 mt-3 border-t border-slate-800 text-xs sm:text-sm text-slate-300">
+                  Marked payloads often include tags such as{' '}
+                  <code className="px-1.5 py-0.5 rounded bg-slate-950 border border-slate-800 text-cyan-300 font-mono text-xs">
+                    [BEGIN EMBEDDED CLASSIFIER MESSAGE]
+                  </code>
+                  , making them easier for structural heuristic filters to intercept. Unmarked payloads instead blend into
+                  forwarded notices, IT instructions, or compliance disclaimers, so M3 can ingest them as legitimate context;
+                  M4 isolates untrusted input before classification.
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
@@ -122,10 +238,19 @@ export const AttackFamilyExplorer: React.FC<AttackFamilyExplorerProps> = ({
 
         {/* Active Family Metadata */}
         <div className="rounded-xl bg-slate-950/80 border border-slate-800/80 p-3 text-xs text-slate-300 flex items-center justify-between gap-4">
-          <div className="space-y-0.5">
-            <span className="font-bold text-white mr-1.5">{currentFamilyMeta.name}:</span>
-            <span className="text-slate-400">{currentFamilyMeta.description}</span>
-          </div>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={explorerFamily}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25, ease: 'easeInOut' }}
+              className="space-y-0.5"
+            >
+              <span className="font-bold text-white mr-1.5">{currentFamilyMeta.name}:</span>
+              <span className="text-slate-400">{currentFamilyMeta.description}</span>
+            </motion.div>
+          </AnimatePresence>
         </div>
 
         {/* Side-by-Side Marked vs. Unmarked Comparison Cards */}
@@ -159,9 +284,13 @@ export const AttackFamilyExplorer: React.FC<AttackFamilyExplorerProps> = ({
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.25, ease: 'easeInOut' }}
-                    className="w-full font-mono text-xs text-cyan-300/90 leading-relaxed overflow-x-auto whitespace-pre-wrap select-text"
+                    className="w-full"
                   >
-                    {currentMarkedText}
+                    <TypingCodeBlock
+                      content={currentMarkedText}
+                      seenCodeBlocks={seenCodeBlocks}
+                      className="font-mono text-xs text-cyan-300/90 leading-relaxed overflow-x-auto whitespace-pre-wrap select-text"
+                    />
                   </motion.div>
                 </AnimatePresence>
               </div>
@@ -217,9 +346,13 @@ export const AttackFamilyExplorer: React.FC<AttackFamilyExplorerProps> = ({
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.25, ease: 'easeInOut' }}
-                    className="w-full font-mono text-xs text-teal-300/90 leading-relaxed overflow-x-auto whitespace-pre-wrap select-text"
+                    className="w-full"
                   >
-                    {currentUnmarkedText}
+                    <TypingCodeBlock
+                      content={currentUnmarkedText}
+                      seenCodeBlocks={seenCodeBlocks}
+                      className="font-mono text-xs text-teal-300/90 leading-relaxed overflow-x-auto whitespace-pre-wrap select-text"
+                    />
                   </motion.div>
                 </AnimatePresence>
               </div>

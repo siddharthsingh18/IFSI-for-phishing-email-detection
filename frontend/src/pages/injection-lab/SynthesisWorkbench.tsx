@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { Badge } from '../../components/Badge';
 import { MethodResultCard } from '../../components/MethodResultCard';
+import { ViewDensityToggle, type ViewDensity } from '../../components/ViewDensityToggle';
 import { Skeleton, SkeletonMethodCard } from '../../components/Skeleton';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fadeInUp, staggerContainer } from '../../lib/motion';
@@ -99,6 +100,8 @@ export const SynthesisWorkbench: React.FC<SynthesisWorkbenchProps> = ({
   onRunAttack,
   onCopyPayload,
 }) => {
+  const [viewDensity, setViewDensity] = React.useState<ViewDensity>('simple');
+
   const getAttackOutcome = () => {
     if (!cleanResult || !injectedResult) return null;
     const cleanPhish = cleanResult.is_phishing;
@@ -198,6 +201,9 @@ export const SynthesisWorkbench: React.FC<SynthesisWorkbenchProps> = ({
       <div className="rounded-2xl border border-slate-800/80 bg-slate-900/60 p-5 sm:p-7 elevation-card backdrop-blur-sm space-y-6">
         {/* 1. Base Email Inputs */}
         <div className="space-y-4">
+          <div className="text-xs font-semibold text-slate-300">
+            1. Email Content:
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="text-xs font-semibold text-slate-300 block mb-1.5">
@@ -324,6 +330,14 @@ export const SynthesisWorkbench: React.FC<SynthesisWorkbenchProps> = ({
             <select
               value={evalMethod}
               onChange={(e) => setEvalMethod(e.target.value as 'M3' | 'M4' | 'M1' | 'M2')}
+              title={
+                {
+                  M3: 'M3: RAG Combined (Vulnerable to Evasion)',
+                  M4: 'M4: RAG Decoupled (IFSI Robust Pipeline)',
+                  M1: 'M1: TF-IDF (Linear Classical Baseline)',
+                  M2: 'M2: Zero-Shot LLM (Prompt Baseline)',
+                }[evalMethod]
+              }
               className="w-full rounded-xl bg-slate-950 border border-slate-800 p-2.5 text-xs text-slate-200 font-medium hover:border-slate-700 hover:bg-slate-900/50 active:scale-[0.98] focus:outline-none focus:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-all duration-150 cursor-pointer"
             >
               <option value="M3">M3: RAG Combined (Vulnerable to Evasion)</option>
@@ -437,6 +451,10 @@ export const SynthesisWorkbench: React.FC<SynthesisWorkbenchProps> = ({
                   exit={{ opacity: 0 }}
                   className="space-y-6 w-full"
                 >
+                  <div className="flex justify-end">
+                    <ViewDensityToggle value={viewDensity} onChange={setViewDensity} />
+                  </div>
+
                   {/* Outcome Highlight Callout */}
                   {outcome && (
                     <motion.div
@@ -481,6 +499,7 @@ export const SynthesisWorkbench: React.FC<SynthesisWorkbenchProps> = ({
                         <MethodResultCard
                           result={cleanResult}
                           emailSnippet={cleanFullText}
+                          viewDensity={viewDensity}
                         />
                       </motion.div>
                     )}
@@ -502,6 +521,7 @@ export const SynthesisWorkbench: React.FC<SynthesisWorkbenchProps> = ({
                         <MethodResultCard
                           result={injectedResult}
                           emailSnippet={injectedFullText}
+                          viewDensity={viewDensity}
                         />
                       </motion.div>
                     )}
