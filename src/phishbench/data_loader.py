@@ -35,6 +35,31 @@ def require_complete_manifest(directory: Path | str) -> dict[str, Any]:
         )
     return manifest
 
+
+def require_primary_split_manifest(directory: Path | str) -> dict[str, Any]:
+    """Require a complete primary split manifest with passing gates."""
+    root = Path(directory)
+    path = root / "split_manifest.json"
+    if not path.is_file():
+        manifest = require_complete_manifest(root)
+        if manifest.get("role") not in (None, "primary"):
+            raise RuntimeError(f"Dataset directory is not a primary corpus: {root}")
+        return manifest
+    try:
+        manifest = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise RuntimeError(f"Unable to read split manifest: {path}") from exc
+    if (
+        manifest.get("status") != "complete"
+        or manifest.get("role") != "primary"
+        or not manifest.get("gates", {}).get("passed", False)
+        or not manifest.get("validation", {}).get("is_valid", False)
+    ):
+        raise RuntimeError(
+            f"Primary split manifest is incomplete or failed gates: {path}"
+        )
+    return manifest
+
 def clean_text(text: str) -> str:
     """Clean text by applying Unicode NFKC normalization and stripping whitespace."""
     if not text:

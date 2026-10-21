@@ -5,6 +5,11 @@
       "maximum_source_fraction": 0.40,
       "minimum_test_records_per_class": 300,
       "minimum_validation_records_per_class": 100
+      ,"confounding": {
+        "source_only_balanced_accuracy_max": 0.65,
+        "format_only_balanced_accuracy_max": 0.85,
+        "full_minus_format_balanced_accuracy_min": 0.05
+      }
     },
     "adversarial": {
       "metrics_policy": "recall_only"

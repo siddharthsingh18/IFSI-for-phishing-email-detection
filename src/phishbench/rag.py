@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import logging
+import subprocess
 import time
 from pathlib import Path
 from typing import Any, Sequence
@@ -14,7 +16,7 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 
 from .baseline import compute_metrics
-from .data_loader import require_complete_manifest
+from .data_loader import require_complete_manifest, require_primary_split_manifest
 from .ollama_client import (
     EmailClassificationResult,
     OllamaClient,
@@ -45,6 +47,11 @@ Rules:
 """
 
 
+def _git_commit() -> str:
+    result = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=False)
+    return result.stdout.strip() or "unknown"
+
+
 class FAISSRetriever:
     """Vector similarity retriever using sentence-transformers and FAISS IndexFlatIP (cosine similarity)."""
 
@@ -70,7 +77,8 @@ class FAISSRetriever:
         train_path = Path(train_jsonl_path)
         if not train_path.exists():
             raise FileNotFoundError(f"Train split not found: {train_path}")
-        require_complete_manifest(train_path.parent)
+        manifest = require_primary_split_manifest(train_path.parent)
+        split_manifest_path = train_path.parent / "split_manifest.json"
 
         records: list[dict[str, Any]] = []
         with train_path.open("r", encoding="utf-8") as f:
@@ -85,6 +93,8 @@ class FAISSRetriever:
                 "text": str(r["text"]),
                 "label": int(r["label"]),
                 "label_name": "phishing" if int(r["label"]) == 1 else "legitimate",
+                "source": r.get("source"),
+                "family": r.get("family"),
             }
             for r in records
         ]
@@ -105,6 +115,19 @@ class FAISSRetriever:
         index = faiss.IndexFlatIP(dim)
         index.add(embeddings)
         retriever.index = index
+        retriever.index_metadata = {
+            "embedding_model": model_name,
+            "embedding_model_version": getattr(__import__("sentence_transformers"), "__version__", "unknown"),
+            "faiss_version": getattr(faiss, "__version__", "unknown"),
+            "index_type": "IndexFlatIP",
+            "top_k_default": 3,
+            "normalization": {"normalize_embeddings": True, "max_text_len": max_text_len},
+            "train_split_sha256": hashlib.sha256(train_path.read_bytes()).hexdigest(),
+            "training_record_count": len(records),
+            "creation_timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "git_commit": _git_commit(),
+            "manifest": manifest,
+        }
 
         return retriever
 
@@ -118,7 +141,11 @@ class FAISSRetriever:
 
         faiss.write_index(self.index, str(target_dir / "train.index"))
         with (target_dir / "metadata.json").open("w", encoding="utf-8") as f:
-            json.dump({"model_name": self.model_name, "records": self.metadata}, f)
+            json.dump({
+                "model_name": self.model_name,
+                "records": self.metadata,
+                "index_metadata": getattr(self, "index_metadata", {}),
+            }, f)
 
     @classmethod
     def load(cls, directory: Path | str) -> FAISSRetriever:
@@ -136,7 +163,26 @@ class FAISSRetriever:
         retriever = cls(model_name=meta_data.get("model_name", DEFAULT_EMBEDDING_MODEL))
         retriever.index = faiss.read_index(str(index_file))
         retriever.metadata = meta_data["records"]
+        retriever.index_metadata = meta_data.get("index_metadata", {})
         return retriever
+
+    def validate_against_splits(self, train_path: Path | str, test_path: Path | str) -> None:
+        """Reject stale indexes and raw or normalized test leakage."""
+        train = Path(train_path)
+        test = Path(test_path)
+        expected_hash = hashlib.sha256(train.read_bytes()).hexdigest()
+        if getattr(self, "index_metadata", {}).get("train_split_sha256") != expected_hash:
+            raise RuntimeError("RAG index train split hash does not match the current split")
+        test_rows = [json.loads(line) for line in test.read_text(encoding="utf-8").splitlines() if line.strip()]
+        test_ids = {str(row["id"]) for row in test_rows}
+        test_texts = {str(row["text"]) for row in test_rows}
+        if self.indexed_ids & test_ids:
+            raise RuntimeError("RAG index leakage detected: test ID appears in index")
+        if self.indexed_texts & test_texts:
+            raise RuntimeError("RAG index leakage detected: test text appears in index")
+        normalize = lambda value: " ".join(value.casefold().split())
+        if {normalize(text) for text in self.indexed_texts} & {normalize(text) for text in test_texts}:
+            raise RuntimeError("RAG index leakage detected: normalized test text appears in index")
 
     @property
     def indexed_ids(self) -> set[str]:
@@ -252,6 +298,10 @@ Remember: Return ONLY a valid JSON object with {{"verdict": "phishing" or "legit
                 "raw_response": raw_response_content,
                 "retrieved_ids": [r["id"] for r in retrieved_examples],
                 "retrieved_labels": [r["label_name"] for r in retrieved_examples],
+                "retrieved_metadata": [
+                    {"id": r["id"], "source": r.get("source"), "family": r.get("family")}
+                    for r in retrieved_examples
+                ],
                 "error": None,
             }
             return validated, metadata
@@ -267,6 +317,10 @@ Remember: Return ONLY a valid JSON object with {{"verdict": "phishing" or "legit
         "raw_response": raw_response_content,
         "retrieved_ids": [r["id"] for r in retrieved_examples],
         "retrieved_labels": [r["label_name"] for r in retrieved_examples],
+        "retrieved_metadata": [
+            {"id": r["id"], "source": r.get("source"), "family": r.get("family")}
+            for r in retrieved_examples
+        ],
         "error": last_error or "Unknown error",
     }
     return None, metadata
@@ -304,6 +358,7 @@ def run_rag_pilot(
                 test_records.append(json.loads(line.strip()))
                 if len(test_records) >= limit:
                     break
+    retriever.validate_against_splits(train_jsonl, test_jsonl)
 
     output_predictions.parent.mkdir(parents=True, exist_ok=True)
     start_time = time.perf_counter()
@@ -354,6 +409,7 @@ def run_rag_pilot(
                 "latency_seconds": meta["latency_seconds"],
                 "retrieved_ids": meta.get("retrieved_ids", []),
                 "retrieved_labels": meta.get("retrieved_labels", []),
+                "retrieved_metadata": meta.get("retrieved_metadata", []),
                 "error": meta["error"],
             }
             out_f.write(json.dumps(record_out, ensure_ascii=False) + "\n")

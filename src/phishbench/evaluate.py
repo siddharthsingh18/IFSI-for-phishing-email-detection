@@ -61,7 +61,63 @@ def classification_metrics(rows: list[dict[str, Any]], valid_only: bool = False)
     fpr = ratio(fp, fp + tn)
     denom = math.sqrt((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn))
     f1 = None if precision is None or recall is None or precision + recall == 0 else 2 * precision * recall / (precision + recall)
-    return {**c, "n": sum(c.values()), "precision": precision, "recall": recall, "f1": f1, "fpr": fpr, "fnr": None if recall is None else 1 - recall, "mcc": None if denom == 0 else (tp * tn - fp * fn) / denom}
+    n = sum(c.values())
+    predicted_positive = tp + fp
+    phishing_n = tp + fn
+    legitimate_n = tn + fp
+    return {
+        **c,
+        "n": n,
+        "precision": precision,
+        "recall": recall,
+        "f1": f1,
+        "fpr": fpr,
+        "fnr": None if recall is None else 1 - recall,
+        "mcc": None if denom == 0 else (tp * tn - fp * fn) / denom,
+        "predicted_positive_count": predicted_positive,
+        "predicted_negative_count": n - predicted_positive,
+        "predicted_positive_rate": ratio(predicted_positive, n),
+        "phishing_n": phishing_n,
+        "legitimate_n": legitimate_n,
+        "degenerate_output": bool(
+            (n and (predicted_positive / n > 0.95 or predicted_positive / n < 0.05))
+            or (specificity := ratio(tn, legitimate_n)) == 0
+            or recall == 0
+        ),
+    }
+
+
+def policy_metrics(
+    rows: list[dict[str, Any]],
+    *,
+    policy: str = "full",
+    minimum_legitimate_n: int = 300,
+    minimum_phishing_n: int = 300,
+) -> dict[str, Any]:
+    """Return policy-aware strict and valid-only metrics with sample guards."""
+    if policy not in {"full", "recall_only", "fpr_only"}:
+        raise ValueError(f"Unknown metrics policy: {policy}")
+    strict = classification_metrics(rows)
+    valid_only = classification_metrics(rows, valid_only=True)
+    result = {"metrics_policy": policy, "strict": strict, "valid_only": valid_only}
+    for name, metrics in (("strict", strict), ("valid_only", valid_only)):
+        metrics["fpr_status"] = (
+            f"insufficient legitimate samples (N={metrics['legitimate_n']})"
+            if metrics["legitimate_n"] < minimum_legitimate_n else "reported"
+        )
+        metrics["recall_status"] = (
+            f"insufficient phishing samples (N={metrics['phishing_n']})"
+            if metrics["phishing_n"] < minimum_phishing_n else "reported"
+        )
+    result["conclusion_flip"] = {
+        "recall": strict.get("recall") != valid_only.get("recall"),
+        "fpr": strict.get("fpr") != valid_only.get("fpr"),
+    }
+    if policy == "recall_only":
+        strict["fpr"] = valid_only["fpr"] = None
+    if policy == "fpr_only":
+        strict["recall"] = valid_only["recall"] = None
+    return result
 
 
 def percentile(values: list[float], q: float) -> float | None:
@@ -167,6 +223,7 @@ def condition_summary(rows: list[dict[str, Any]], seed: int, iterations: int, pr
         "records_parsed": sum(row.get("prediction") in (0, 1) for row in rows),
         "failure_as_error_metrics": base,
         "valid_output_only_metrics": classification_metrics(rows, valid_only=True),
+        "policy_metrics": policy_metrics(rows),
         "efficiency": efficiency(rows, pricing),
         "summary_length_soft_check": {
             "non_null_summaries": len(summaries),

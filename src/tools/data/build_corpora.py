@@ -20,6 +20,7 @@ from phishbench.data_loader import (
     split_by_regime,
     validate_split_records,
 )
+from tools.diagnostics.confounding_audit import audit_corpus
 
 
 def _load_config(path: Path) -> dict[str, Any]:
@@ -108,6 +109,8 @@ def write_regime(
     held_out_family: str | None = None,
     held_out_template: str | None = None,
     recall_only: bool = False,
+    role: str = "primary",
+    metrics_policy: str = "full",
 ) -> dict[str, Any]:
     split = split_by_regime(
         records,
@@ -129,6 +132,9 @@ def write_regime(
         files[name] = {"path": str(path), "sha256": _sha256(path), "records": len(rows)}
     manifest = {
         "status": "complete",
+        "role": role,
+        "metrics_policy": metrics_policy,
+        "gates": {"passed": validation["is_valid"]},
         "git_commit": subprocess.run(
             ["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=False
         ).stdout.strip() or "unknown",
@@ -240,7 +246,26 @@ def _build_corpora_impl(
             held_out_family=held_out_family,
             held_out_template=held_out_template,
             recall_only=recall_only,
+            role="primary" if name == "primary_balanced" else (
+                "adversarial" if name == "adversarial_robustness" else
+                "controls" if name == "legit_controls" else "injection"
+            ),
+            metrics_policy=corpus_cfg.get("metrics_policy", "full"),
         )
+        if name == "primary_balanced":
+            audit = audit_corpus(corpus_dir)
+            split_manifest["confounding_audit"] = audit["gate"]
+            split_manifest["gates"] = {
+                "passed": split_manifest["gates"]["passed"] and audit["gate"]["passed"]
+            }
+            (corpus_dir / "split_manifest.json").write_text(
+                json.dumps(split_manifest, indent=2) + "\n", encoding="utf-8"
+            )
+            if not audit["gate"]["passed"]:
+                raise ValueError(
+                    "primary_balanced failed confounding audit: "
+                    + "; ".join(audit["gate"]["reasons"])
+                )
         gate = {
             "passed": split_manifest["validation"]["is_valid"],
             "metrics_policy": cfg["corpora"].get(name, {}).get("metrics_policy", "full"),

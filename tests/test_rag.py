@@ -172,3 +172,23 @@ def test_rag_cli_k_flag() -> None:
     assert parser.parse_args(["-k", "5"]).top_k == 5
     assert parser.parse_args(["--top-k", "2"]).top_k == 2
     assert parser.parse_args([]).top_k == 3
+
+
+def test_retriever_rejects_test_leakage() -> None:
+    retriever = FAISSRetriever.__new__(FAISSRetriever)
+    retriever.metadata = [{
+        "id": "test-id",
+        "text": "Subject: leaked test message",
+        "label": 1,
+    }]
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        root = Path(tmp_dir)
+        train = root / "train.jsonl"
+        test = root / "test.jsonl"
+        train.write_text(json.dumps({"id": "train-id", "text": "train", "label": 0}) + "\n")
+        test.write_text(json.dumps({"id": "test-id", "text": "Subject: leaked test message", "label": 1}) + "\n")
+        retriever.index_metadata = {
+            "train_split_sha256": __import__("hashlib").sha256(train.read_bytes()).hexdigest()
+        }
+        with pytest.raises(RuntimeError, match="leakage"):
+            retriever.validate_against_splits(train, test)

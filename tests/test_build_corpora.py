@@ -12,6 +12,11 @@ def test_corpus_build_is_deterministic_and_respects_roles(tmp_path: Path) -> Non
     for index in range(12):
         rows.append({"id": f"l{index}", "text": f"legit message {index}", "label": "legit", "source": "enron"})
         rows.append({"id": f"p{index}", "text": f"phishing message {index}", "label": "phishing", "source": "nazario"})
+    for index in range(12):
+        rows.extend([
+            {"id": f"cross-l{index}", "text": f"legit cross-source message {index}", "label": "legit", "source": "nazario"},
+            {"id": f"cross-p{index}", "text": f"phishing cross-source message {index}", "label": "phishing", "source": "enron"},
+        ])
     for index in range(4):
         rows.append({"id": f"e{index}", "text": f"attack message {index}", "label": "phishing", "source": "epvme", "family": "1"})
     pool.write_text("\n".join(json.dumps(row) for row in rows) + "\n", encoding="utf-8")
