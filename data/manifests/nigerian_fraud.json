@@ -1,0 +1,10 @@
+{
+  "name": "Nigerian Fraud / 419",
+  "source": "nigerian_fraud",
+  "origin_url": "https://www.cl.cam.ac.uk/~rnc1/naivebayes.html",
+  "expected_paths": ["data/raw/nigerian_fraud/"],
+  "sha256": null,
+  "record_count": null,
+  "license": "Access-gated source terms; verify",
+  "redistribution_allowed": false
+}

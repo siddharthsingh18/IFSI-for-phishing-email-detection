@@ -1,0 +1,10 @@
+{
+  "name": "SpamAssassin easy_ham and hard_ham",
+  "source": "spamassassin_ham",
+  "origin_url": "https://spamassassin.apache.org/old/publiccorpus/",
+  "expected_paths": ["data/raw/spamassassin/easy_ham/", "data/raw/spamassassin/hard_ham/"],
+  "sha256": null,
+  "record_count": null,
+  "license": "Original sender copyrights and corpus warning; verify",
+  "redistribution_allowed": false
+}

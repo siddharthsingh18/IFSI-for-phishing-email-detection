@@ -1,0 +1,10 @@
+{
+  "name": "Enron",
+  "source": "enron",
+  "origin_url": "https://www.cs.cmu.edu/~enron/",
+  "expected_paths": ["data/raw/enron/"],
+  "sha256": null,
+  "record_count": null,
+  "license": "Original corpus terms; verify",
+  "redistribution_allowed": false
+}

@@ -1,0 +1,40 @@
+{
+  "sources": {
+    "enron": {"role": "legit", "label": "legit"},
+    "spamassassin_ham": {"role": "legit", "label": "legit"},
+    "nazario": {"role": "phishing", "label": "phishing"},
+    "nigerian_fraud": {"role": "phishing", "label": "phishing", "family": "fraud_419"},
+    "epvme": {
+      "role": "malicious",
+      "label": "phishing",
+      "adversarial": true,
+      "max_family_share": 0.25,
+      "max_header_scaffold_share": 0.25
+    },
+    "iwspa_synthetic": {"role": "malicious", "label": "phishing", "adversarial": true},
+    "iwspa_adversarial": {"role": "both", "adversarial": true}
+  },
+  "corpora": {
+    "primary_balanced": {
+      "include_roles": ["legit", "phishing"],
+      "exclude_sources": ["epvme", "iwspa_synthetic", "iwspa_adversarial"],
+      "target_phishing_share": [0.4, 0.6],
+      "max_source_share": 0.4
+    },
+    "adversarial_robustness": {
+      "include_sources": ["epvme", "iwspa_synthetic"],
+      "metrics_policy": "recall_only"
+    },
+    "legit_controls": {
+      "include_roles": ["legit"],
+      "reserve_from_primary": true,
+      "metrics_policy": "fpr_only"
+    },
+    "injection_resilience": {
+      "base_corpus": "primary_balanced",
+      "include_corpus": "legit_controls",
+      "metrics_policy": "full"
+    }
+  },
+  "seed": 42
+}

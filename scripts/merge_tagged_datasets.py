@@ -26,6 +26,7 @@ from typing import Any, Iterable
 
 from phishbench.data_loader import (
     clean_text,
+    cluster_near_duplicates,
     deduplicate_exact,
     deduplicate_near_duplicates,
     normalize_key,
@@ -197,6 +198,26 @@ def _label_conflicts(records: Iterable[dict[str, Any]]) -> list[dict[str, Any]]:
                 }
             )
     return conflicts
+
+
+def _duplicate_source_pairs(
+    before: list[dict[str, Any]],
+    after_exact: list[dict[str, Any]],
+    after_near: list[dict[str, Any]],
+) -> dict[str, dict[str, int]]:
+    exact_ids = {str(record["id"]) for record in after_exact}
+    near_ids = {str(record["id"]) for record in after_near}
+    counts: Counter[tuple[str, str, str]] = Counter()
+    representatives = {str(record["id"]) for record in after_near}
+    for record in before:
+        if str(record["id"]) not in exact_ids:
+            counts[(str(record.get("source")), str(record.get("source")), "exact")] += 1
+        elif str(record["id"]) not in near_ids and str(record["id"]) not in representatives:
+            counts[(str(record.get("source")), str(record.get("source")), "near")] += 1
+    return {
+        f"{a}->{b}:{kind}": count
+        for (a, b, kind), count in sorted(counts.items())
+    }
 
 
 def _git_commit() -> str:
@@ -402,6 +423,7 @@ def main() -> None:
     parser.add_argument("--log-every", type=int, default=1000)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--near-dedup-threshold", type=float, default=0.85)
+    parser.add_argument("--on-conflict", choices=("fail", "drop"), default="fail")
     args = parser.parse_args()
 
     run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + _git_commit()[:8]
@@ -426,7 +448,11 @@ def main() -> None:
         cleaned = [record for record in cleaned if record["text"]]
         stage_seconds["cleaned"] = time.perf_counter() - start
         start = time.perf_counter()
-        exact, exact_stats = deduplicate_exact([_as_numeric_label(record) for record in cleaned])
+        exact, exact_stats = deduplicate_exact(
+            [_as_numeric_label(record) for record in cleaned],
+            on_conflict=args.on_conflict,
+            conflict_path=work_dir / "label_conflicts.jsonl",
+        )
         stage_seconds["exact_dedup"] = time.perf_counter() - start
         start = time.perf_counter()
         after_near, near_stats = deduplicate_near_duplicates(
@@ -436,6 +462,14 @@ def main() -> None:
             log_every=args.log_every,
             return_stats=True,
         )
+        clustered, cluster_stats = cluster_near_duplicates(
+            exact, threshold=args.near_dedup_threshold
+        )
+        cluster_by_id = {str(record["id"]): record["cluster_id"] for record in clustered}
+        after_near = [
+            {**record, "cluster_id": cluster_by_id.get(str(record["id"]), f"cluster-{record['id']}")}
+            for record in after_near
+        ]
         stage_seconds["near_dedup"] = time.perf_counter() - start
         deduped = [{**record, "label": "phishing" if int(record["label"]) else "legit"} for record in after_near]
         label_conflicts = _label_conflicts(cleaned)
@@ -481,6 +515,7 @@ def main() -> None:
                 "after_near": len(deduped),
                 "exact_stats": exact_stats,
                 "near_dedup_stats": near_stats,
+                "cluster_stats": cluster_stats,
             },
             "source_contribution_before": _source_counts(parsed),
             "source_contribution_after": _source_counts(deduped),
@@ -500,6 +535,7 @@ def main() -> None:
                 for name, rows in split_records.items()
             },
             "validation": validation,
+            "duplicate_source_pairs": _duplicate_source_pairs(parsed, exact, after_near),
             "schema": "all outputs use id,text,label,source",
         }
         combined_stage.mkdir(parents=True, exist_ok=True)

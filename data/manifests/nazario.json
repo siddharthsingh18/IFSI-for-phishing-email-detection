@@ -1,0 +1,10 @@
+{
+  "name": "Nazario phishing corpus",
+  "source": "nazario",
+  "origin_url": "https://monkey.org/~jose/phishing/",
+  "expected_paths": ["data/raw/nazario/phishing3.mbox"],
+  "sha256": null,
+  "record_count": null,
+  "license": "Source terms; verify",
+  "redistribution_allowed": false
+}

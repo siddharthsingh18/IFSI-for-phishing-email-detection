@@ -10,6 +10,7 @@ import pytest
 
 from phishbench.data_loader import (
     clean_text,
+    cluster_near_duplicates,
     deduplicate_exact,
     deduplicate_near_duplicates,
     jaccard_similarity,
@@ -17,6 +18,8 @@ from phishbench.data_loader import (
     require_complete_manifest,
     save_splits_to_jsonl,
     stratified_split,
+    split_by_regime,
+    validate_split_records,
     validate_splits,
 )
 
@@ -44,6 +47,20 @@ def test_exact_deduplication() -> None:
     assert {r["id"] for r in kept} == {"1", "4"}
 
 
+def test_conflicting_labels_are_quarantined_and_fail(tmp_path: Path) -> None:
+    records = [
+        {"id": "p", "text": "same message", "label": 1, "source": "a"},
+        {"id": "l", "text": " SAME   MESSAGE ", "label": 0, "source": "b"},
+    ]
+    quarantine = tmp_path / "label_conflicts.jsonl"
+    with pytest.raises(ValueError, match="label conflict"):
+        deduplicate_exact(records, conflict_path=quarantine)
+    assert len(quarantine.read_text(encoding="utf-8").splitlines()) == 2
+    kept, stats = deduplicate_exact(records, on_conflict="drop")
+    assert kept == []
+    assert stats["label_conflict_records"] == 2
+
+
 def test_near_deduplication() -> None:
     # Two emails differing by only a phone number or 1 word out of many
     base_text = "Subject: Important security alert. Your corporate banking password will expire today. Please verify your credentials immediately by visiting the secure portal. Contact helpdesk at 555-0101."
@@ -61,6 +78,34 @@ def test_near_deduplication() -> None:
     assert len(kept) == 2
     assert kept[0]["id"] == "1"
     assert kept[1]["id"] == "3"
+
+
+def test_cluster_ids_and_grouped_split_do_not_leak() -> None:
+    records = [
+        {"id": "a", "text": "security alert verify your account now immediately", "label": 1, "source": "x", "family": "f1"},
+        {"id": "b", "text": "security alert verify your account now immediately today", "label": 1, "source": "x", "family": "f1"},
+        {"id": "c", "text": "weekly team meeting agenda and notes", "label": 0, "source": "y", "family": "f2"},
+        {"id": "d", "text": "monthly project status report and notes", "label": 0, "source": "y", "family": "f2"},
+    ]
+    annotated, _ = cluster_near_duplicates(records, threshold=0.7)
+    assert annotated[0]["cluster_id"] == annotated[1]["cluster_id"]
+    splits = split_by_regime(annotated, regime="random_stratified_grouped", seed=42)
+    assert validate_split_records(splits)["is_valid"]
+    locations = {
+        row["cluster_id"]: split
+        for split, rows in splits.items()
+        for row in rows
+    }
+    assert len(locations) >= 2
+
+
+def test_source_held_out_refuses_single_class_without_recall_only() -> None:
+    records = [
+        {"id": str(i), "text": f"message {i}", "label": 1 if i < 4 else 0, "source": "held" if i < 2 else "other", "cluster_id": str(i)}
+        for i in range(6)
+    ]
+    with pytest.raises(ValueError, match="single class"):
+        split_by_regime(records, regime="source_held_out", held_out_source="held")
 
 
 def test_stratified_split_ratios_and_reproducibility() -> None:

@@ -1,0 +1,10 @@
+{
+  "name": "IWSPA adversarial",
+  "source": "iwspa_adversarial",
+  "origin_url": "https://github.com/mitchellkrogza/IWSPA-2023-Adversarial-Synthetic-Dataset",
+  "expected_paths": ["data/raw/iwspa/Adversarial/adversarial_dataset.csv"],
+  "sha256": null,
+  "record_count": null,
+  "license": "Dataset terms; verify",
+  "redistribution_allowed": false
+}

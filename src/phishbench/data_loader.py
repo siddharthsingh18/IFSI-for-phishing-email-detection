@@ -49,7 +49,12 @@ def normalize_key(text: str) -> str:
     return " ".join(norm.split())
 
 
-def deduplicate_exact(records: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], dict[str, int]]:
+def deduplicate_exact(
+    records: list[dict[str, Any]],
+    *,
+    on_conflict: str = "fail",
+    conflict_path: Path | None = None,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """Deduplicate records based on exact text and normalized whitespace/case text.
 
     Args:
@@ -58,11 +63,35 @@ def deduplicate_exact(records: list[dict[str, Any]]) -> tuple[list[dict[str, Any
     Returns:
         tuple of (kept_records, stats_dict)
     """
+    if on_conflict not in {"fail", "drop"}:
+        raise ValueError("on_conflict must be 'fail' or 'drop'")
+    groups: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for record in records:
+        groups[normalize_key(str(record["text"]))].append(record)
+    conflicts = [
+        group for group in groups.values()
+        if len({str(item["label"]) for item in group}) > 1
+    ]
+    if conflict_path and conflicts:
+        conflict_path.parent.mkdir(parents=True, exist_ok=True)
+        with conflict_path.open("w", encoding="utf-8") as handle:
+            for group in conflicts:
+                for record in group:
+                    handle.write(json.dumps(record, ensure_ascii=False) + "\n")
+    if conflicts and on_conflict == "fail":
+        raise ValueError(
+            f"Found {len(conflicts)} normalized-text label conflict group(s); "
+            f"quarantined members to {conflict_path}" if conflict_path
+            else f"Found {len(conflicts)} normalized-text label conflict group(s)"
+        )
+    conflict_ids = {id(record) for group in conflicts for record in group}
+    eligible = [record for record in records if id(record) not in conflict_ids]
+
     seen_raw: set[str] = set()
     exact_raw_dupes = 0
     after_raw: list[dict[str, Any]] = []
 
-    for r in records:
+    for r in eligible:
         raw_text = r["text"]
         if raw_text in seen_raw:
             exact_raw_dupes += 1
@@ -86,6 +115,8 @@ def deduplicate_exact(records: list[dict[str, Any]]) -> tuple[list[dict[str, Any
         "exact_raw_duplicates_removed": exact_raw_dupes,
         "normalized_whitespace_duplicates_removed": norm_dupes,
         "total_exact_duplicates_removed": exact_raw_dupes + norm_dupes,
+        "label_conflict_groups": len(conflicts),
+        "label_conflict_records": sum(len(group) for group in conflicts),
     }
     return kept, stats
 
@@ -123,6 +154,76 @@ def jaccard_similarity(set_a: set[str], set_b: set[str]) -> float:
     return intersection / union if union > 0 else 0.0
 
 
+def cluster_near_duplicates(
+    records: list[dict[str, Any]],
+    threshold: float = 0.85,
+    num_perm: int = 64,
+    num_bands: int = 8,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Assign connected-component cluster IDs using verified LSH candidates."""
+    if not records:
+        return [], {
+            "candidate_pair_count": 0,
+            "exact_similarity_comparisons": 0,
+            "cluster_count": 0,
+            "cluster_sizes": {},
+        }
+    rows_per_band = num_perm // num_bands
+    shingles = [get_shingles(str(record["text"])) for record in records]
+    signatures = [compute_minhash_signature(item, num_perm=num_perm) for item in shingles]
+    buckets: dict[tuple[int, tuple[int, ...]], list[int]] = defaultdict(list)
+    for index, signature in enumerate(signatures):
+        for band in range(num_bands):
+            key = (band, tuple(signature[band * rows_per_band : (band + 1) * rows_per_band]))
+            buckets[key].append(index)
+
+    parent = list(range(len(records)))
+
+    def find(index: int) -> int:
+        while parent[index] != index:
+            parent[index] = parent[parent[index]]
+            index = parent[index]
+        return index
+
+    def union(left: int, right: int) -> None:
+        root_left, root_right = find(left), find(right)
+        if root_left != root_right:
+            parent[root_right] = root_left
+
+    candidates: set[tuple[int, int]] = set()
+    for bucket in buckets.values():
+        for left in range(len(bucket)):
+            for right in range(left + 1, len(bucket)):
+                candidates.add((min(bucket[left], bucket[right]), max(bucket[left], bucket[right])))
+    comparisons = 0
+    for left, right in sorted(candidates):
+        if not shingles[left] or not shingles[right]:
+            continue
+        comparisons += 1
+        if jaccard_similarity(shingles[left], shingles[right]) >= threshold:
+            union(left, right)
+
+    members: dict[int, list[int]] = defaultdict(list)
+    for index in range(len(records)):
+        members[find(index)].append(index)
+    annotated: list[dict[str, Any]] = []
+    cluster_sizes: dict[str, int] = {}
+    for root, indexes in members.items():
+        cluster_id = "cluster-" + hashlib.sha256(
+            "\0".join(sorted(str(records[index]["id"]) for index in indexes)).encode("utf-8")
+        ).hexdigest()[:16]
+        cluster_sizes[cluster_id] = len(indexes)
+        for index in indexes:
+            annotated.append({**records[index], "cluster_id": cluster_id})
+    annotated.sort(key=lambda record: str(record["id"]))
+    return annotated, {
+        "candidate_pair_count": len(candidates),
+        "exact_similarity_comparisons": comparisons,
+        "cluster_count": len(members),
+        "cluster_sizes": cluster_sizes,
+    }
+
+
 def deduplicate_near_duplicates(
     records: list[dict[str, Any]],
     threshold: float = 0.85,
@@ -146,6 +247,21 @@ def deduplicate_near_duplicates(
             "runtime_seconds": time.perf_counter() - started,
         }
         return (records, stats) if return_stats else (records, 0)
+
+    if checkpoint_dir is None:
+        annotated, cluster_stats = cluster_near_duplicates(
+            records, threshold=threshold, num_perm=num_perm, num_bands=num_bands
+        )
+        representatives: dict[str, dict[str, Any]] = {}
+        for record in annotated:
+            representatives.setdefault(str(record["cluster_id"]), record)
+        kept = list(representatives.values())
+        stats = {
+            "near_duplicates_removed": len(records) - len(kept),
+            **cluster_stats,
+            "runtime_seconds": time.perf_counter() - started,
+        }
+        return (kept, stats) if return_stats else (kept, len(records) - len(kept))
 
     rows_per_band = num_perm // num_bands
     checkpoint_dir = Path(checkpoint_dir) if checkpoint_dir else None
@@ -283,17 +399,140 @@ def stratified_split(
     rng_test.shuffle(test)
 
     def _format(r: dict[str, Any]) -> dict[str, Any]:
-        return {
+        formatted = {
             "id": str(r["id"]),
             "text": str(r["text"]),
             "label": int(r["label"]),
-            **({"source": str(r["source"])} if "source" in r else {}),
         }
+        for key in (
+            "source", "family", "cluster_id", "payload_fingerprint",
+            "header_scaffold_fingerprint", "template_style",
+        ):
+            if key in r:
+                formatted[key] = str(r[key])
+        return formatted
 
     return {
         "train": [_format(r) for r in train],
         "val": [_format(r) for r in val],
         "test": [_format(r) for r in test],
+    }
+
+
+def split_by_regime(
+    records: list[dict[str, Any]],
+    *,
+    regime: str,
+    seed: int = 42,
+    held_out_source: str | None = None,
+    held_out_family: str | None = None,
+    held_out_template: str | None = None,
+    recall_only: bool = False,
+) -> dict[str, list[dict[str, Any]]]:
+    """Split whole clusters while supporting source, family, and template holdouts."""
+    if regime not in {
+        "random_stratified_grouped",
+        "source_held_out",
+        "family_held_out",
+        "template_held_out",
+    }:
+        raise ValueError(f"Unknown split regime: {regime}")
+    groups: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for record in records:
+        group_key = str(record.get("cluster_id") or record["id"])
+        if str(record.get("source")) == "epvme":
+            group_key += "|" + "|".join(
+                str(record.get(key, ""))
+                for key in ("family", "payload_fingerprint", "header_scaffold_fingerprint")
+            )
+        groups[group_key].append(record)
+
+    def held_out(record: dict[str, Any]) -> bool:
+        if regime == "source_held_out":
+            return held_out_source is not None and str(record.get("source")) == held_out_source
+        if regime == "family_held_out":
+            return held_out_family is not None and str(record.get("family")) == held_out_family
+        if regime == "template_held_out":
+            return held_out_template is not None and str(
+                record.get("template_style") or record.get("template") or record.get("family")
+            ) == held_out_template
+        return False
+
+    held_out_groups = [rows for rows in groups.values() if held_out(rows[0])]
+    remaining_groups = [rows for rows in groups.values() if not held_out(rows[0])]
+    if regime == "source_held_out" and held_out_groups:
+        labels = {
+            1 if row["label"] in (1, "1", "phishing", "spam", "true") else 0
+            for group in held_out_groups for row in group
+        }
+        if len(labels) < 2 and not recall_only:
+            raise ValueError("source-held-out source has a single class; use recall_only explicitly")
+
+    rng = random.Random(seed)
+    rng.shuffle(remaining_groups)
+    buckets: dict[str, list[dict[str, Any]]] = {"train": [], "val": [], "test": []}
+    if held_out_groups:
+        buckets["test"] = [row for group in held_out_groups for row in group]
+    for group in remaining_groups:
+        raw_label = group[0]["label"]
+        label = 1 if raw_label in (1, "1", "phishing", "spam", "true") else 0
+        current = len([
+            row for row in buckets["train"]
+            if row["label"] in (label, str(label), "phishing" if label else "legit")
+        ])
+        total = sum(
+            len(item)
+            for item in remaining_groups
+            if item[0]["label"] in (label, str(label), "phishing" if label else "legit")
+        )
+        target_train = round(total * 0.8)
+        target_val = round(total * 0.1)
+        destination = (
+            "train" if current < target_train
+            else "val" if len([
+                row for row in buckets["val"]
+                if row["label"] in (label, str(label), "phishing" if label else "legit")
+            ]) < target_val
+            else "test"
+        )
+        buckets[destination].extend(group)
+    for rows in buckets.values():
+        rng.shuffle(rows)
+    return buckets
+
+
+def validate_split_records(splits: dict[str, list[dict[str, Any]]]) -> dict[str, Any]:
+    """Validate provenance, IDs, text, and cluster isolation across in-memory splits."""
+    seen_ids: dict[str, str] = {}
+    seen_texts: dict[str, str] = {}
+    seen_normalized: dict[str, str] = {}
+    seen_clusters: dict[str, str] = {}
+    for split, records in splits.items():
+        for record in records:
+            if not record.get("source"):
+                raise ValueError(f"Missing source provenance in {split}: {record.get('id')}")
+            record_id = str(record["id"])
+            if record_id in seen_ids:
+                raise ValueError(f"Duplicate id across splits: {record_id}")
+            seen_ids[record_id] = split
+            text = str(record["text"])
+            normalized = normalize_key(text)
+            for value, lookup, label in (
+                (text, seen_texts, "exact text"),
+                (normalized, seen_normalized, "normalized text"),
+            ):
+                if value in lookup and lookup[value] != split:
+                    raise ValueError(f"Cross-split {label}: {record_id}")
+                lookup[value] = split
+            cluster_id = record.get("cluster_id")
+            if cluster_id:
+                if cluster_id in seen_clusters and seen_clusters[cluster_id] != split:
+                    raise ValueError(f"Cross-split cluster_id: {cluster_id}")
+                seen_clusters[str(cluster_id)] = split
+    return {
+        "is_valid": True,
+        "total_records": len(seen_ids),
+        "splits": {name: len(rows) for name, rows in splits.items()},
     }
 
 
@@ -315,6 +554,9 @@ def save_splits_to_jsonl(
                 }
                 if "source" in item:
                     record["source"] = str(item["source"])
+                for key in ("family", "cluster_id", "payload_fingerprint", "header_scaffold_fingerprint", "template_style"):
+                    if key in item:
+                        record[key] = str(item[key])
                 f.write(json.dumps(record, ensure_ascii=False) + "\n")
         paths[name] = path
     return paths
@@ -363,7 +605,10 @@ def validate_splits(
                     raise ValueError(f"{name}:{line_no}: Row is not a JSON object")
 
                 required_keys = {"id", "text", "label"}
-                allowed_keys = required_keys | {"source"}
+                allowed_keys = required_keys | {
+                    "source", "family", "cluster_id", "payload_fingerprint",
+                    "header_scaffold_fingerprint", "template_style",
+                }
                 if not required_keys.issubset(obj) or not set(obj).issubset(allowed_keys):
                     raise ValueError(
                         f"{name}:{line_no}: Expected keys {required_keys} with optional "

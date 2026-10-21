@@ -1,0 +1,10 @@
+{
+  "name": "EPVME",
+  "source": "epvme",
+  "origin_url": "https://github.com/antispam-research/EPVME",
+  "expected_paths": ["data/raw/epvme/"],
+  "sha256": null,
+  "record_count": null,
+  "license": "GPL-3.0 package and embedded-source terms; verify",
+  "redistribution_allowed": false
+}
