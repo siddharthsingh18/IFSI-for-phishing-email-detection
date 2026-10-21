@@ -24,18 +24,20 @@ The root `.gitignore` enforces this default boundary. Do not use `git add -f`
 on an excluded artifact without completing a record-level privacy and upstream
 license review.
 
-## Before the first push
+## Before publishing a new release
 
-1. Choose and add an appropriate software license before release. Until then,
-   public visibility does not grant reuse rights.
+1. The repository is released under the MIT license in `LICENSE`; retain
+   upstream attribution and verify redistribution terms for any source data.
 2. Review `git status --short` and `git diff --cached --stat`.
-3. Run `./src/tools/release/check_public_release.sh`.
-4. Because `v2` is nested in a larger historical repository, create a clean
+3. Run `./src/tools/release/check_public_release.sh` when that helper exists in
+   the checkout.
+4. Because historical commits may contain older V1 material, create a clean
    standalone tree with
    `./src/tools/release/export_public_tree.sh /tmp/phishbench-public`.
 5. Inspect the exported or staged file list for email bodies, credentials, absolute local
    paths, private reviewer material, and unpublished paper drafts.
-6. If raw artifacts will be released separately, publish their hashes from
+6. Never commit raw `.mbox` corpora or expanded email records. If raw artifacts
+   will be released separately, publish their hashes from
    `experiments/MANIFEST.json` and document the access/licensing process.
 
 ## Reproducibility levels

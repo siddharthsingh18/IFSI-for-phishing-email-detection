@@ -33,6 +33,8 @@ dist/
 data/
 /data/raw/
 /data/processed/
+/phishing3.mbox
+*.mbox
 
 # Raw result directories in any project area
 **/raw/
@@ -56,6 +58,8 @@ raw-results/
 /paper/
 /docs/*
 !/docs/V2_RESEARCH_SPEC_ZH.md
+!/docs/screenshots/
+!/docs/screenshots/*.png
 
 # LaTeX build products (source .tex/.bib and intentional PDFs remain eligible)
 *.aux
@@ -72,4 +76,3 @@ missfont.log
 # Intermediate prediction traces and RAG vector index
 results/*.jsonl
 results/rag_index/
-
