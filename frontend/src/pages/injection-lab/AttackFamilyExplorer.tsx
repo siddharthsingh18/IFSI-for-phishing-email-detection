@@ -2,8 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import { BookOpen, FlaskConical, Copy, Check, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { AttackFamilyMeta } from './types';
+import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion';
 
-const MarkedUnmarkedEnvelopeGraphic: React.FC = () => (
+const MarkedUnmarkedEnvelopeGraphic: React.FC = () => {
+  const shouldReduceMotion = usePrefersReducedMotion();
+
+  return (
   <div className="w-full max-w-[330px] shrink-0" aria-label="Marked envelope with warning sticker compared with an unmarked envelope">
     <svg viewBox="0 0 330 150" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
       <defs>
@@ -25,9 +29,9 @@ const MarkedUnmarkedEnvelopeGraphic: React.FC = () => (
         <path d="M3 79L48 39M125 79L80 39" stroke="#64748b" strokeWidth="1.5" />
         <motion.g
           initial={{ scale: 1, opacity: 1 }}
-          whileInView={{ scale: [1, 1.14, 1], opacity: [1, 1, 1] }}
+          whileInView={shouldReduceMotion ? undefined : { scale: [1, 1.14, 1], opacity: [1, 1, 1] }}
           viewport={{ once: true, amount: 0.8 }}
-          transition={{ duration: 0.55, delay: 0.15, ease: 'easeInOut' }}
+          transition={{ duration: shouldReduceMotion ? 0 : 0.55, delay: shouldReduceMotion ? 0 : 0.15, ease: 'easeInOut' }}
           style={{ transformOrigin: '64px 42px' }}
           filter="url(#markedEnvelopeGlow)"
         >
@@ -51,7 +55,8 @@ const MarkedUnmarkedEnvelopeGraphic: React.FC = () => (
       </text>
     </svg>
   </div>
-);
+  );
+};
 
 interface TypingCodeBlockProps {
   content: string;
@@ -62,12 +67,17 @@ interface TypingCodeBlockProps {
 const TypingCodeBlock: React.FC<TypingCodeBlockProps> = ({ content, className, seenCodeBlocks }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const intervalRef = useRef<number | null>(null);
+  const shouldReduceMotion = usePrefersReducedMotion();
   const [displayedContent, setDisplayedContent] = useState(() =>
-    seenCodeBlocks.current.has(content) ? content : ''
+    shouldReduceMotion || seenCodeBlocks.current.has(content) ? content : ''
   );
   const hasStartedTyping = useRef(seenCodeBlocks.current.has(content));
 
   useEffect(() => {
+    if (shouldReduceMotion) {
+      setDisplayedContent(content);
+      return;
+    }
     if (seenCodeBlocks.current.has(content)) {
       setDisplayedContent(content);
       hasStartedTyping.current = true;
@@ -76,7 +86,7 @@ const TypingCodeBlock: React.FC<TypingCodeBlockProps> = ({ content, className, s
 
     setDisplayedContent('');
     hasStartedTyping.current = false;
-  }, [content, seenCodeBlocks]);
+  }, [content, seenCodeBlocks, shouldReduceMotion]);
 
   useEffect(() => {
     const node = containerRef.current;
@@ -153,6 +163,7 @@ export const AttackFamilyExplorer: React.FC<AttackFamilyExplorerProps> = ({
   currentMarkedText,
   currentUnmarkedText,
 }) => {
+  const shouldReduceMotion = usePrefersReducedMotion();
   const [copiedSnippetKey, setCopiedSnippetKey] = useState<'marked' | 'unmarked' | null>(null);
   const [isDifferenceExpanded, setIsDifferenceExpanded] = useState(false);
   const seenCodeBlocks = useRef<Set<string>>(new Set());
@@ -246,7 +257,7 @@ export const AttackFamilyExplorer: React.FC<AttackFamilyExplorerProps> = ({
           </div>
           <div className="flex items-center gap-2">
             <span className="text-xs text-slate-400">Unmarked Style:</span>
-            <div className="inline-flex rounded-lg bg-slate-950 border border-slate-800 p-0.5 text-xs">
+            <div className="flex max-w-full flex-wrap justify-end gap-1 rounded-lg bg-slate-950 border border-slate-800 p-0.5 text-xs">
               {availableExplorerStyles.map((st) => (
                 <button
                   key={st.id}
@@ -266,7 +277,7 @@ export const AttackFamilyExplorer: React.FC<AttackFamilyExplorerProps> = ({
         </div>
 
         {/* Attack Family Selector Tabs */}
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2" role="tablist" aria-label="Attack families">
           {attackFamilies.map((fam) => {
             const isSelected = explorerFamily === fam.id;
             return (
@@ -297,7 +308,7 @@ export const AttackFamilyExplorer: React.FC<AttackFamilyExplorerProps> = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.25, ease: 'easeInOut' }}
+              transition={{ duration: shouldReduceMotion ? 0 : 0.25, ease: 'easeInOut' }}
               className="space-y-0.5"
             >
               <span className="font-bold text-white mr-1.5">{currentFamilyMeta.name}:</span>
@@ -336,7 +347,7 @@ export const AttackFamilyExplorer: React.FC<AttackFamilyExplorerProps> = ({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.25, ease: 'easeInOut' }}
+                    transition={{ duration: shouldReduceMotion ? 0 : 0.25, ease: 'easeInOut' }}
                     className="w-full"
                   >
                     <TypingCodeBlock
@@ -398,7 +409,7 @@ export const AttackFamilyExplorer: React.FC<AttackFamilyExplorerProps> = ({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.25, ease: 'easeInOut' }}
+                    transition={{ duration: shouldReduceMotion ? 0 : 0.25, ease: 'easeInOut' }}
                     className="w-full"
                   >
                     <TypingCodeBlock

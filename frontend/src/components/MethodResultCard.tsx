@@ -98,6 +98,7 @@ export interface MethodResultCardProps {
   emailSnippet?: string;
   emailLabel?: string;
   viewDensity?: 'simple' | 'detailed';
+  verdictEffect?: 'evasion' | 'false_positive';
 }
 
 export const MethodResultCard: React.FC<MethodResultCardProps> = ({
@@ -114,6 +115,7 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
   emailSnippet,
   emailLabel,
   viewDensity = 'simple',
+  verdictEffect,
 }) => {
   // Support both controlled and uncontrolled open states
   const [internalIsOpen, setInternalIsOpen] = useState(false);
@@ -232,12 +234,32 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
               <div className="py-2.5 flex items-center justify-center">
                 <motion.div
                   initial={shouldReduceMotion ? { scale: 1, opacity: 1 } : { scale: 1.0, opacity: 0 }}
-                  animate={shouldReduceMotion ? { scale: 1, opacity: 1 } : { scale: [1.0, 1.08, 1.0], opacity: 1 }}
-                  transition={shouldReduceMotion ? { duration: 0 } : {
-                    scale: { duration: 0.42, times: [0, 0.5, 1], ease: [0.16, 1, 0.3, 1], delay: 0.1 },
-                    opacity: { duration: 0.2, ease: 'easeOut' },
-                  }}
-                  className="w-full flex items-center justify-center"
+                  animate={
+                    verdictEffect === 'evasion'
+                      ? { x: [0, -4, 4, -3, 3, 0], opacity: 1 }
+                      : verdictEffect === 'false_positive'
+                      ? { scale: [1, 1.06, 1], opacity: 1 }
+                      : shouldReduceMotion
+                      ? { scale: 1, opacity: 1 }
+                      : { scale: [1.0, 1.08, 1.0], opacity: 1 }
+                  }
+                  transition={
+                    verdictEffect
+                      ? { duration: shouldReduceMotion ? 0 : 0.45, ease: 'easeInOut' }
+                      : shouldReduceMotion
+                      ? { duration: 0 }
+                      : {
+                          scale: { duration: 0.42, times: [0, 0.5, 1], ease: [0.16, 1, 0.3, 1], delay: 0.1 },
+                          opacity: { duration: 0.2, ease: 'easeOut' },
+                        }
+                  }
+                  className={`w-full flex items-center justify-center ${
+                    verdictEffect === 'evasion'
+                      ? 'rounded-lg ring-2 ring-rose-400/70 shadow-[0_0_18px_rgba(244,63,94,0.55)]'
+                      : verdictEffect === 'false_positive'
+                      ? 'rounded-lg ring-2 ring-amber-400/70 shadow-[0_0_18px_rgba(245,158,11,0.45)]'
+                      : ''
+                  }`}
                 >
                   <Badge
                     variant={!result.is_valid ? 'neutral' : isPhishing ? 'phishing' : 'legitimate'}

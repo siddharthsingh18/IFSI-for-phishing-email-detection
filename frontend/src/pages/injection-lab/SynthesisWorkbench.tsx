@@ -18,6 +18,7 @@ import { ViewDensityToggle, type ViewDensity } from '../../components/ViewDensit
 import { Skeleton, SkeletonMethodCard } from '../../components/Skeleton';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fadeInUp, staggerContainer } from '../../lib/motion';
+import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion';
 import type {
   PresetSample,
   ClassificationResult,
@@ -101,6 +102,7 @@ export const SynthesisWorkbench: React.FC<SynthesisWorkbenchProps> = ({
   onCopyPayload,
 }) => {
   const [viewDensity, setViewDensity] = React.useState<ViewDensity>('simple');
+  const shouldReduceMotion = usePrefersReducedMotion();
 
   const getAttackOutcome = () => {
     if (!cleanResult || !injectedResult) return null;
@@ -388,17 +390,33 @@ export const SynthesisWorkbench: React.FC<SynthesisWorkbenchProps> = ({
               disabled={isEvaluating}
               className="px-6 py-2.5 rounded-xl border border-teal-400/40 bg-gradient-to-r from-teal-500 to-cyan-500 text-xs font-bold text-slate-950 shadow-lg shadow-teal-500/20 hover:brightness-110 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-all duration-150 cursor-pointer flex items-center gap-2 disabled:opacity-50"
             >
-              {isEvaluating ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin text-slate-950" />
-                  <span>Synthesizing &amp; Evaluating...</span>
-                </>
-              ) : (
-                <>
-                  <Play className="h-4 w-4 fill-slate-950 text-slate-950" />
-                  <span>Run Attack &bull; Dual Evaluate</span>
-                </>
-              )}
+              <AnimatePresence mode="wait" initial={false}>
+                {isEvaluating ? (
+                  <motion.span
+                    key="evaluating"
+                    initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -4 }}
+                    transition={{ duration: shouldReduceMotion ? 0 : 0.16 }}
+                    className="inline-flex items-center gap-2"
+                  >
+                    <Loader2 className={`h-4 w-4 ${shouldReduceMotion ? '' : 'animate-spin'} text-slate-950`} />
+                    <span>Synthesizing &amp; Evaluating...</span>
+                  </motion.span>
+                ) : (
+                  <motion.span
+                    key="idle"
+                    initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -4 }}
+                    transition={{ duration: shouldReduceMotion ? 0 : 0.16 }}
+                    className="inline-flex items-center gap-2"
+                  >
+                    <Play className="h-4 w-4 fill-slate-950 text-slate-950" />
+                    <span>Run Attack &bull; Dual Evaluate</span>
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </button>
           </div>
         </div>
@@ -488,7 +506,13 @@ export const SynthesisWorkbench: React.FC<SynthesisWorkbenchProps> = ({
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* LEFT: Clean Baseline Result */}
                     {cleanResult && (
-                      <motion.div variants={fadeInUp} className="space-y-2">
+                      <motion.div
+                        variants={fadeInUp}
+                        initial="hidden"
+                        animate="visible"
+                        transition={{ delay: 0 }}
+                        className="space-y-2"
+                      >
                         <div className="flex items-center justify-between text-xs font-semibold text-slate-300 px-1">
                           <span className="flex items-center gap-1.5">
                             <span className="h-2 w-2 rounded-full bg-slate-400" />
@@ -506,7 +530,13 @@ export const SynthesisWorkbench: React.FC<SynthesisWorkbenchProps> = ({
 
                     {/* RIGHT: Injected Email Result */}
                     {injectedResult && (
-                      <motion.div variants={fadeInUp} className="space-y-2">
+                      <motion.div
+                        variants={fadeInUp}
+                        initial="hidden"
+                        animate="visible"
+                        transition={{ delay: 0.15 }}
+                        className="space-y-2"
+                      >
                         <div className="flex items-center justify-between text-xs font-semibold text-slate-300 px-1">
                           <span className="flex items-center gap-1.5">
                             <span className={`h-2 w-2 rounded-full ${injectedResult.is_phishing ? 'bg-emerald-400' : 'bg-rose-400'}`} />
@@ -522,6 +552,13 @@ export const SynthesisWorkbench: React.FC<SynthesisWorkbenchProps> = ({
                           result={injectedResult}
                           emailSnippet={injectedFullText}
                           viewDensity={viewDensity}
+                          verdictEffect={
+                            outcome?.type === 'evasion_success'
+                              ? 'evasion'
+                              : outcome?.type === 'false_positive'
+                              ? 'false_positive'
+                              : undefined
+                          }
                         />
                       </motion.div>
                     )}
