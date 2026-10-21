@@ -274,9 +274,11 @@ def validate_splits(
                     raise ValueError(f"{name}:{line_no}: Row is not a JSON object")
 
                 required_keys = {"id", "text", "label"}
-                if set(obj.keys()) != required_keys:
+                allowed_keys = required_keys | {"source"}
+                if not required_keys.issubset(obj) or not set(obj).issubset(allowed_keys):
                     raise ValueError(
-                        f"{name}:{line_no}: Expected keys {required_keys}, got {set(obj.keys())}"
+                        f"{name}:{line_no}: Expected keys {required_keys} with optional "
+                        f"'source', got {set(obj.keys())}"
                     )
 
                 item_id = str(obj["id"]).strip()
