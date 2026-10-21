@@ -170,6 +170,26 @@ conditions and reports accuracy, precision, recall, specificity, F1, false
 positive rate, invalid-output rate, latency, bootstrap intervals, and paired
 McNemar tests with Holm-Bonferroni correction.
 
+### Rebuilding tagged dataset artifacts
+
+The tagged merge pipeline stages each run under `data/work/` and only publishes
+`data/combined_v2/` and `data/splits_v2/` after all role-specific gates pass.
+It writes `MANIFEST.json` files with hashes, counts, provenance, and timing;
+RAG and benchmark consumers reject directories without a complete manifest.
+
+```bash
+python scripts/merge_tagged_datasets.py \
+  --role adversarial \
+  --near-dedup-threshold 0.85 \
+  --seed 42
+```
+
+Use `--role primary` to enforce class-balance, source-mix, split-size, and
+cross-split near-duplicate requirements. Thresholds are maintained in
+[`config/dataset_gates.yaml`](config/dataset_gates.yaml). Failed runs remain
+under `data/work/<pipeline>_<run_id>/FAILED.json` and never publish partial
+final directories.
+
 ## Development and testing
 
 ### Frontend

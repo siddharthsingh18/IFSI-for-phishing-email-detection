@@ -6,13 +6,34 @@ import argparse
 import csv
 import hashlib
 import json
+import logging
 import random
 import re
+import time
 import unicodedata
 from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any, Sequence
 
+logger = logging.getLogger(__name__)
+
+
+def require_complete_manifest(directory: Path | str) -> dict[str, Any]:
+    """Require a completed pipeline manifest before consuming a dataset directory."""
+    root = Path(directory)
+    manifest_path = root / "MANIFEST.json"
+    if not manifest_path.is_file():
+        raise RuntimeError(f"Dataset directory has no MANIFEST.json: {root}")
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise RuntimeError(f"Unable to read dataset manifest: {manifest_path}") from exc
+    if manifest.get("status") != "complete":
+        raise RuntimeError(
+            f"Dataset directory is not complete: {root} "
+            f"(status={manifest.get('status')!r})"
+        )
+    return manifest
 
 def clean_text(text: str) -> str:
     """Clean text by applying Unicode NFKC normalization and stripping whitespace."""
@@ -107,27 +128,81 @@ def deduplicate_near_duplicates(
     threshold: float = 0.85,
     num_perm: int = 64,
     num_bands: int = 8,
-) -> tuple[list[dict[str, Any]], int]:
+    checkpoint_dir: Path | None = None,
+    log_every: int = 1000,
+    return_stats: bool = False,
+) -> tuple[list[dict[str, Any]], int] | tuple[list[dict[str, Any]], dict[str, Any]]:
     """Deduplicate records based on word 3-gram MinHash LSH and Jaccard similarity.
 
     When two documents have Jaccard similarity >= threshold, the later occurrence
     is excluded as a near-duplicate.
     """
+    started = time.perf_counter()
     if len(records) <= 1:
-        return records, 0
+        stats = {
+            "near_duplicates_removed": 0,
+            "candidate_pair_count": 0,
+            "exact_similarity_comparisons": 0,
+            "runtime_seconds": time.perf_counter() - started,
+        }
+        return (records, stats) if return_stats else (records, 0)
 
     rows_per_band = num_perm // num_bands
+    checkpoint_dir = Path(checkpoint_dir) if checkpoint_dir else None
+    if checkpoint_dir:
+        checkpoint_dir.mkdir(parents=True, exist_ok=True)
+    signatures_path = checkpoint_dir / "near_dedupe_signatures.json" if checkpoint_dir else None
+    buckets_path = checkpoint_dir / "near_dedupe_buckets.json" if checkpoint_dir else None
     shingle_cache = [get_shingles(r["text"]) for r in records]
-    signatures = [compute_minhash_signature(s, num_perm=num_perm) for s in shingle_cache]
+    signatures: list[list[int]]
+    if signatures_path and signatures_path.exists():
+        payload = json.loads(signatures_path.read_text(encoding="utf-8"))
+        signatures = payload["signatures"]
+        if len(signatures) != len(records):
+            raise ValueError("Near-dedupe signature checkpoint does not match input records")
+    else:
+        signatures = []
+        for index, shingles in enumerate(shingle_cache, start=1):
+            signatures.append(compute_minhash_signature(shingles, num_perm=num_perm))
+            if log_every and index % log_every == 0:
+                logger.info("Near-dedupe signatures: %d/%d", index, len(records))
+        if signatures_path:
+            signatures_path.write_text(
+                json.dumps({"record_count": len(records), "signatures": signatures}),
+                encoding="utf-8",
+            )
 
     # Index into LSH buckets
-    buckets: dict[tuple[int, tuple[int, ...]], list[int]] = defaultdict(list)
-    for idx, sig in enumerate(signatures):
-        for b in range(num_bands):
-            band = tuple(sig[b * rows_per_band : (b + 1) * rows_per_band])
-            buckets[(b, band)].append(idx)
+    if buckets_path and buckets_path.exists():
+        bucket_payload = json.loads(buckets_path.read_text(encoding="utf-8"))
+        buckets = {
+            (int(item["band"]), tuple(item["signature"])): item["indices"]
+            for item in bucket_payload["buckets"]
+        }
+    else:
+        buckets = defaultdict(list)
+        for idx, sig in enumerate(signatures):
+            for b in range(num_bands):
+                band = tuple(sig[b * rows_per_band : (b + 1) * rows_per_band])
+                buckets[(b, band)].append(idx)
+        if buckets_path:
+            buckets_path.write_text(
+                json.dumps(
+                    {
+                        "record_count": len(records),
+                        "buckets": [
+                            {"band": band, "signature": list(signature), "indices": indices}
+                            for (band, signature), indices in buckets.items()
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
 
     dropped_indices: set[int] = set()
+    candidate_pair_count = 0
+    exact_similarity_comparisons = 0
+    processed = 0
     for bucket in buckets.values():
         if len(bucket) <= 1:
             continue
@@ -139,16 +214,27 @@ def deduplicate_near_duplicates(
                 idx2 = bucket[j]
                 if idx2 in dropped_indices:
                     continue
+                candidate_pair_count += 1
                 s1 = shingle_cache[idx1]
                 s2 = shingle_cache[idx2]
                 if not s1 or not s2:
                     continue
+                exact_similarity_comparisons += 1
                 sim = jaccard_similarity(s1, s2)
                 if sim >= threshold:
                     dropped_indices.add(idx2)
+            processed += 1
+            if log_every and processed % log_every == 0:
+                logger.info("Near-dedupe candidate buckets: %d processed", processed)
 
     kept = [r for idx, r in enumerate(records) if idx not in dropped_indices]
-    return kept, len(dropped_indices)
+    stats = {
+        "near_duplicates_removed": len(dropped_indices),
+        "candidate_pair_count": candidate_pair_count,
+        "exact_similarity_comparisons": exact_similarity_comparisons,
+        "runtime_seconds": time.perf_counter() - started,
+    }
+    return (kept, stats) if return_stats else (kept, len(dropped_indices))
 
 
 def stratified_split(
@@ -201,6 +287,7 @@ def stratified_split(
             "id": str(r["id"]),
             "text": str(r["text"]),
             "label": int(r["label"]),
+            **({"source": str(r["source"])} if "source" in r else {}),
         }
 
     return {
@@ -226,6 +313,8 @@ def save_splits_to_jsonl(
                     "text": str(item["text"]),
                     "label": int(item["label"]),
                 }
+                if "source" in item:
+                    record["source"] = str(item["source"])
                 f.write(json.dumps(record, ensure_ascii=False) + "\n")
         paths[name] = path
     return paths

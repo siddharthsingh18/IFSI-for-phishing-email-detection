@@ -14,6 +14,7 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 
 from .baseline import compute_metrics
+from .data_loader import require_complete_manifest
 from .ollama_client import (
     EmailClassificationResult,
     OllamaClient,
@@ -69,6 +70,7 @@ class FAISSRetriever:
         train_path = Path(train_jsonl_path)
         if not train_path.exists():
             raise FileNotFoundError(f"Train split not found: {train_path}")
+        require_complete_manifest(train_path.parent)
 
         records: list[dict[str, Any]] = []
         with train_path.open("r", encoding="utf-8") as f:

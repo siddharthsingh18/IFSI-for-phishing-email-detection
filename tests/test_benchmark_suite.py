@@ -3,16 +3,145 @@
 from __future__ import annotations
 
 from pathlib import Path
+import re
 import unittest
 from phishbench.benchmark_suite import (
+    build_markdown_report,
     bootstrap_metric_cis,
     compute_cell_metrics,
+    derive_findings,
     exact_mcnemar_test,
 )
 
 
 
 class TestBenchmarkSuiteStats(unittest.TestCase):
+    @staticmethod
+    def _synthetic_summary() -> dict:
+        cells = {}
+        for method in ("M1", "M2", "M3", "M4"):
+            for condition in ("clean", "marked", "unmarked"):
+                recall = 0.8 if condition == "clean" else 0.4
+                specificity = 0.95
+                if method == "M2" and condition == "clean":
+                    recall = 1.0
+                    specificity = 0.0
+                metrics = {
+                    "accuracy": 0.8,
+                    "precision": 0.8,
+                    "recall": recall,
+                    "specificity": specificity,
+                    "fpr": 1 - specificity,
+                    "f1": 0.8,
+                    "true_positives": 8,
+                    "false_positives": 2 if specificity < 0.1 else 1,
+                    "valid_count": 10,
+                    "invalid_rate": 0.0,
+                    "total_samples": 10,
+                    "invalid_count": 0,
+                    "false_negatives": 2,
+                    "true_negatives": 9 if specificity > 0.1 else 0,
+                    "mean_latency_seconds": 0.1,
+                    "total_runtime_seconds": 1.0,
+                }
+                cells[f"{method}_{condition}"] = {
+                    "metrics": metrics,
+                    "bootstrap_95_ci": {
+                        metric: [max(0.0, value - 0.01), min(1.0, value + 0.01)]
+                        for metric, value in (
+                            ("accuracy", metrics["accuracy"]),
+                            ("precision", metrics["precision"]),
+                            ("recall", metrics["recall"]),
+                            ("specificity", metrics["specificity"]),
+                            ("fpr", metrics["fpr"]),
+                            ("f1", metrics["f1"]),
+                        )
+                    },
+                }
+        paired = {}
+        for key in (
+            "M2_vs_M3__clean",
+            "M2_vs_M3__marked",
+            "M2_vs_M3__unmarked",
+            "marked_vs_unmarked__M1",
+            "marked_vs_unmarked__M2",
+            "marked_vs_unmarked__M3",
+            "marked_vs_unmarked__M4",
+            "combined_vs_decoupled_M3_vs_M4__clean",
+            "combined_vs_decoupled_M3_vs_M4__marked",
+            "combined_vs_decoupled_M3_vs_M4__unmarked",
+        ):
+            paired[key] = {
+                "paired_samples": 10,
+                "both_correct": 8,
+                "a_correct_b_wrong (b)": 1,
+                "a_wrong_b_correct (c)": 1,
+                "p_value": 1.0,
+                "significant_alpha_0_05": False,
+                "holm_bonferroni_rank": 1,
+                "holm_bonferroni_factor": 1,
+                "holm_bonferroni_p_value": 1.0,
+                "significant_after_holm_bonferroni": False,
+            }
+        return {"cells": cells, "paired_tests": paired}
+
+    def test_derive_findings_uses_same_method_for_injection_effects(self) -> None:
+        summary = self._synthetic_summary()
+        findings = derive_findings(summary)
+        m3_effect = next(
+            finding
+            for finding in findings
+            if finding.kind == "injection_effect"
+            and finding.method == "M3"
+            and finding.condition == "unmarked"
+        )
+        self.assertAlmostEqual(m3_effect.delta, -0.4)
+        self.assertNotIn("M4", m3_effect.details)
+
+    def test_derive_findings_flags_degenerate_m2_clean(self) -> None:
+        findings = derive_findings(self._synthetic_summary())
+        self.assertTrue(
+            any(
+                finding.kind == "degenerate_clean" and finding.method == "M2"
+                for finding in findings
+            )
+        )
+
+    def test_report_percentages_come_from_summary_metrics(self) -> None:
+        summary = self._synthetic_summary()
+        report = build_markdown_report(summary)
+        allowed = {
+            round(value * 100, 2)
+            for cell in summary["cells"].values()
+            for value in (
+                cell["metrics"]["accuracy"],
+                cell["metrics"]["precision"],
+                cell["metrics"]["recall"],
+                cell["metrics"]["specificity"],
+                cell["metrics"]["fpr"],
+                cell["metrics"]["f1"],
+                cell["metrics"]["invalid_rate"],
+            )
+        }
+        allowed.update(
+            round(
+                abs(
+                    summary["cells"][f"{method}_clean"]["metrics"]["recall"]
+                    - summary["cells"][f"{method}_{condition}"]["metrics"]["recall"]
+                )
+                * 100,
+                2,
+            )
+            for method in ("M1", "M2", "M3", "M4")
+            for condition in ("marked", "unmarked")
+        )
+        percentages = [
+            float(match)
+            for match in re.findall(r"(?<![\d.])(\d+(?:\.\d+)?)%", report)
+        ]
+        self.assertTrue(percentages)
+        self.assertTrue(all(round(value, 2) in allowed for value in percentages))
+
     def test_mcnemar_hand_computed_exact_binomial(self) -> None:
         """Verify exact binomial two-sided p-value calculation against manual combinatorics."""
         # Case 1: b=10, c=0 -> discordant=10.
@@ -167,4 +296,3 @@ class TestBenchmarkManifest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

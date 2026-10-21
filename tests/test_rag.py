@@ -83,6 +83,9 @@ def test_faiss_retrieval_and_isolation_synthetic() -> None:
         with train_file.open("w", encoding="utf-8") as f:
             for row in train_data:
                 f.write(json.dumps(row) + "\n")
+        (Path(tmp_dir) / "MANIFEST.json").write_text(
+            json.dumps({"status": "complete"}), encoding="utf-8"
+        )
 
         retriever = FAISSRetriever.build_from_train_split(train_file)
         assert len(retriever.indexed_ids) == 4
@@ -112,6 +115,9 @@ def test_classify_with_rag_mocked_ollama() -> None:
         with train_file.open("w", encoding="utf-8") as f:
             for row in train_data:
                 f.write(json.dumps(row) + "\n")
+        (Path(tmp_dir) / "MANIFEST.json").write_text(
+            json.dumps({"status": "complete"}), encoding="utf-8"
+        )
 
         retriever = FAISSRetriever.build_from_train_split(train_file)
         config = OllamaConfig(model="mock-model", temperature=0.0)
@@ -166,4 +172,3 @@ def test_rag_cli_k_flag() -> None:
     assert parser.parse_args(["-k", "5"]).top_k == 5
     assert parser.parse_args(["--top-k", "2"]).top_k == 2
     assert parser.parse_args([]).top_k == 3
-

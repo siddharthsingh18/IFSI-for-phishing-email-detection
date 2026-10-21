@@ -14,6 +14,7 @@ from phishbench.data_loader import (
     deduplicate_near_duplicates,
     jaccard_similarity,
     run_pipeline,
+    require_complete_manifest,
     save_splits_to_jsonl,
     stratified_split,
     validate_splits,
@@ -159,3 +160,46 @@ def test_validator_and_leakage_detection() -> None:
         # Validator MUST raise AssertionError due to leakage
         with pytest.raises(AssertionError, match="Data leakage detected"):
             validate_splits(saved_paths["train"], saved_paths["val"], saved_paths["test"])
+
+
+def test_source_is_preserved_when_saving_splits() -> None:
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        records = [
+            {"id": f"mail-{i}", "text": f"Unique source email {i}", "label": i % 2, "source": "fixture"}
+            for i in range(20)
+        ]
+        paths = save_splits_to_jsonl(stratified_split(records, seed=42), Path(tmp_dir))
+        item = json.loads(paths["train"].read_text(encoding="utf-8").splitlines()[0])
+        assert item["source"] == "fixture"
+
+
+def test_complete_manifest_guard_rejects_incomplete_directory() -> None:
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        directory = Path(tmp_dir)
+        with pytest.raises(RuntimeError, match="no MANIFEST"):
+            require_complete_manifest(directory)
+        (directory / "MANIFEST.json").write_text(json.dumps({"status": "failed"}), encoding="utf-8")
+        with pytest.raises(RuntimeError, match="not complete"):
+            require_complete_manifest(directory)
+        (directory / "MANIFEST.json").write_text(json.dumps({"status": "complete"}), encoding="utf-8")
+        assert require_complete_manifest(directory)["status"] == "complete"
+
+
+def test_near_dedup_checkpoint_reports_comparisons() -> None:
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        records = [
+            {"id": "1", "text": "same security alert message for account verification", "label": 1},
+            {"id": "2", "text": "same security alert message for account verification today", "label": 1},
+            {"id": "3", "text": "unrelated cafeteria lunch announcement", "label": 0},
+        ]
+        kept, stats = deduplicate_near_duplicates(
+            records,
+            threshold=0.75,
+            checkpoint_dir=Path(tmp_dir),
+            return_stats=True,
+        )
+        assert len(kept) == 2
+        assert stats["candidate_pair_count"] >= 1
+        assert stats["exact_similarity_comparisons"] >= 1
+        assert (Path(tmp_dir) / "near_dedupe_signatures.json").exists()
+        assert (Path(tmp_dir) / "near_dedupe_buckets.json").exists()

@@ -1,0 +1,19 @@
+{
+  "roles": {
+    "primary": {
+      "minimum_minority_fraction": 0.20,
+      "maximum_source_fraction": 0.40,
+      "minimum_test_records_per_class": 300,
+      "minimum_validation_records_per_class": 100
+    },
+    "adversarial": {
+      "metrics_policy": "recall_only"
+    },
+    "controls": {
+      "metrics_policy": "full"
+    },
+    "injection": {
+      "metrics_policy": "full"
+    }
+  }
+}
