@@ -50,6 +50,13 @@ def test_health_endpoint_schema() -> None:
     assert "package" in data["environment"]
 
 
+def test_model_catalog_does_not_promote_missing_primary_artifact() -> None:
+    data = client.get("/models").json()
+    assert data["primary_model"] == "qwen2.5:0.5b"
+    llama = next(item for item in data["available_models"] if item["id"] == "llama3.2:3b")
+    assert llama["role"] == "candidate"
+
+
 def test_cors_headers() -> None:
     resp = client.get("/health", headers={"Origin": "http://localhost:5173"})
     assert resp.status_code == 200

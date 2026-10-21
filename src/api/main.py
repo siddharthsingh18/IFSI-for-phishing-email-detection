@@ -34,7 +34,9 @@ from core import (
     load_preset_samples,
     load_report_markdown,
     load_unmarked_injection_templates,
+    discover_models,
 )
+from core.model_config import DEFAULT_LIVE_MODEL
 
 
 @asynccontextmanager
@@ -104,7 +106,7 @@ class ClassifyRequest(BaseModel):
     subject: str = Field("", description="Optional email subject line")
     sender: str = Field("", description="Optional sender/from address")
     method: str = Field("M1", description="Classification method to execute ('M1', 'M2', 'M3', 'M4')")
-    model: str = Field("qwen2.5:0.5b", description="Local Ollama model name for M2, M3, M4")
+    model: str = Field(DEFAULT_LIVE_MODEL, description="Local Ollama model name for M2, M3, M4")
     k: int = Field(3, ge=1, le=10, description="Top-k nearest exemplars for FAISS RAG retrieval (M3, M4)")
 
 
@@ -112,7 +114,7 @@ class ClassifyCompareRequest(BaseModel):
     text: str = Field(..., description="Email body text or full raw email content")
     subject: str = Field("", description="Optional email subject line")
     sender: str = Field("", description="Optional sender/from address")
-    model: str = Field("qwen2.5:0.5b", description="Local Ollama model name for M2, M3, M4")
+    model: str = Field(DEFAULT_LIVE_MODEL, description="Local Ollama model name for M2, M3, M4")
     k: int = Field(3, ge=1, le=10, description="Top-k nearest exemplars for FAISS RAG retrieval (M3, M4)")
 
 
@@ -127,6 +129,9 @@ class ClassificationResult(BaseModel):
     latency_seconds: float = Field(..., description="Inference execution duration in seconds")
     reasons: list[str] = Field(default_factory=list, description="Reasoning tokens or influential vocabulary features")
     is_valid: bool = Field(True, description="Whether output conformed to schema")
+    failure_type: str | None = None
+    failure_message: str | None = None
+    attempts: int = 1
     raw_response: str | None = Field(None, description="Raw model completion response text")
     raw_response_call1: str | None = Field(None, description="M4 Call 1 raw output if applicable")
     raw_response_call2: str | None = Field(None, description="M4 Call 2 raw output if applicable")
@@ -402,6 +407,12 @@ def get_benchmark_summary() -> dict[str, Any]:
     if not summary:
         raise HTTPException(status_code=404, detail="Benchmark summary results not found.")
     return summary
+
+
+@app.get("/models", tags=["Configuration"])
+def get_model_catalog() -> dict[str, Any]:
+    """Return model roles derived from complete benchmark manifests."""
+    return discover_models()
 
 
 @app.get("/results/mistakes", response_model=list[MistakeRecord], tags=["Results"])

@@ -30,6 +30,7 @@ from pathlib import Path
 from typing import Any, Sequence
 
 import httpx
+from pydantic import ValidationError
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 
@@ -570,6 +571,7 @@ async def classify_m2_single(
     t0 = time.perf_counter()
     parsed_res: EmailClassificationResult | None = None
     retries = 0
+    failure_type: str | None = None
 
     async with semaphore:
         for attempt in range(1 + config.max_retries):
@@ -581,8 +583,14 @@ async def classify_m2_single(
                     raw = json.loads(resp.json().get("message", {}).get("content", ""))
                     parsed_res = EmailClassificationResult.model_validate(raw)
                     break
-            except Exception:
-                pass
+            except httpx.TimeoutException:
+                failure_type = "timeout"
+            except (httpx.ConnectError, httpx.NetworkError):
+                failure_type = "unavailable"
+            except json.JSONDecodeError:
+                failure_type = "invalid_json"
+            except ValidationError:
+                failure_type = "schema_error"
 
     latency = round(time.perf_counter() - t0, 4)
     is_valid = parsed_res is not None
@@ -602,6 +610,9 @@ async def classify_m2_single(
         "method": "M2_ZeroShot_LLM",
         "source": record.get("source"),
         "family": record.get("family"),
+        "failure_type": failure_type,
+        "failure_message": None if is_valid else "Model did not return a valid classification.",
+        "attempts": retries + 1,
     }
 
 

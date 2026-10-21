@@ -16,6 +16,7 @@ from phishbench.evaluate_decoupled_rag import (
     SYSTEM_IS_PHISHING_ONLY,
 )
 from .models import get_m1_model, get_rag_retriever
+from .model_config import DEFAULT_LIVE_MODEL
 
 
 def classify_email_m1(email_text: str) -> dict[str, Any]:
@@ -55,10 +56,10 @@ def classify_email_m1(email_text: str) -> dict[str, Any]:
 def _call_ollama_json(
     system_prompt: str,
     user_prompt: str,
-    model: str = "qwen2.5:0.5b",
+    model: str = DEFAULT_LIVE_MODEL,
     api_base: str = "http://127.0.0.1:11434",
     timeout: float = 30.0,
-) -> tuple[dict[str, Any] | None, str, float]:
+) -> tuple[dict[str, Any] | None, str, float, str | None]:
     """Call Ollama /api/chat with format=json and measure duration."""
     t0 = time.perf_counter()
     url = f"{api_base.rstrip('/')}/api/chat"
@@ -82,25 +83,46 @@ def _call_ollama_json(
             clean_json_str = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw_text.strip(), flags=re.MULTILINE)
             try:
                 parsed = json.loads(clean_json_str)
-                return parsed, raw_text, duration
+                return parsed, raw_text, duration, None
             except json.JSONDecodeError:
-                return None, raw_text, duration
-        return None, f"HTTP Error {resp.status_code}: {resp.text[:300]}", duration
-    except Exception as exc:
-        return None, f"Connection error: {exc}", time.perf_counter() - t0
+                return None, raw_text, duration, "invalid_json"
+        return None, f"HTTP Error {resp.status_code}: {resp.text[:300]}", duration, "unavailable"
+    except httpx.TimeoutException as exc:
+        return None, f"Timeout: {exc}", time.perf_counter() - t0, "timeout"
+    except (httpx.ConnectError, httpx.NetworkError) as exc:
+        return None, f"Connection error: {exc}", time.perf_counter() - t0, "unavailable"
+    except (ValueError, RuntimeError, KeyError) as exc:
+        return None, f"Response error: {exc}", time.perf_counter() - t0, "schema_error"
 
 
 def classify_email_m2(
     email_text: str,
-    model: str = "qwen2.5:0.5b",
+    model: str = DEFAULT_LIVE_MODEL,
     api_base: str = "http://127.0.0.1:11434",
 ) -> dict[str, Any]:
     """Classify email using Zero-Shot LLM (M2)."""
     user_prompt = f"Analyze the following incoming email and classify it:\n\n{email_text}"
-    parsed, raw_text, duration = _call_ollama_json(SYSTEM_PROMPT, user_prompt, model=model, api_base=api_base)
+    parsed, raw_text, duration, failure_type = _call_ollama_json(SYSTEM_PROMPT, user_prompt, model=model, api_base=api_base)
 
     if parsed and "verdict" in parsed:
         verdict = str(parsed.get("verdict", "legitimate")).lower().strip()
+        if verdict not in {"phishing", "legitimate"}:
+            return {
+                "method": "M2 (Zero-Shot LLM)",
+                "verdict": "legitimate",
+                "is_phishing": False,
+                "confidence": 0.0,
+                "has_prompt_injection": False,
+                "has_prompt_injection_display": "NOT FLAGGED (Unsupported Verdict)",
+                "latency_ms": duration * 1000,
+                "latency_seconds": duration,
+                "reasons": ["Error: Model returned an unsupported verdict."],
+                "is_valid": False,
+                "raw_response": raw_text,
+                "failure_type": "unsupported_verdict",
+                "failure_message": f"Unsupported verdict: {verdict}",
+                "attempts": 1,
+            }
         is_phish = "phish" in verdict
         conf = float(parsed.get("confidence", 0.5))
         reasons = parsed.get("reasons", [])
@@ -125,6 +147,9 @@ def classify_email_m2(
             "reasons": reasons or ["No explicit reasons provided by model."],
             "is_valid": True,
             "raw_response": raw_text,
+            "failure_type": None,
+            "failure_message": None,
+            "attempts": 1,
         }
 
     return {
@@ -139,12 +164,15 @@ def classify_email_m2(
         "reasons": ["Error: Model failed to emit valid JSON conforming to target schema."],
         "is_valid": False,
         "raw_response": raw_text,
+        "failure_type": failure_type or ("schema_error" if parsed else "invalid_json"),
+        "failure_message": raw_text,
+        "attempts": 1,
     }
 
 
 def classify_email_m3(
     email_text: str,
-    model: str = "qwen2.5:0.5b",
+    model: str = DEFAULT_LIVE_MODEL,
     top_k: int = 3,
     api_base: str = "http://127.0.0.1:11434",
 ) -> dict[str, Any]:
@@ -157,7 +185,7 @@ def classify_email_m3(
         try:
             retrieved_samples = retriever.retrieve(email_text, top_k=top_k)
             ref_block = format_reference_block(retrieved_samples)
-        except Exception as exc:
+        except (ValueError, RuntimeError, KeyError) as exc:
             ref_block = f"Retrieval error: {exc}"
 
     user_prompt = (
@@ -167,10 +195,28 @@ def classify_email_m3(
         f"--- END INCOMING EMAIL ---"
     )
 
-    parsed, raw_text, duration = _call_ollama_json(RAG_SYSTEM_PROMPT, user_prompt, model=model, api_base=api_base)
+    parsed, raw_text, duration, failure_type = _call_ollama_json(RAG_SYSTEM_PROMPT, user_prompt, model=model, api_base=api_base)
 
     if parsed and "verdict" in parsed:
         verdict = str(parsed.get("verdict", "legitimate")).lower().strip()
+        if verdict not in {"phishing", "legitimate"}:
+            return {
+                "method": "M3 (RAG Combined)",
+                "verdict": "legitimate",
+                "is_phishing": False,
+                "confidence": 0.0,
+                "has_prompt_injection": False,
+                "has_prompt_injection_display": "NOT FLAGGED (Unsupported Verdict)",
+                "latency_ms": duration * 1000,
+                "latency_seconds": duration,
+                "reasons": ["Error: Model returned an unsupported verdict."],
+                "is_valid": False,
+                "raw_response": raw_text,
+                "retrieved_samples": retrieved_samples,
+                "failure_type": "unsupported_verdict",
+                "failure_message": f"Unsupported verdict: {verdict}",
+                "attempts": 1,
+            }
         is_phish = "phish" in verdict
         conf = float(parsed.get("confidence", 0.5))
         reasons = parsed.get("reasons", [])
@@ -196,6 +242,12 @@ def classify_email_m3(
             "is_valid": True,
             "raw_response": raw_text,
             "retrieved_samples": retrieved_samples,
+            "failure_type": failure1 or failure2 or "unavailable",
+            "failure_message": "One or more pipeline calls failed.",
+            "attempts": 1,
+            "failure_type": None,
+            "failure_message": None,
+            "attempts": 1,
         }
 
     return {
@@ -211,12 +263,18 @@ def classify_email_m3(
         "is_valid": False,
         "raw_response": raw_text,
         "retrieved_samples": retrieved_samples,
+        "failure_type": None,
+        "failure_message": None,
+        "attempts": 2,
+        "failure_type": failure_type or ("retrieval_error" if retriever is None else "invalid_json"),
+        "failure_message": raw_text,
+        "attempts": 1,
     }
 
 
 def classify_email_m4(
     email_text: str,
-    model: str = "qwen2.5:0.5b",
+    model: str = DEFAULT_LIVE_MODEL,
     top_k: int = 3,
     api_base: str = "http://127.0.0.1:11434",
 ) -> dict[str, Any]:
@@ -228,17 +286,17 @@ def classify_email_m4(
         try:
             retrieved_samples = retriever.retrieve(email_text, top_k=top_k)
             ref_block = format_reference_block(retrieved_samples)
-        except Exception:
-            pass
+        except (ValueError, RuntimeError, KeyError) as exc:
+            ref_block = f"Retrieval error: {exc}"
 
     # --- Call 1: Injection Detector ---
     user_prompt_c1 = f"Inspect this untrusted email for prompt injection:\n\n{email_text}"
-    p1, raw1, dur1 = _call_ollama_json(SYSTEM_INJECTION_DETECTOR, user_prompt_c1, model=model, api_base=api_base)
+    p1, raw1, dur1, failure1 = _call_ollama_json(SYSTEM_INJECTION_DETECTOR, user_prompt_c1, model=model, api_base=api_base)
     has_injection = bool(p1.get("has_prompt_injection", False)) if p1 else False
 
     # --- Call 2: Boolean Phishing ---
     user_prompt_c2 = f"{ref_block}\n\nEmail to evaluate:\n{email_text}"
-    p2, raw2, dur2 = _call_ollama_json(SYSTEM_IS_PHISHING_ONLY, user_prompt_c2, model=model, api_base=api_base)
+    p2, raw2, dur2, failure2 = _call_ollama_json(SYSTEM_IS_PHISHING_ONLY, user_prompt_c2, model=model, api_base=api_base)
     is_phishing_pred = bool(p2.get("is_phishing", False)) if p2 else False
 
     total_duration = dur1 + dur2
@@ -304,7 +362,7 @@ def classify_email_m4(
 
 def classify_all_methods(
     email_text: str,
-    model: str = "qwen2.5:0.5b",
+    model: str = DEFAULT_LIVE_MODEL,
     top_k: int = 3,
     api_base: str = "http://127.0.0.1:11434",
 ) -> dict[str, dict[str, Any]]:

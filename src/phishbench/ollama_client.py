@@ -10,7 +10,8 @@ from pathlib import Path
 from typing import Any, Literal
 
 import httpx
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, ValidationError, field_validator
+from core.model_config import DEFAULT_LIVE_MODEL
 
 logger = logging.getLogger(__name__)
 
@@ -86,7 +87,7 @@ Rules:
 class OllamaConfig(BaseModel):
     """Configuration for Ollama inference."""
 
-    model: str = "qwen2.5:0.5b"
+    model: str = DEFAULT_LIVE_MODEL
     temperature: float = 0.0
     api_base: str = "http://localhost:11434"
     timeout_seconds: float = 60.0
@@ -142,7 +143,7 @@ class OllamaClient:
         try:
             resp = self.client.get("/api/tags", timeout=3.0)
             return resp.status_code == 200
-        except Exception:
+        except (httpx.TimeoutException, httpx.ConnectError, httpx.NetworkError):
             return False
 
     def list_local_models(self) -> list[str]:
@@ -152,7 +153,7 @@ class OllamaClient:
             if resp.status_code == 200:
                 data = resp.json()
                 return [m.get("name", "") for m in data.get("models", [])]
-        except Exception:
+        except (httpx.TimeoutException, httpx.ConnectError, httpx.NetworkError, json.JSONDecodeError):
             pass
         return []
 
@@ -176,6 +177,7 @@ class OllamaClient:
 
         retries_used = 0
         last_error: str | None = None
+        failure_type = "unavailable"
         raw_response_content = ""
         start_time = time.perf_counter()
 
@@ -188,6 +190,7 @@ class OllamaClient:
             try:
                 response = self.client.post(url, json=payload)
                 if response.status_code != 200:
+                    failure_type = "unavailable"
                     last_error = f"HTTP {response.status_code}: {response.text[:200]}"
                     continue
 
@@ -209,8 +212,17 @@ class OllamaClient:
                 }
                 return validated, metadata
 
-            except (json.JSONDecodeError, Exception) as exc:
+            except httpx.TimeoutException as exc:
+                failure_type, last_error = "timeout", str(exc)
+            except (httpx.ConnectError, httpx.NetworkError) as exc:
+                failure_type, last_error = "unavailable", str(exc)
+            except json.JSONDecodeError as exc:
+                failure_type, last_error = "invalid_json", str(exc)
+            except ValidationError as exc:
+                failure_type, last_error = "schema_error", str(exc)
                 last_error = f"{type(exc).__name__}: {str(exc)}"
+            except ValueError as exc:
+                failure_type, last_error = "schema_error", str(exc)
 
         latency = time.perf_counter() - start_time
         metadata = {
@@ -219,6 +231,9 @@ class OllamaClient:
             "latency_seconds": round(latency, 4),
             "raw_response": raw_response_content,
             "error": last_error or "Unknown error",
+            "failure_type": failure_type,
+            "failure_message": last_error or "Unknown error",
+            "attempts": max_attempts,
         }
         return None, metadata
 

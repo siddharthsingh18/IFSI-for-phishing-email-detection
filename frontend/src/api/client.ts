@@ -92,12 +92,30 @@ export interface ClassificationResult {
   latency_seconds: number;
   reasons: string[];
   is_valid: boolean;
+  failure_type?: string | null;
+  failure_message?: string | null;
+  attempts?: number;
   raw_response?: string | null;
   raw_response_call1?: string | null;
   raw_response_call2?: string | null;
   retrieved_samples?: Array<Record<string, unknown>> | null;
   has_injection?: boolean | null;
   is_phishing_only?: boolean | null;
+}
+
+export interface ModelCatalogEntry {
+  id: string;
+  label: string;
+  role: string;
+  description: string;
+  artifact: string;
+  artifact_complete: boolean;
+}
+
+export interface ModelCatalog {
+  primary_model: string;
+  available_models: ModelCatalogEntry[];
+  benchmarks: Record<string, Record<string, unknown>>;
 }
 
 export interface MethodStyle {
@@ -347,6 +365,10 @@ export const apiClient = {
     return request<HealthResponse>('/health');
   },
 
+  async getModels(): Promise<ModelCatalog> {
+    return request<ModelCatalog>('/models');
+  },
+
   /**
    * POST /classify - Classify email with single architecture (M1-M4)
    */
@@ -358,7 +380,7 @@ export const apiClient = {
         subject: req.subject || '',
         sender: req.sender || '',
         method: req.method || 'M1',
-        model: req.model || 'qwen2.5:0.5b',
+        model: req.model,
         k: req.k ?? 3,
       }),
     });
@@ -374,7 +396,7 @@ export const apiClient = {
         text: req.text,
         subject: req.subject || '',
         sender: req.sender || '',
-        model: req.model || 'qwen2.5:0.5b',
+        model: req.model,
         k: req.k ?? 3,
       }),
     });

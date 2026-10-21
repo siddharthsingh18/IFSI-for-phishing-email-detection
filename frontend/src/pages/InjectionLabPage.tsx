@@ -7,6 +7,7 @@ import {
   type ClassificationResult,
   type InjectResponse,
   type AttackFamilyExample,
+  type ModelCatalog,
 } from '../api/client';
 import { OfflineFallbackBanner } from '../components/OfflineFallbackBanner';
 import { motion } from 'framer-motion';
@@ -37,6 +38,7 @@ export const InjectionLabPage: React.FC = () => {
   const [summary, setSummary] = useState<BenchmarkSummary | null>(null);
   const [loadingSummary, setLoadingSummary] = useState(true);
   const [summaryError, setSummaryError] = useState<string | null>(null);
+  const [modelCatalog, setModelCatalog] = useState<ModelCatalog | null>(null);
 
   const [presets, setPresets] = useState<Record<string, PresetSample>>({});
   const [selectedPresetKey, setSelectedPresetKey] = useState<string>('');
@@ -75,6 +77,13 @@ export const InjectionLabPage: React.FC = () => {
 
   const [showPayloadDetails, setShowPayloadDetails] = useState(true);
   const [copiedPayload, setCopiedPayload] = useState(false);
+
+  useEffect(() => {
+    apiClient.getModels().then((catalog) => {
+      setModelCatalog(catalog);
+      setEvalModel(catalog.primary_model);
+    }).catch(() => setModelCatalog(null));
+  }, []);
 
   // Load benchmark summary, authentic attack families & presets on mount
   useEffect(() => {
@@ -290,7 +299,7 @@ export const InjectionLabPage: React.FC = () => {
     setAttackStyle('unmarked');
     setAttackPosition('body_start');
     setEvalMethod('M3');
-    setEvalModel('qwen2.5:0.5b');
+    setEvalModel(modelCatalog?.primary_model ?? 'qwen2.5:0.5b');
     setAttackRan(false);
     setCleanResult(null);
     setInjectedResult(null);

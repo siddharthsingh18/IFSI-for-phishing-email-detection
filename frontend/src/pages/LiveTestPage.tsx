@@ -19,6 +19,7 @@ import {
   type ClassificationResult,
   type CompareResponse,
   type PresetSample,
+  type ModelCatalog,
 } from '../api/client';
 import { Card } from '../components/Card';
 import { OfflineFallbackBanner } from '../components/OfflineFallbackBanner';
@@ -55,21 +56,6 @@ const ARCHITECTURE_OPTIONS: SelectOption<string>[] = [
     label: 'M4: RAG Decoupled (IFSI Two-Stage)',
     description: 'IFSI Defense Architecture (Sanitizer + Isolated classifier)',
     badge: 'IFSI Decoupled',
-  },
-];
-
-const MODEL_OPTIONS: SelectOption<string>[] = [
-  {
-    value: 'qwen2.5:0.5b',
-    label: 'qwen2.5:0.5b (Default Local Model)',
-    description: '0.5B parameters • Fast, lightweight inference',
-    badge: 'Default',
-  },
-  {
-    value: 'llama3.2:3b',
-    label: 'llama3.2:3b (Pilot Local Model)',
-    description: '3B parameters • High-capacity reasoning',
-    badge: 'Pilot',
   },
 ];
 
@@ -186,6 +172,7 @@ export const LiveTestPage: React.FC = () => {
   const [emailText, setEmailText] = useState('');
   const [method, setMethod] = useState<'M1' | 'M2' | 'M3' | 'M4'>('M1');
   const [model, setModel] = useState('qwen2.5:0.5b');
+  const [modelCatalog, setModelCatalog] = useState<ModelCatalog | null>(null);
   const [topK, setTopK] = useState(3);
 
   // Adversarial Prompt Injection Testbed State
@@ -244,6 +231,13 @@ export const LiveTestPage: React.FC = () => {
   const [emailInputMode, setEmailInputMode] = useState<'preset' | 'custom'>('preset');
 
   // Load curated presets on mount
+  useEffect(() => {
+    apiClient.getModels().then((catalog) => {
+      setModelCatalog(catalog);
+      setModel(catalog.primary_model);
+    }).catch(() => setModelCatalog(null));
+  }, []);
+
   useEffect(() => {
     let mounted = true;
     apiClient
@@ -575,7 +569,12 @@ export const LiveTestPage: React.FC = () => {
                       <Select
                         id="model-select"
                         label="Local LLM Runtime"
-                        options={MODEL_OPTIONS}
+                        options={(modelCatalog?.available_models ?? []).map((entry) => ({
+                          value: entry.id,
+                          label: entry.label,
+                          description: entry.description,
+                          badge: entry.role,
+                        }))}
                         value={model}
                         onChange={(val) => setModel(val as string)}
                         ariaLabel="Local LLM Model"

@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10", "3.12"]
+        python-version: ["3.11", "3.12"]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -23,8 +23,14 @@ jobs:
       - name: Compile sources
         run: python -m compileall -q src tests
       - name: Run unit tests
-        run: python -m unittest discover -s tests -v
-      - name: Exercise the offline dry-run
+        run: >-
+          python -m pytest
+          tests/test_api.py
+          tests/test_benchmark_suite.py
+          tests/test_build_corpora.py
+          tests/test_confounding_audit.py
+          tests/test_model_config.py
+      - name: Exercise legacy DeepSeek offline dry-run
         run: >-
           phishbench-run
           --input examples/sample_emails.jsonl
@@ -37,3 +43,21 @@ jobs:
           --thinking off
           --limit 1
           --dry-run
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.14.0"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install frontend dependencies
+        run: npm ci
+      - name: Lint frontend
+        run: npm run lint
+      - name: Build frontend
+        run: npm run build
