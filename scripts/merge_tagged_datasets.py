@@ -153,7 +153,13 @@ def _source_counts(records: Iterable[dict[str, Any]]) -> dict[str, dict[str, int
 
 def _source_mix(records: Iterable[dict[str, Any]]) -> dict[str, dict[str, int]]:
     counts: Counter[tuple[str, int]] = Counter(
-        (str(record["source"]), int(record["label"])) for record in records
+        (
+            str(record["source"]),
+            1
+            if record["label"] in (1, "1", "phishing")
+            else 0,
+        )
+        for record in records
     )
     return {
         source: {
@@ -162,6 +168,71 @@ def _source_mix(records: Iterable[dict[str, Any]]) -> dict[str, dict[str, int]]:
             "legit": counts[(source, 0)],
         }
         for source in sorted({source for source, _ in counts})
+    }
+
+
+def _label_conflicts(records: Iterable[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Find normalized texts that received both labels."""
+    labels_by_text: dict[str, set[str]] = {}
+    examples: dict[str, list[str]] = {}
+    for record in records:
+        key = normalize_key(str(record["text"]))
+        labels_by_text.setdefault(key, set()).add(str(record["label"]))
+        examples.setdefault(key, []).append(str(record["id"]))
+    conflicts = []
+    for key, labels in labels_by_text.items():
+        if len(labels) > 1:
+            conflicts.append(
+                {
+                    "normalized_text_sha256": hashlib.sha256(key.encode("utf-8")).hexdigest(),
+                    "labels": sorted(labels),
+                    "record_ids": examples[key],
+                }
+            )
+    return conflicts
+
+
+def _quality_gate(
+    records: list[dict[str, Any]],
+    source_mix: dict[str, dict[str, int]],
+) -> dict[str, Any]:
+    total = len(records)
+    phishing = sum(record["label"] == "phishing" for record in records)
+    legitimate = total - phishing
+    phishing_ratio = phishing / total if total else 0.0
+    largest_source = max(
+        source_mix.items(),
+        key=lambda item: item[1]["total"],
+        default=(None, {"total": 0}),
+    )
+    largest_share = largest_source[1]["total"] / total if total else 0.0
+    warnings: list[str] = []
+    if legitimate == 0 or legitimate / total < 0.20:
+        warnings.append("class_balance_unsuitable_for_primary_binary_benchmark")
+    if largest_share > 0.50:
+        warnings.append("single_source_dominates_pool")
+    labels_by_source = {
+        source: (counts["phishing"] > 0, counts["legit"] > 0)
+        for source, counts in source_mix.items()
+    }
+    if any(phishing_only and not has_legit for phishing_only, has_legit in labels_by_source.values()):
+        warnings.append("source_and_label_are_confounded")
+    return {
+        "primary_benchmark_eligible": not warnings,
+        "recommended_role": "adversarial_only" if warnings else "primary_candidate",
+        "warnings": warnings,
+        "class_balance": {
+            "total": total,
+            "phishing": phishing,
+            "legit": legitimate,
+            "phishing_ratio": phishing_ratio,
+            "legit_ratio": legitimate / total if total else 0.0,
+        },
+        "largest_source": {
+            "source": largest_source[0],
+            "count": largest_source[1]["total"],
+            "share": largest_share,
+        },
     }
 
 
@@ -204,6 +275,7 @@ def main() -> None:
         exact,
         threshold=args.near_dedup_threshold,
     )
+    label_conflicts = _label_conflicts(cleaned)
     # Restore the source field after the shared helper has preserved it.
     deduped = [
         {**record, "label": "phishing" if int(record["label"]) else "legit"}
@@ -256,6 +328,14 @@ def main() -> None:
         "source_contribution_before": _source_counts(parsed),
         "source_contribution_after": _source_counts(deduped),
         "source_label_distribution_after": _source_mix(deduped),
+        "quality_gate": _quality_gate(
+            deduped,
+            _source_mix(deduped),
+        ),
+        "label_conflicts": {
+            "count": len(label_conflicts),
+            "examples": label_conflicts[:20],
+        },
         "splits": {
             name: {
                 "total": len(rows),
