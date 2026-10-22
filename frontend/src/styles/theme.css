@@ -178,7 +178,7 @@ html.light .glass-panel-elevated {
   width: min(100%, 25rem);
   padding: 1rem 1.1rem;
   color: var(--slate-900);
-  background: rgba(255, 255, 255, .96);
+  background: rgba(255, 255, 255, .91);
   border: 1px solid rgba(226, 232, 240, .9);
   border-radius: 12px;
   box-shadow: 0 12px 30px rgba(0, 0, 0, .18);
@@ -230,6 +230,80 @@ html.light .glass-panel-elevated {
   width: 100%;
   height: auto;
   min-height: 25rem;
+  overflow: visible;
+}
+
+.landing-network-atmosphere {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: landing-atmosphere-drift 18s ease-in-out infinite alternate;
+}
+
+.landing-network-atmosphere--one {
+  animation-duration: 23s;
+  animation-delay: -8s;
+}
+
+.landing-network-atmosphere--two {
+  animation-duration: 27s;
+  animation-delay: -13s;
+}
+
+.landing-network-atmosphere--three {
+  animation-duration: 21s;
+  animation-delay: -5s;
+}
+
+.landing-network-flow {
+  pointer-events: none;
+}
+
+.landing-network-flow path {
+  animation: landing-network-flow 8s linear infinite;
+}
+
+.landing-network-flow path:nth-child(2) {
+  animation-delay: -2.6s;
+}
+
+.landing-network-flow path:nth-child(3) {
+  animation-delay: -5.1s;
+}
+
+.landing-network-particles circle:nth-child(2),
+.landing-network-particles circle:nth-child(4),
+.landing-network-particles circle:nth-child(5) {
+  filter: blur(1.1px) drop-shadow(0 3px 4px rgba(2, 6, 23, .65));
+}
+
+.landing-network-particles circle:nth-child(6) {
+  animation: landing-particle-glow 6s ease-in-out infinite alternate;
+}
+
+@keyframes landing-network-flow {
+  to {
+    stroke-dashoffset: -44;
+  }
+}
+
+@keyframes landing-atmosphere-drift {
+  from {
+    transform: translate3d(-4px, 3px, 0) scale(.96);
+  }
+
+  to {
+    transform: translate3d(6px, -5px, 0) scale(1.06);
+  }
+}
+
+@keyframes landing-particle-glow {
+  from {
+    opacity: .35;
+  }
+
+  to {
+    opacity: .8;
+  }
 }
 
 .landing-recall-card {
@@ -242,9 +316,77 @@ html.light .glass-panel-elevated {
   background: rgba(255, 255, 255, .96);
   border: 1px solid rgba(226, 232, 240, .9);
   border-radius: 14px;
-  box-shadow: 0 18px 38px rgba(0, 0, 0, .28);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, .16),
+    0 14px 30px rgba(0, 0, 0, .28),
+    0 30px 62px rgba(0, 0, 0, .2);
   font-size: .72rem;
   font-weight: 700;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+}
+
+.landing-hero-prompt-badge {
+  position: absolute;
+  left: .5rem;
+  bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  padding: .62rem .8rem;
+  color: #e2e8f0;
+  background: rgba(15, 23, 42, .76);
+  border: 1px solid rgba(94, 234, 212, .28);
+  border-top-color: rgba(204, 251, 241, .6);
+  border-radius: 12px;
+  box-shadow:
+    0 2px 5px rgba(0, 0, 0, .18),
+    0 10px 24px rgba(0, 0, 0, .25),
+    0 20px 42px rgba(0, 0, 0, .16);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: landing-badge-float 7.5s ease-in-out -2.2s infinite;
+}
+
+.landing-hero-prompt-icon {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 auto;
+  place-items: center;
+  color: #5eead4;
+  background: rgba(20, 184, 166, .13);
+  border: 1px solid rgba(94, 234, 212, .2);
+  border-radius: 9px;
+}
+
+.landing-hero-prompt-badge strong,
+.landing-hero-prompt-badge small {
+  display: block;
+}
+
+.landing-hero-prompt-badge strong {
+  color: #f0fdfa;
+  font-size: .68rem;
+  line-height: 1.2;
+}
+
+.landing-hero-prompt-badge small {
+  margin-top: .2rem;
+  color: #94a3b8;
+  font-size: .58rem;
+}
+
+@keyframes landing-badge-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
 }
 
 .landing-chart-label {
@@ -369,6 +511,42 @@ html.light .glass-panel-elevated {
   .landing-hero-stat {
     right: .25rem;
     bottom: 0;
+  }
+
+  .landing-hero-prompt-badge {
+    left: .25rem;
+    bottom: .5rem;
+    padding: .5rem .6rem;
+  }
+
+  .landing-hero-prompt-badge strong {
+    font-size: .6rem;
+  }
+
+  .landing-hero-prompt-badge small {
+    font-size: .52rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-network-atmosphere,
+  .landing-network-particles circle:nth-child(6),
+  .landing-network-flow,
+  .landing-hero-prompt-badge {
+    animation: none !important;
+  }
+
+  .landing-network-flow {
+    opacity: .22;
+  }
+
+  .landing-network-flow path {
+    animation: none !important;
+    stroke-dasharray: none;
+  }
+
+  .landing-recall-card {
+    will-change: auto;
   }
 }
 

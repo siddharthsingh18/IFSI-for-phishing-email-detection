@@ -33,7 +33,7 @@ import { SectionTransitionDivider } from '../components/SectionTransitionDivider
 import { motion, AnimatePresence, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 import { useCountUp } from '../hooks/useCountUp';
-import { fadeInUp, scaleIn } from '../lib/motion';
+import { fadeInUp } from '../lib/motion';
 import {
   Area,
   AreaChart,
@@ -314,7 +314,8 @@ export const LandingPage: React.FC = () => {
           <svg className="landing-network" viewBox="0 0 620 440" role="img" aria-label="Abstract network of connected phishing detection methods">
             <defs>
               <radialGradient id="networkGlow">
-                <stop offset="0" stopColor="#14b8a6" stopOpacity=".28" />
+                <stop offset="0" stopColor="#14b8a6" stopOpacity=".3" />
+                <stop offset=".55" stopColor="#0e7490" stopOpacity=".1" />
                 <stop offset="1" stopColor="#14b8a6" stopOpacity="0" />
               </radialGradient>
               <linearGradient id="networkLine" x1="0" x2="1">
@@ -322,26 +323,93 @@ export const LandingPage: React.FC = () => {
                 <stop offset=".5" stopColor="#2dd4bf" stopOpacity=".9" />
                 <stop offset="1" stopColor="#0d9488" stopOpacity=".2" />
               </linearGradient>
+              <radialGradient id="networkOrbFill" cx="35%" cy="24%" r="78%">
+                <stop offset="0" stopColor="#99f6e4" stopOpacity=".52" />
+                <stop offset=".35" stopColor="#0f766e" stopOpacity=".88" />
+                <stop offset="1" stopColor="#07111f" />
+              </radialGradient>
+              <radialGradient id="networkShieldFill" cx="36%" cy="20%" r="82%">
+                <stop offset="0" stopColor="#ccfbf1" stopOpacity=".7" />
+                <stop offset=".38" stopColor="#115e59" />
+                <stop offset="1" stopColor="#06101b" />
+              </radialGradient>
+              <linearGradient id="networkOrbRim" x1="0" y1="0" x2="1" y2="1">
+                <stop stopColor="#ecfeff" stopOpacity=".95" />
+                <stop offset=".38" stopColor="#5eead4" stopOpacity=".58" />
+                <stop offset="1" stopColor="#0f766e" stopOpacity=".08" />
+              </linearGradient>
+              <filter id="networkOrbShadow" x="-80%" y="-80%" width="260%" height="280%">
+                <feDropShadow dx="0" dy="5" stdDeviation="4" floodColor="#020617" floodOpacity=".72" />
+                <feDropShadow dx="-1" dy="-1" stdDeviation="1.2" floodColor="#99f6e4" floodOpacity=".24" />
+              </filter>
+              <filter id="networkShieldGlow" x="-100%" y="-100%" width="300%" height="300%">
+                <feGaussianBlur stdDeviation="10" />
+              </filter>
             </defs>
-            <circle cx="290" cy="225" r="190" fill="url(#networkGlow)" />
+            <circle className="landing-network-core-glow" cx="300" cy="220" r="190" fill="url(#networkGlow)" />
+            <circle className="landing-network-atmosphere" cx="300" cy="220" r="128" fill="#14b8a6" opacity=".12" filter="url(#networkShieldGlow)" />
+            <circle className="landing-network-atmosphere landing-network-atmosphere--one" cx="105" cy="105" r="40" fill="#22d3ee" opacity=".12" filter="url(#networkShieldGlow)" />
+            <circle className="landing-network-atmosphere landing-network-atmosphere--two" cx="490" cy="335" r="52" fill="#10b981" opacity=".1" filter="url(#networkShieldGlow)" />
+            <circle className="landing-network-atmosphere landing-network-atmosphere--three" cx="505" cy="130" r="30" fill="#38bdf8" opacity=".1" filter="url(#networkShieldGlow)" />
             <g fill="none" stroke="url(#networkLine)" strokeWidth="2">
               <path d="M90 250 190 155 300 225 420 145 520 250" />
               <path d="M190 155 230 315 300 225 390 320 420 145" />
               <path d="M90 250 230 315 390 320 520 250" />
             </g>
-            <g fill="#0f172a" stroke="#2dd4bf" strokeWidth="2">
-              <circle cx="90" cy="250" r="9" /><circle cx="190" cy="155" r="9" />
-              <circle cx="230" cy="315" r="9" /><circle cx="390" cy="320" r="9" />
-              <circle cx="420" cy="145" r="9" /><circle cx="520" cy="250" r="9" />
+            <g className="landing-network-flow" fill="none" stroke="#a7f3d0" strokeWidth="3" strokeLinecap="round" strokeDasharray="2 20">
+              <path d="M90 250 190 155 300 225" />
+              <path d="M300 225 420 145 520 250" />
+              <path d="M230 315 300 225 390 320" />
+            </g>
+            <g fill="none" stroke="#5eead4" strokeOpacity=".2" strokeWidth="1.2">
+              <path d="M128 88 190 155" />
+              <path d="M470 90 420 145" />
+              <path d="M80 350 145 318" />
+              <path d="M490 365 450 320" />
+            </g>
+            <g className="landing-network-particles">
+              <circle cx="128" cy="88" r="7" fill="url(#networkOrbFill)" stroke="url(#networkOrbRim)" filter="url(#networkOrbShadow)" />
+              <circle cx="470" cy="90" r="5" fill="url(#networkOrbFill)" stroke="url(#networkOrbRim)" filter="url(#networkOrbShadow)" opacity=".72" />
+              <circle cx="80" cy="350" r="9" fill="url(#networkOrbFill)" stroke="url(#networkOrbRim)" filter="url(#networkOrbShadow)" />
+              <circle cx="490" cy="365" r="6" fill="url(#networkOrbFill)" stroke="url(#networkOrbRim)" filter="url(#networkOrbShadow)" opacity=".78" />
+              <circle cx="555" cy="175" r="4" fill="url(#networkOrbFill)" stroke="url(#networkOrbRim)" filter="url(#networkOrbShadow)" opacity=".54" />
+              <circle cx="350" cy="72" r="3" fill="#a7f3d0" opacity=".62" filter="url(#networkShieldGlow)" />
+            </g>
+            <g filter="url(#networkOrbShadow)" stroke="url(#networkOrbRim)">
+              <circle cx="90" cy="250" r="11" fill="url(#networkOrbFill)" />
+              <circle cx="190" cy="155" r="11" fill="url(#networkOrbFill)" />
+              <circle cx="230" cy="315" r="11" fill="url(#networkOrbFill)" />
+              <circle cx="390" cy="320" r="11" fill="url(#networkOrbFill)" />
+              <circle cx="420" cy="145" r="11" fill="url(#networkOrbFill)" />
+              <circle cx="520" cy="250" r="11" fill="url(#networkOrbFill)" />
             </g>
             <g transform="translate(267 192)">
-              <circle r="34" fill="#0b1120" stroke="#14b8a6" strokeWidth="3" />
+              <circle className="landing-network-shield-halo" r="50" fill="#14b8a6" opacity=".3" filter="url(#networkShieldGlow)" />
+              <circle r="38" fill="url(#networkShieldFill)" stroke="url(#networkOrbRim)" strokeWidth="2.5" filter="url(#networkOrbShadow)" />
+              <circle r="31" fill="none" stroke="#5eead4" strokeOpacity=".18" strokeWidth="1" />
               <path d="M0-16 13-10v12C13 12 6 19 0 22-6 19-13 12-13 2v-12z" fill="none" stroke="#5eead4" strokeWidth="2" />
               <path d="M-5 1h10M0-4v10" stroke="#5eead4" strokeWidth="2" strokeLinecap="round" />
             </g>
-            <g fill="#99f6e4" opacity=".8"><circle cx="155" cy="90" r="3" /><circle cx="475" cy="95" r="3" /><circle cx="555" cy="175" r="2" /></g>
+            <g fill="#ccfbf1" opacity=".8"><circle cx="155" cy="90" r="2" /><circle cx="475" cy="95" r="2" /><circle cx="555" cy="175" r="1.5" /></g>
           </svg>
-          <motion.div variants={scaleIn} className="landing-recall-card">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={{
+              hidden: shouldReduceMotion
+                ? { opacity: 0 }
+                : { opacity: 0, scale: 0.95, rotateX: 8 },
+              visible: {
+                opacity: 1,
+                scale: 1,
+                rotateX: 0,
+                transition: { duration: shouldReduceMotion ? 0.18 : 0.55, ease: [0.16, 1, 0.3, 1] },
+              },
+            }}
+            style={shouldReduceMotion ? undefined : { transformPerspective: 900, transformOrigin: '50% 100%' }}
+            className="landing-recall-card"
+          >
             <div className="flex items-center justify-between">
               <span>Recall across conditions</span>
               <span className="landing-chart-label">M4</span>
@@ -361,6 +429,13 @@ export const LandingPage: React.FC = () => {
               </div>
             ) : <div className="landing-chart-empty">Live benchmark data unavailable.</div>}
           </motion.div>
+          <div className="landing-hero-prompt-badge" aria-label="Prompt-injection tested across four methods">
+            <span className="landing-hero-prompt-icon"><ShieldCheck className="h-4 w-4" /></span>
+            <span>
+              <strong>Prompt-Injection Tested</strong>
+              <small>4 methods · 3 conditions</small>
+            </span>
+          </div>
           <div className="landing-hero-stat">
             <strong>{animatedTestEmailCount || '—'}</strong>
             <span>Test Emails Evaluated</span>
