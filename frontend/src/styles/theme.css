@@ -154,6 +154,224 @@ html.light .glass-panel-elevated {
   outline-offset: 2px;
 }
 
+.landing-hero {
+  position: relative;
+  min-height: 35rem;
+  padding: 2.5rem 0 4rem;
+  color: var(--slate-100);
+}
+
+.landing-hero::before {
+  content: '';
+  position: absolute;
+  inset: 5% 0 0 42%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(circle at 52% 48%, rgba(20, 184, 166, .14), transparent 55%);
+  filter: blur(10px);
+}
+
+.landing-method-card {
+  display: flex;
+  align-items: flex-start;
+  gap: .8rem;
+  width: min(100%, 25rem);
+  padding: 1rem 1.1rem;
+  color: var(--slate-900);
+  background: rgba(255, 255, 255, .96);
+  border: 1px solid rgba(226, 232, 240, .9);
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .18);
+}
+
+.landing-method-icon {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  color: var(--color-accent);
+  background: rgba(20, 184, 166, .12);
+  border-radius: 10px;
+}
+
+.landing-method-card strong,
+.landing-method-card span,
+.landing-method-card a {
+  display: block;
+}
+
+.landing-method-card strong {
+  font-size: .78rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.landing-method-card span {
+  margin-top: .2rem;
+  color: var(--slate-500);
+  font-size: .75rem;
+}
+
+.landing-method-card a {
+  margin-top: .45rem;
+  color: var(--color-accent-hover);
+  font-size: .75rem;
+  font-weight: 700;
+}
+
+.landing-hero-visual {
+  position: relative;
+  min-height: 31rem;
+}
+
+.landing-network {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 25rem;
+}
+
+.landing-recall-card {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: min(18rem, 48%);
+  padding: .85rem;
+  color: var(--slate-900);
+  background: rgba(255, 255, 255, .96);
+  border: 1px solid rgba(226, 232, 240, .9);
+  border-radius: 14px;
+  box-shadow: 0 18px 38px rgba(0, 0, 0, .28);
+  font-size: .72rem;
+  font-weight: 700;
+}
+
+.landing-chart-label {
+  color: var(--color-accent-hover);
+  font-family: var(--font-mono);
+  font-size: .65rem;
+}
+
+.landing-chart-empty {
+  display: grid;
+  height: 8rem;
+  place-items: center;
+  color: var(--slate-500);
+  font-size: .7rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.landing-chart-wrap {
+  position: relative;
+}
+
+.landing-chart-callout {
+  position: absolute;
+  top: .1rem;
+  right: .15rem;
+  padding: .2rem .35rem;
+  color: var(--slate-900);
+  background: #ccfbf1;
+  border: 1px solid #5eead4;
+  border-radius: 5px;
+  font-size: .58rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.landing-hero-stat {
+  position: absolute;
+  right: 1rem;
+  bottom: 0;
+  display: grid;
+  justify-items: end;
+  color: var(--slate-100);
+  text-align: right;
+}
+
+.landing-hero-stat strong {
+  color: var(--color-accent-light);
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  line-height: .9;
+  letter-spacing: -.06em;
+}
+
+.landing-hero-stat > span {
+  margin-top: .45rem;
+  color: var(--slate-400);
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.landing-method-badges {
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+  margin-top: .8rem;
+}
+
+.landing-method-badges span,
+.landing-method-badges a {
+  display: grid;
+  width: 1.8rem;
+  height: 1.8rem;
+  place-items: center;
+  color: var(--slate-200);
+  background: rgba(15, 23, 42, .85);
+  border: 1px solid rgba(45, 212, 191, .4);
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: .58rem;
+}
+
+.landing-method-badges a {
+  color: var(--color-accent-light);
+}
+
+@media (max-width: 1023px) {
+  .landing-hero {
+    min-height: 0;
+    padding-top: 2rem;
+  }
+
+  .landing-hero::before {
+    inset: 35% 0 0;
+  }
+
+  .landing-hero-visual {
+    min-height: 29rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .landing-hero {
+    padding-bottom: 2.5rem;
+  }
+
+  .landing-hero-visual {
+    min-height: 25rem;
+  }
+
+  .landing-network {
+    min-height: 20rem;
+  }
+
+  .landing-recall-card {
+    top: .25rem;
+    right: .25rem;
+    width: min(15rem, 62%);
+  }
+
+  .landing-hero-stat {
+    right: .25rem;
+    bottom: 0;
+  }
+}
+
 /* Common interactive button utilities */
 .interactive-press {
   transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1), filter 150ms ease, background-color 150ms ease;

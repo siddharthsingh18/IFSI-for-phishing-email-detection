@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import {
+  ArrowRight,
   Cpu,
   Bot,
   Layers,
@@ -13,6 +15,7 @@ import {
   ShieldAlert,
   TrendingDown,
   ChevronDown,
+  Network,
 } from 'lucide-react';
 import { apiClient, type BenchmarkSummary } from '../api/client';
 import { Card } from '../components/Card';
@@ -29,6 +32,16 @@ import {
 import { SectionTransitionDivider } from '../components/SectionTransitionDivider';
 import { motion, AnimatePresence, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
+import { useCountUp } from '../hooks/useCountUp';
+import { fadeInUp, scaleIn } from '../lib/motion';
+import {
+  Area,
+  AreaChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 
 export const LandingPage: React.FC = () => {
   const [summary, setSummary] = useState<BenchmarkSummary | null>(null);
@@ -37,6 +50,8 @@ export const LandingPage: React.FC = () => {
   const [hoveredMethod, setHoveredMethod] = useState<'M1' | 'M2' | 'M3' | 'M4' | null>(null);
   const [expandedMethodology, setExpandedMethodology] = useState<Record<string, boolean>>({});
   const [expandedLimitations, setExpandedLimitations] = useState<Record<string, boolean>>({});
+  const [heroInView, setHeroInView] = useState(false);
+  const heroRef = useRef<HTMLElement>(null);
 
   const toggleMethodology = (id: string) => {
     setExpandedMethodology((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -82,6 +97,35 @@ export const LandingPage: React.FC = () => {
   const framerReducedMotion = useReducedMotion();
   const prefersReducedMotion = usePrefersReducedMotion();
   const shouldReduceMotion = prefersReducedMotion || Boolean(framerReducedMotion);
+  const testEmailCount = summary?.dataset?.test_size ?? 0;
+  const animatedTestEmailCount = useCountUp(testEmailCount, { start: heroInView, duration: 700 });
+  const recallSeries = ['clean', 'marked', 'unmarked'].map((condition) => {
+    const metrics = summary?.cells?.[`M4_${condition}`]?.metrics;
+    return {
+      condition: condition[0].toUpperCase() + condition.slice(1),
+      recall: metrics ? Number((metrics.recall * 100).toFixed(1)) : null,
+    };
+  });
+  const hasRecallData = recallSeries.every((point) => point.recall !== null);
+  const strongestRecall = recallSeries.reduce((best, point) => (
+    point.recall !== null && (best === null || (best.recall !== null && point.recall > best.recall)) ? point : best
+  ), null as (typeof recallSeries)[number] | null);
+
+  useEffect(() => {
+    const element = heroRef.current;
+    if (!element || typeof IntersectionObserver === 'undefined') {
+      setHeroInView(true);
+      return;
+    }
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setHeroInView(true);
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
 
   // Methods section scroll reveals
   const methodsSectionRef = useRef<HTMLElement>(null);
@@ -228,6 +272,105 @@ export const LandingPage: React.FC = () => {
           onRetry={() => window.location.reload()}
         />
       )}
+
+      {/* =========================================================================
+          SECTION 2: THE PROBLEM
+          ========================================================================= */}
+      <motion.section
+        ref={heroRef}
+        initial="hidden"
+        animate="visible"
+        className="landing-hero grid grid-cols-1 lg:grid-cols-[.9fr_1.1fr] gap-10 lg:gap-14 items-center"
+      >
+        <div className="space-y-6">
+          <motion.div variants={fadeInUp} className="space-y-5">
+            <div className="text-xs font-semibold uppercase tracking-[.14em] text-teal-400">IFSI Phishing Detection · Benchmark</div>
+            <h1 className="text-4xl sm:text-6xl font-black leading-[1.02] tracking-[-0.025em] text-white">
+              Phishing emails can fool the model, too.
+            </h1>
+            <p className="max-w-xl text-base sm:text-lg leading-relaxed text-slate-300">
+              Measure whether LLM-based detectors keep the right verdict when malicious instructions are hidden inside the email.
+            </p>
+          </motion.div>
+          <motion.div variants={fadeInUp} className="flex flex-wrap gap-3">
+            <Link to="/test" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-teal-500 px-5 py-2.5 text-sm font-bold text-slate-950 transition hover:bg-teal-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-300">
+              Try Live Test <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link to="/dashboard" className="inline-flex min-h-11 items-center justify-center rounded-full border border-slate-600 px-5 py-2.5 text-sm font-semibold text-slate-200 transition hover:border-teal-400 hover:text-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-300">
+              View Results
+            </Link>
+          </motion.div>
+          <motion.div variants={fadeInUp} className="landing-method-card">
+            <div className="landing-method-icon"><Network className="h-5 w-5" /></div>
+            <div className="min-w-0">
+              <strong>4 methods compared head-to-head</strong>
+              <span>From a linear baseline to decoupled RAG.</span>
+              <a href="#methods-section">More Details <ArrowRight className="inline h-3 w-3" /></a>
+            </div>
+          </motion.div>
+        </div>
+
+        <motion.div variants={fadeInUp} className="landing-hero-visual">
+          <svg className="landing-network" viewBox="0 0 620 440" role="img" aria-label="Abstract network of connected phishing detection methods">
+            <defs>
+              <radialGradient id="networkGlow">
+                <stop offset="0" stopColor="#14b8a6" stopOpacity=".28" />
+                <stop offset="1" stopColor="#14b8a6" stopOpacity="0" />
+              </radialGradient>
+              <linearGradient id="networkLine" x1="0" x2="1">
+                <stop stopColor="#14b8a6" stopOpacity=".2" />
+                <stop offset=".5" stopColor="#2dd4bf" stopOpacity=".9" />
+                <stop offset="1" stopColor="#0d9488" stopOpacity=".2" />
+              </linearGradient>
+            </defs>
+            <circle cx="290" cy="225" r="190" fill="url(#networkGlow)" />
+            <g fill="none" stroke="url(#networkLine)" strokeWidth="2">
+              <path d="M90 250 190 155 300 225 420 145 520 250" />
+              <path d="M190 155 230 315 300 225 390 320 420 145" />
+              <path d="M90 250 230 315 390 320 520 250" />
+            </g>
+            <g fill="#0f172a" stroke="#2dd4bf" strokeWidth="2">
+              <circle cx="90" cy="250" r="9" /><circle cx="190" cy="155" r="9" />
+              <circle cx="230" cy="315" r="9" /><circle cx="390" cy="320" r="9" />
+              <circle cx="420" cy="145" r="9" /><circle cx="520" cy="250" r="9" />
+            </g>
+            <g transform="translate(267 192)">
+              <circle r="34" fill="#0b1120" stroke="#14b8a6" strokeWidth="3" />
+              <path d="M0-16 13-10v12C13 12 6 19 0 22-6 19-13 12-13 2v-12z" fill="none" stroke="#5eead4" strokeWidth="2" />
+              <path d="M-5 1h10M0-4v10" stroke="#5eead4" strokeWidth="2" strokeLinecap="round" />
+            </g>
+            <g fill="#99f6e4" opacity=".8"><circle cx="155" cy="90" r="3" /><circle cx="475" cy="95" r="3" /><circle cx="555" cy="175" r="2" /></g>
+          </svg>
+          <motion.div variants={scaleIn} className="landing-recall-card">
+            <div className="flex items-center justify-between">
+              <span>Recall across conditions</span>
+              <span className="landing-chart-label">M4</span>
+            </div>
+            {hasRecallData ? (
+              <div className="landing-chart-wrap h-32">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={recallSeries} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+                    <defs><linearGradient id="recallFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#14b8a6" stopOpacity=".35" /><stop offset="1" stopColor="#14b8a6" stopOpacity="0" /></linearGradient></defs>
+                    <XAxis dataKey="condition" interval={0} tick={{ fontSize: 9 }} axisLine={false} tickLine={false} />
+                    <YAxis domain={[0, 100]} hide />
+                    <Tooltip formatter={(value) => [`${value ?? 0}%`, 'Recall']} />
+                    <Area type="monotone" dataKey="recall" stroke="#0d9488" strokeWidth={3} fill="url(#recallFill)" dot={{ r: 4, fill: '#0d9488' }} activeDot={{ r: 6 }} />
+                  </AreaChart>
+                </ResponsiveContainer>
+                {strongestRecall && <span className="landing-chart-callout">{strongestRecall.condition}: {strongestRecall.recall}%</span>}
+              </div>
+            ) : <div className="landing-chart-empty">Live benchmark data unavailable.</div>}
+          </motion.div>
+          <div className="landing-hero-stat">
+            <strong>{animatedTestEmailCount || '—'}</strong>
+            <span>Test Emails Evaluated</span>
+            <div className="landing-method-badges" aria-label="Four benchmark methods">
+              {['M1', 'M2', 'M3', 'M4'].map((method) => <span key={method}>{method}</span>)}
+              <a href="#methods-section" aria-label="See all methods"><ArrowRight className="h-3 w-3" /></a>
+            </div>
+          </div>
+        </motion.div>
+      </motion.section>
 
       {/* =========================================================================
           SECTION 2: THE PROBLEM
