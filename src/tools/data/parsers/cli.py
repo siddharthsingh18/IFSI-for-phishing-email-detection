@@ -7,12 +7,12 @@ import hashlib
 import json
 from pathlib import Path
 
-from .common import parse_csv, parse_eml_tree, parse_mbox
+from .common import parse_csv, parse_eml_tree, parse_mbox, parse_spamassassin_ham_tree
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--format", choices=("mbox", "csv", "eml-tree"), required=True)
+    parser.add_argument("--format", choices=("mbox", "csv", "eml-tree", "spamassassin-ham-tree"), required=True)
     parser.add_argument("--input", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--source", required=True)
@@ -34,6 +34,10 @@ def main() -> None:
         records = parse_mbox(args.input, source=args.source, label=args.label)
     elif args.format == "csv":
         records = parse_csv(args.input, source=args.source)
+    elif args.format == "spamassassin-ham-tree":
+        if args.label != "legit":
+            parser.error("SpamAssassin ham records must use --label legit")
+        records = parse_spamassassin_ham_tree(args.input, source=args.source)
     else:
         records = parse_eml_tree(args.input, source=args.source, label=args.label)
     args.output.parent.mkdir(parents=True, exist_ok=True)

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import csv
 import hashlib
+import re
 from email import policy
 from email.parser import BytesParser
 from pathlib import Path
@@ -93,4 +94,29 @@ def parse_eml_tree(
         if text:
             family = path.parent.name if family_from_parent else None
             records.append(_record(text, source, label, path, raw, **({"family": family} if family else {})))
+    return records
+
+
+def parse_spamassassin_ham_tree(root: Path, *, source: str = "spamassassin_ham") -> list[dict[str, str]]:
+    """Parse SpamAssassin's extensionless ham message files, excluding its ``cmds`` helper."""
+    if not root.is_dir():
+        raise NotADirectoryError(f"SpamAssassin ham root is not a directory: {root}")
+    message_name = re.compile(r"\d+\.[0-9a-fA-F]{32}\Z")
+    ham_sets = {"easy_ham", "easy_ham_2", "hard_ham"}
+    if not any((root / name).is_dir() for name in ham_sets):
+        raise ValueError(f"No SpamAssassin ham subsets found under: {root}")
+    records = []
+    for path in sorted(root.rglob("*")):
+        if not path.is_file() or path.parent.relative_to(root).parts[0] not in ham_sets:
+            continue
+        if path.name == "cmds":
+            continue
+        if not message_name.fullmatch(path.name):
+            raise ValueError(f"Unexpected file in SpamAssassin ham tree: {path}")
+        raw = path.read_bytes()
+        text = _email_text(BytesParser(policy=policy.default).parsebytes(raw))
+        if text:
+            records.append(_record(text, source, "legit", path, raw, family=path.parent.name))
+    if not records:
+        raise ValueError(f"No SpamAssassin ham messages found under: {root}")
     return records

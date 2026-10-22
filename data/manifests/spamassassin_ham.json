@@ -1,10 +1,36 @@
 {
-  "name": "SpamAssassin easy_ham and hard_ham",
+  "name": "SpamAssassin easy_ham, easy_ham_2, and hard_ham",
   "source": "spamassassin_ham",
   "origin_url": "https://spamassassin.apache.org/old/publiccorpus/",
-  "expected_paths": ["data/raw/spamassassin/easy_ham/", "data/raw/spamassassin/hard_ham/"],
-  "sha256": null,
-  "record_count": null,
-  "license": "Original sender copyrights and corpus warning; verify",
-  "redistribution_allowed": false
+  "snapshot": "2003-02-28",
+  "expected_paths": [
+    "data/raw/spamassassin/easy_ham/",
+    "data/raw/spamassassin/easy_ham_2/",
+    "data/raw/spamassassin/hard_ham/"
+  ],
+  "archives": [
+    {
+      "path": "data/raw/spamassassin/archives/20030228_easy_ham.tar.bz2",
+      "sha256": "2b7b65904bcfcc31d2b5f51946f2d261370b257402cbbd62930b46ab83367438",
+      "records": 2500
+    },
+    {
+      "path": "data/raw/spamassassin/archives/20030228_easy_ham_2.tar.bz2",
+      "sha256": "b4bd3dc5ae5b40f38e99a0e41ad7d16b428b56e818e3a6ffa07330d62004dd38",
+      "records": 1400
+    },
+    {
+      "path": "data/raw/spamassassin/archives/20030228_hard_ham.tar.bz2",
+      "sha256": "ce2ce67880643dbde65ea7f85bffbfe4417349c4bd80b6b0de56262ae6b0a9c9",
+      "records": 250
+    }
+  ],
+  "record_count": 4150,
+  "label": "legit",
+  "license": "Original sender copyrights and SpamAssassin public corpus warning; verify terms before redistribution.",
+  "redistribution_allowed": false,
+  "notes": [
+    "Uses one latest available ham snapshot per subset; older overlapping snapshots are not combined.",
+    "Spam and spam_2 archives are excluded because spam is not equivalent to phishing."
+  ]
 }

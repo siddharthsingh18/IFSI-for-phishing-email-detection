@@ -30,5 +30,43 @@
     "local_path": "data/raw/phishfuzzer/upstream/PhishFuzzer_emails_original_seed_v1.json",
     "repository_url": "https://github.com/DataPhish/PhishFuzzer",
     "sha256": "394d542e27dcef57321bc69f0f93b03e5965531f616eb3d3c79416cc60a30765"
+  },
+  "spamassassin_ham": {
+    "snapshot": "2003-02-28",
+    "archives": [
+      {
+        "filename": "20030228_easy_ham.tar.bz2",
+        "local_path": "data/raw/spamassassin/archives/20030228_easy_ham.tar.bz2",
+        "sha256": "2b7b65904bcfcc31d2b5f51946f2d261370b257402cbbd62930b46ab83367438",
+        "records": 2500
+      },
+      {
+        "filename": "20030228_easy_ham_2.tar.bz2",
+        "local_path": "data/raw/spamassassin/archives/20030228_easy_ham_2.tar.bz2",
+        "sha256": "b4bd3dc5ae5b40f38e99a0e41ad7d16b428b56e818e3a6ffa07330d62004dd38",
+        "records": 1400
+      },
+      {
+        "filename": "20030228_hard_ham.tar.bz2",
+        "local_path": "data/raw/spamassassin/archives/20030228_hard_ham.tar.bz2",
+        "sha256": "ce2ce67880643dbde65ea7f85bffbfe4417349c4bd80b6b0de56262ae6b0a9c9",
+        "records": 250
+      }
+    ],
+    "parsed_path": "data/processed/spamassassin_ham.jsonl",
+    "record_count": 4150,
+    "quality_checks": {
+      "empty_records": 0,
+      "normalized_duplicates_within_source": 0,
+      "exact_normalized_overlaps_with_existing_v2_pool": 0
+    },
+    "candidate_pool": {
+      "path": "data/combined_v2/combined_plus_spamassassin_ham_candidate.jsonl",
+      "records": 51550,
+      "phishing": 47294,
+      "legit": 4256,
+      "training_split_created": false
+    },
+    "license_status": "SpamAssassin public corpus; original sender copyrights and corpus warning apply. Redistribution is not permitted by this project."
   }
 }
