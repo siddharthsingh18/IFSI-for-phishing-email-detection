@@ -158,8 +158,8 @@ export const Navbar: React.FC = () => {
           <button
             type="button"
             onClick={toggleTheme}
-            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-            title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode (currently ${theme})`}
+            aria-label={theme === 'dark' ? 'Turn lights on' : 'Turn lights off'}
+            title={theme === 'dark' ? 'Lights on' : 'Lights off'}
             className="p-2 rounded-xl border border-slate-700/80 bg-slate-900/80 text-slate-300 hover:text-teal-400 hover:border-teal-500/40 hover:bg-slate-850 transition-all duration-150 hover:scale-[1.05] hover:brightness-110 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 elevation-card flex items-center justify-center cursor-pointer"
           >
             {theme === 'dark' ? (
@@ -167,6 +167,7 @@ export const Navbar: React.FC = () => {
             ) : (
               <Moon className="h-4 w-4 text-teal-600 transition-transform duration-150" />
             )}
+            <span className="hidden sm:inline">{theme === 'dark' ? 'Lights on' : 'Lights off'}</span>
           </button>
 
           {/* Mobile Hamburger Toggle Button (< lg) */}

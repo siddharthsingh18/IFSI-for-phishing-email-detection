@@ -101,6 +101,12 @@ export interface ClassificationResult {
   retrieved_samples?: Array<Record<string, unknown>> | null;
   has_injection?: boolean | null;
   is_phishing_only?: boolean | null;
+  injection_spans?: Array<{
+    start: number;
+    end: number;
+    source: 'model' | 'pattern';
+    text: string;
+  }>;
 }
 
 export interface ModelCatalogEntry {

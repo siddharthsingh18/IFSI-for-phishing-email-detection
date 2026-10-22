@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import sys
+import json
+import time
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any
@@ -15,7 +17,7 @@ if str(src_dir) not in sys.path:
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import PlainTextResponse, StreamingResponse
 from pydantic import BaseModel, Field
 
 from core import (
@@ -138,6 +140,7 @@ class ClassificationResult(BaseModel):
     retrieved_samples: list[dict[str, Any]] | None = Field(None, description="Retrieved FAISS exemplars for RAG methods")
     has_injection: bool | None = Field(None, description="M4 Call 1 prompt injection detection flag")
     is_phishing_only: bool | None = Field(None, description="M4 Call 2 pure boolean phishing flag")
+    injection_spans: list[dict[str, Any]] = Field(default_factory=list)
 
 
 class MethodStyle(BaseModel):
@@ -302,7 +305,81 @@ def classify_email(req: ClassifyRequest) -> ClassificationResult:
             detail=f"Unknown method '{req.method}'. Supported methods: M1, M2, M3, M4.",
         )
 
-    return ClassificationResult(**raw_result)
+    return ClassificationResult(**_with_injection_spans(raw_result, email_text))
+
+
+def _with_injection_spans(result: dict[str, Any], text: str) -> dict[str, Any]:
+    spans: list[dict[str, Any]] = []
+    seen: set[tuple[int, int]] = set()
+    for reason in result.get("reasons", []):
+        if not isinstance(reason, str):
+            continue
+        for fragment in reason.split('"'):
+            fragment = fragment.strip()
+            if len(fragment) < 12:
+                continue
+            start = text.find(fragment)
+            if start >= 0 and (start, start + len(fragment)) not in seen:
+                spans.append({"start": start, "end": start + len(fragment), "source": "model", "text": fragment})
+                seen.add((start, start + len(fragment)))
+    templates = load_unmarked_injection_templates()
+    for template in templates:
+        payload = str(template.get("injected_text", "")).strip()
+        if len(payload) < 12:
+            continue
+        start = text.find(payload)
+        if start >= 0 and (start, start + len(payload)) not in seen:
+            spans.append({"start": start, "end": start + len(payload), "source": "pattern", "text": payload})
+            seen.add((start, start + len(payload)))
+    result["injection_spans"] = spans
+    return result
+
+
+def _sse(event: str, payload: dict[str, Any]) -> str:
+    return f"event: {event}\ndata: {json.dumps(payload)}\n\n"
+
+
+def _stream_analysis(req: ClassifyCompareRequest):
+    methods = ("M1", "M2", "M3", "M4")
+    for method in methods:
+        started = time.perf_counter()
+        yield _sse("lane_started", {"method": method})
+        try:
+            result = classify_email(ClassifyRequest(
+                text=req.text,
+                subject=req.subject,
+                sender=req.sender,
+                method=method,
+                model=req.model,
+                k=req.k,
+            ))
+            total_ms = round((time.perf_counter() - started) * 1000, 3)
+            yield _sse("stage", {"method": method, "name": "classification", "ms": total_ms})
+            yield _sse("lane_finished", {
+                "method": method,
+                "verdict": result.verdict,
+                "confidence": result.confidence,
+                "valid": result.is_valid,
+                "failure_type": result.failure_type,
+                "total_ms": total_ms,
+                "injection_spans": result.injection_spans,
+            })
+        except (ValueError, RuntimeError, KeyError) as exc:
+            total_ms = round((time.perf_counter() - started) * 1000, 3)
+            yield _sse("lane_finished", {
+                "method": method,
+                "verdict": "unknown",
+                "valid": False,
+                "failure_type": "schema_error",
+                "failure_message": str(exc),
+                "total_ms": total_ms,
+            })
+
+
+@app.post("/analyze/stream", tags=["Classification"])
+@app.post("/api/analyze/stream", tags=["Classification"])
+def analyze_stream(req: ClassifyCompareRequest) -> StreamingResponse:
+    return StreamingResponse(_stream_analysis(req), media_type="text/event-stream")
 
 
 @app.post("/classify/compare", response_model=CompareResponse, tags=["Classification"])
@@ -315,7 +392,10 @@ def classify_and_compare(req: ClassifyCompareRequest) -> CompareResponse:
     all_results = classify_all_methods(email_text, model=req.model, top_k=req.k)
     disagreement = evaluate_method_disagreements(all_results)
 
-    typed_results_map = {m: ClassificationResult(**res) for m, res in all_results.items()}
+    typed_results_map = {
+        m: ClassificationResult(**_with_injection_spans(res, email_text))
+        for m, res in all_results.items()
+    }
     typed_results_list = [
         typed_results_map["M1"],
         typed_results_map["M2"],

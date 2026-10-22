@@ -242,9 +242,6 @@ def classify_email_m3(
             "is_valid": True,
             "raw_response": raw_text,
             "retrieved_samples": retrieved_samples,
-            "failure_type": failure1 or failure2 or "unavailable",
-            "failure_message": "One or more pipeline calls failed.",
-            "attempts": 1,
             "failure_type": None,
             "failure_message": None,
             "attempts": 1,
@@ -326,6 +323,9 @@ def classify_email_m4(
             "raw_response_call1": raw1,
             "raw_response_call2": raw2,
             "retrieved_samples": retrieved_samples,
+            "failure_type": failure1 or failure2 or "unavailable",
+            "failure_message": "One or more pipeline calls failed.",
+            "attempts": 1,
         }
 
     overall_malicious = has_injection or is_phishing_pred

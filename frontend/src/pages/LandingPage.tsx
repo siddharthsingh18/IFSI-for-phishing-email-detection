@@ -22,8 +22,6 @@ import { Card } from '../components/Card';
 import { OfflineFallbackBanner } from '../components/OfflineFallbackBanner';
 import { Badge } from '../components/Badge';
 import { SkeletonCard } from '../components/Skeleton';
-import { HeroNetworkIllustration } from '../components/HeroNetworkIllustration';
-import { HeroFloatingRecallCard } from '../components/HeroFloatingRecallCard';
 import { InjectedEmailGraphic } from '../components/InjectedEmailGraphic';
 import { ApproachFlowDiagram } from '../components/ApproachFlowDiagram';
 import {
@@ -32,10 +30,10 @@ import {
   StrainedShieldIcon,
 } from '../components/KeyFindingShields';
 import { SectionTransitionDivider } from '../components/SectionTransitionDivider';
-import { MagneticButton } from '../components/MagneticButton';
 import { motion, AnimatePresence, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
-import { fadeInUp, staggerContainer, scaleIn } from '../lib/motion';
+import { fadeInUp, staggerContainer } from '../lib/motion';
+import { syntheticSpecimen } from '../content/specimen';
 
 export const LandingPage: React.FC = () => {
   const [summary, setSummary] = useState<BenchmarkSummary | null>(null);
@@ -44,6 +42,13 @@ export const LandingPage: React.FC = () => {
   const [hoveredMethod, setHoveredMethod] = useState<'M1' | 'M2' | 'M3' | 'M4' | null>(null);
   const [expandedMethodology, setExpandedMethodology] = useState<Record<string, boolean>>({});
   const [expandedLimitations, setExpandedLimitations] = useState<Record<string, boolean>>({});
+  const [beam, setBeam] = useState({ x: 66, y: 46 });
+  const [revealed, setRevealed] = useState(() =>
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
+  const beamFrame = useRef<number | null>(null);
+  const beamTarget = useRef(beam);
+  const specimenRef = useRef<HTMLDivElement>(null);
 
   const toggleMethodology = (id: string) => {
     setExpandedMethodology((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -52,6 +57,24 @@ export const LandingPage: React.FC = () => {
   const toggleLimitation = (id: string) => {
     setExpandedLimitations((prev) => ({ ...prev, [id]: !prev[id] }));
   };
+
+  const moveBeam = (event: React.PointerEvent<HTMLDivElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    beamTarget.current = {
+      x: ((event.clientX - rect.left) / rect.width) * 100,
+      y: ((event.clientY - rect.top) / rect.height) * 100,
+    };
+    if (beamFrame.current === null) {
+      beamFrame.current = requestAnimationFrame(() => {
+        setBeam(beamTarget.current);
+        beamFrame.current = null;
+      });
+    }
+  };
+
+  useEffect(() => () => {
+    if (beamFrame.current !== null) cancelAnimationFrame(beamFrame.current);
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -92,16 +115,6 @@ export const LandingPage: React.FC = () => {
 
   // Hero Parallax
   const heroSectionRef = useRef<HTMLElement>(null);
-  const { scrollYProgress: heroScrollProgress } = useScroll({
-    target: heroSectionRef,
-    offset: ['start start', 'end start'],
-  });
-  const heroIllustrationY = useTransform(
-    heroScrollProgress,
-    [0, 1],
-    shouldReduceMotion ? [0, 0] : [0, 60]
-  );
-
   // Methods section scroll reveals
   const methodsSectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress: methodsScrollProgress } = useScroll({
@@ -261,85 +274,75 @@ export const LandingPage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
           {/* Left Column: Headline and Call-to-Actions */}
           <motion.div variants={fadeInUp} className="lg:col-span-5 xl:col-span-5 space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-teal-950/80 text-teal-400 border border-teal-800/60 shadow-sm backdrop-blur-sm">
-              <span className="h-1.5 w-1.5 rounded-full bg-teal-400 animate-pulse" />
-              <span>Adversarial AI Benchmark</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-[var(--ultraviolet)] border border-[var(--ultraviolet)]/40 [clip-path:var(--clip-tag)]">
+              <span className="h-1.5 w-1.5 rounded-full bg-[var(--ultraviolet)]" />
+              <span>Forensic prompt-injection bench</span>
             </div>
 
-            <div className="space-y-3">
-              <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-[1.08] font-['Plus_Jakarta_Sans',sans-serif]">
-                Evaluating Indirect Prompt Injections on{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-emerald-300 to-cyan-400">
-                  LLM Phishing Classifiers
-                </span>
+            <div className="space-y-4">
+              <h1 className="text-4xl sm:text-6xl font-black text-[var(--ink)] tracking-tight leading-[1.03] font-['Plus_Jakarta_Sans',sans-serif]">
+                Some emails talk to the model reading them.
               </h1>
-              <p className="text-lg sm:text-2xl text-slate-300 font-normal tracking-tight">
-                <span className="text-slate-400 font-light">By </span>
-                <span className="text-slate-100 font-medium">Siddharth Singh</span>
-                <span className="text-slate-400 font-light"> &amp; </span>
-                <span className="text-slate-100 font-medium">Sanchit Kukreja</span>
+              <p className="text-base sm:text-xl text-[var(--graphite)] leading-relaxed">
+                PhishBench measures whether phishing detectors can be talked out of the right answer.
               </p>
             </div>
-
-            <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-normal">
-              Empirical evaluation showing how monolithic RAG-combined detection (M3) collapses under natural prompt injection,
-              while decoupled two-stage inference (M4) restores attack resilience at an operational false-alarm tax.
-            </p>
 
             <motion.div
               variants={fadeInUp}
               className="flex flex-wrap items-center gap-3 pt-2"
             >
-              <MagneticButton
-                strength={0.2}
-                className="inline-flex"
-              >
-                <Link
-                  to="/test"
-                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm text-slate-950 bg-teal-400 hover:bg-teal-300 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-teal-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-all duration-150"
-                >
-                  <Shield className="h-4 w-4" />
-                  <span>Test an Email</span>
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
-              </MagneticButton>
-
-              <MagneticButton
-                strength={0.2}
-                className="inline-flex"
-              >
-                <Link
-                  to="/dashboard"
-                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm text-slate-200 bg-slate-900 border border-slate-700 hover:bg-slate-800 hover:text-white hover:border-slate-600 hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-all duration-150"
-                >
-                  <span>View Benchmark Dashboard</span>
-                </Link>
-              </MagneticButton>
+              <Link to="/test" className="inline-flex min-h-11 items-center justify-center gap-2 px-5 py-2.5 rounded-[var(--radius-control)] font-bold text-sm text-white bg-[var(--ultraviolet)] hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ultraviolet)] focus-visible:ring-offset-2 transition-[filter] duration-[var(--duration-fast)]">
+                <Shield className="h-4 w-4" /> Test an email <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+              <Link to="/injection-lab" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-[var(--ink)] underline decoration-[var(--ultraviolet)] underline-offset-4">
+                Open the injection lab
+              </Link>
             </motion.div>
           </motion.div>
 
           {/* Right Column: Floating Contrast Recall Card */}
-          <div className="lg:col-span-7 xl:col-span-7 relative w-full h-full min-w-0 flex flex-col items-center justify-center">
-            <div className="relative w-full flex items-center justify-center">
-              <motion.div
-                style={{ y: heroIllustrationY }}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.22, ease: 'easeOut' }}
-                className="w-full h-full flex items-center justify-center will-change-transform"
-              >
-                <HeroNetworkIllustration />
-              </motion.div>
-
-              <motion.div
-                variants={scaleIn}
-                initial="hidden"
-                animate="visible"
-                transition={{ delay: 0.25, duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute top-2 right-1 sm:top-4 sm:right-4 lg:top-4 lg:right-6 z-20"
-              >
-                <HeroFloatingRecallCard summary={summary} loading={loading} />
-              </motion.div>
+          <div className="lg:col-span-7 xl:col-span-7 relative w-full min-w-0">
+            <div
+              ref={specimenRef}
+              tabIndex={0}
+              role="img"
+              aria-label="Synthetic Northwind Payroll email specimen. Move your pointer over it to reveal hidden instructions aimed at an AI classifier."
+              onPointerMove={moveBeam}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') setRevealed((value) => !value);
+                if (event.key.startsWith('Arrow')) {
+                  event.preventDefault();
+                  setBeam((value) => ({
+                    x: Math.max(5, Math.min(95, value.x + (event.key === 'ArrowLeft' ? -5 : event.key === 'ArrowRight' ? 5 : 0))),
+                    y: Math.max(5, Math.min(95, value.y + (event.key === 'ArrowUp' ? -5 : event.key === 'ArrowDown' ? 5 : 0))),
+                  }));
+                }
+              }}
+              className="relative overflow-hidden bg-[var(--sheet)] text-[var(--ink)] border border-[var(--ink)]/15 p-5 sm:p-8 [box-shadow:var(--shadow-sheet)] focus-visible:outline-2 focus-visible:outline-[var(--ultraviolet)]"
+              style={{ '--beam-x': `${beam.x}%`, '--beam-y': `${beam.y}%` } as React.CSSProperties}
+            >
+              <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_150px_at_var(--beam-x)_var(--beam-y),rgba(106,61,255,.18),transparent_70%)]" aria-hidden="true" />
+              <div className="relative font-mono text-xs sm:text-sm leading-7">
+                <div className="mb-4 border-b border-[var(--ink)]/15 pb-4">
+                  <div><span className="text-[var(--graphite)]">From:</span> {syntheticSpecimen.sender}</div>
+                  <div><span className="text-[var(--graphite)]">To:</span> {syntheticSpecimen.recipient}</div>
+                  <div><span className="text-[var(--graphite)]">Subject:</span> {syntheticSpecimen.subject}</div>
+                </div>
+                {syntheticSpecimen.lines.map((line, index) => (
+                  <div key={line.text} className={line.hidden ? `relative ${revealed ? 'text-[var(--ultraviolet)] font-semibold' : 'text-[var(--ink)]/35 text-[10px]'}` : ''}>
+                    <span className="mr-4 inline-block w-5 select-none text-right text-[var(--graphite)]/60">{String(index + 1).padStart(2, '0')}</span>
+                    {line.text}
+                    {line.hidden && revealed && <span className="ml-2 inline-flex items-center text-[10px] font-sans font-semibold text-[var(--ultraviolet)]">model instruction</span>}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              <button type="button" onClick={() => setRevealed((value) => !value)} className="min-h-11 border border-[var(--ultraviolet)]/50 px-3 py-2 text-xs font-semibold text-[var(--ultraviolet)] [clip-path:var(--clip-tag)]">
+                {revealed ? 'Hide hidden instructions' : 'Reveal hidden instructions'}
+              </button>
+              <div aria-live="polite" className="sr-only">{revealed ? '3 hidden instructions found.' : ''}</div>
             </div>
           </div>
         </div>

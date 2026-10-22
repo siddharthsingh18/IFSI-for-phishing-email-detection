@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./styles/theme.css";
+@import "./styles/tokens.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -41,7 +42,7 @@
     min-height: 100vh;
     max-width: 100%;
     overflow-x: clip;
-    transition: background-color 150ms ease, color 150ms ease;
+    transition: background-color var(--duration-standard) var(--ease-settle), color var(--duration-standard) var(--ease-settle);
   }
 
   #root {

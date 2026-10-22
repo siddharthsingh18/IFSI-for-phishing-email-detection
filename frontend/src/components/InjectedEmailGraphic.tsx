@@ -16,6 +16,7 @@ export const InjectedEmailGraphic: React.FC<InjectedEmailGraphicProps> = ({
       whileInView="visible"
       viewport={{ once: true, margin: '-40px' }}
       className="w-full max-w-[280px] select-none"
+      role="img"
       aria-label="Illustration: hidden prompt injection inside normal email text"
     >
       <svg

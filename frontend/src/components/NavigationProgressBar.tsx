@@ -49,6 +49,7 @@ export const NavigationProgressBar: React.FC = () => {
   return (
     <div
       role="progressbar"
+      aria-hidden="true"
       aria-label="Page navigation progress"
       aria-valuenow={progress}
       aria-valuemin={0}

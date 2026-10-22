@@ -35,8 +35,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     } catch {
       // In case localStorage is unavailable in iframe or security sandbox
     }
-    // Default to 'dark' mode (Dark Slate foundation)
-    return 'dark';
+    return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
 
   const isDark = theme === 'dark';

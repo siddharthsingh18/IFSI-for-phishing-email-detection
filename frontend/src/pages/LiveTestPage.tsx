@@ -192,6 +192,7 @@ export const LiveTestPage: React.FC = () => {
   const [executionMode, setExecutionMode] = useState<'single' | 'compare' | null>(null);
   const [singleResult, setSingleResult] = useState<ClassificationResult | null>(null);
   const [compareResult, setCompareResult] = useState<CompareResponse | null>(null);
+  const [runStatus, setRunStatus] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Collapsible Accordion State for result details
@@ -376,6 +377,7 @@ export const LiveTestPage: React.FC = () => {
 
       await minLoadingPromise;
       setCompareResult(res);
+      setRunStatus('Ran on all four');
       // Default: collapse detail drawers in 4-column compare grid to keep cards compact
       setOpenDetailsMap({});
     } catch (err: any) {
@@ -424,10 +426,13 @@ export const LiveTestPage: React.FC = () => {
           Interactive Evaluation Sandbox
         </div>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mt-1 font-['Plus_Jakarta_Sans',sans-serif]">
-          Live Email Phishing &amp; Injection Test
+          Inspection bench
         </h1>
         <p className="text-slate-400 text-sm mt-1 max-w-3xl leading-relaxed">
-          Evaluate incoming emails in real-time across four classifier architectures. Submit an email below to inspect phishing verdicts, confidence scores, prompt injection detection, and full reasoning traces.
+          Put a synthetic or non-confidential email on the bench and inspect how four classifier architectures respond.
+        </p>
+        <p className="mt-3 max-w-3xl border-l-2 border-[var(--evidence-amber)] pl-3 text-xs text-[var(--graphite)]">
+          Do not paste confidential email. Text is sent only to your local backend and is never saved in localStorage.
         </p>
       </div>
 
@@ -985,6 +990,11 @@ export const LiveTestPage: React.FC = () => {
                     <span>Reset</span>
                   </button>
                 </div>
+                {runStatus && (
+                  <p role="status" className="text-xs font-mono text-[var(--cleared-green)]">
+                    {runStatus}
+                  </p>
+                )}
 
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full sm:w-auto">
                   {/* Compare All Button with smooth rotational icon morph */}
@@ -1034,7 +1044,7 @@ export const LiveTestPage: React.FC = () => {
                         >
                           {isLoading && executionMode === 'compare'
                             ? 'Classifying…'
-                            : 'Compare All (M1–M4)'}
+                            : 'Run on all four'}
                         </motion.span>
                       </AnimatePresence>
                     </div>
