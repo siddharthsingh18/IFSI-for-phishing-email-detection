@@ -43,6 +43,8 @@ import {
   YAxis,
 } from 'recharts';
 
+const M1_TRAINING_EMAIL_COUNT = 4_881;
+
 export const LandingPage: React.FC = () => {
   const [summary, setSummary] = useState<BenchmarkSummary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -97,8 +99,10 @@ export const LandingPage: React.FC = () => {
   const framerReducedMotion = useReducedMotion();
   const prefersReducedMotion = usePrefersReducedMotion();
   const shouldReduceMotion = prefersReducedMotion || Boolean(framerReducedMotion);
-  const testEmailCount = summary?.dataset?.test_size ?? 0;
-  const animatedTestEmailCount = useCountUp(testEmailCount, { start: heroInView, duration: 700 });
+  const animatedTrainingEmailCount = useCountUp(M1_TRAINING_EMAIL_COUNT, {
+    start: heroInView,
+    duration: 700,
+  });
   const recallSeries = ['clean', 'marked', 'unmarked'].map((condition) => {
     const metrics = summary?.cells?.[`M4_${condition}`]?.metrics;
     return {
@@ -362,13 +366,11 @@ export const LandingPage: React.FC = () => {
               <path d="M230 315 300 225 390 320" />
             </g>
             <g fill="none" stroke="#5eead4" strokeOpacity=".2" strokeWidth="1.2">
-              <path d="M128 88 190 155" />
               <path d="M470 90 420 145" />
               <path d="M80 350 145 318" />
               <path d="M490 365 450 320" />
             </g>
             <g className="landing-network-particles">
-              <circle cx="128" cy="88" r="7" fill="url(#networkOrbFill)" stroke="url(#networkOrbRim)" filter="url(#networkOrbShadow)" />
               <circle cx="470" cy="90" r="5" fill="url(#networkOrbFill)" stroke="url(#networkOrbRim)" filter="url(#networkOrbShadow)" opacity=".72" />
               <circle cx="80" cy="350" r="9" fill="url(#networkOrbFill)" stroke="url(#networkOrbRim)" filter="url(#networkOrbShadow)" />
               <circle cx="490" cy="365" r="6" fill="url(#networkOrbFill)" stroke="url(#networkOrbRim)" filter="url(#networkOrbShadow)" opacity=".78" />
@@ -437,8 +439,8 @@ export const LandingPage: React.FC = () => {
             </span>
           </div>
           <div className="landing-hero-stat">
-            <strong>{animatedTestEmailCount || '—'}</strong>
-            <span>Test Emails Evaluated</span>
+            <strong>{animatedTrainingEmailCount || '—'}</strong>
+            <span>Emails Used to Train M1</span>
             <div className="landing-method-badges" aria-label="Four benchmark methods">
               {['M1', 'M2', 'M3', 'M4'].map((method) => <span key={method}>{method}</span>)}
               <a href="#methods-section" aria-label="See all methods"><ArrowRight className="h-3 w-3" /></a>
