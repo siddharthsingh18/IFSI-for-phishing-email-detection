@@ -37,6 +37,26 @@ records with the existing v2 corpus without replacing it. It contains 51,550
 records (47,294 phishing and 4,256 legitimate), remains imbalanced, and is not
 a training split.
 
+`python -m tools.data.build_review_split` can build a separate local-only
+`data/splits/review_seed42/` candidate from a locally acquired Nazario mbox and
+the parsed SpamAssassin ham. It filters empty/MIME-placeholder bodies, groups
+same-source sender addresses and verified near-duplicate clusters before
+splitting, and writes an `audit.json`. This pairing is source-confounded
+(Nazario supplies phishing and SpamAssassin supplies legitimate mail), so the
+split is for review only and must not be treated as a source-independent
+benchmark. The email-bearing files remain ignored and must not be committed or
+redistributed.
+
+The checked seed-42 local candidate contains 6,391 records after excluding 38
+Nazario messages with empty or known placeholder bodies. Its train/validation/
+test sizes are 4,881 / 677 / 833. Phishing counts are 1,745 / 286 / 210 and
+legitimate counts are 3,136 / 391 / 623. All legitimate records come from
+SpamAssassin and all phishing records from Nazario (100% source share within
+each label), so source and label are completely confounded. The LSH-based
+near-duplicate audit found 304 / 341 / 7 within-split pairs and zero
+cross-split pairs; this candidate still needs a second independent phishing
+source before it can support source-independent model claims.
+
 ## Local findings
 
 At the time of this audit, EPVME and IWSPA were present under `~/Downloads`.

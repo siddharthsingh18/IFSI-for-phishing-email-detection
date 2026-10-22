@@ -68,5 +68,44 @@
       "training_split_created": false
     },
     "license_status": "SpamAssassin public corpus; original sender copyrights and corpus warning apply. Redistribution is not permitted by this project."
+  },
+  "nazario_clean_training_candidate": {
+    "local_path": "data/raw/nazario/phishing3.mbox",
+    "sha256": "b29336d2e31c2dff19639415e98ed2aced5b4d63675ea5e29bea1a7d4e452841",
+    "raw_messages": 2279,
+    "usable_after_body_quality_filter": 2241,
+    "excluded_empty_or_mime_placeholder_body": 38,
+    "normalized_exact_duplicates": 0,
+    "corpora_yaml_primary_balanced_role": "phishing",
+    "license_status": "Source terms; verify. Raw email content and derived splits remain local-only."
+  },
+  "review_split_seed42": {
+    "local_path": "data/splits/review_seed42/",
+    "records": 6391,
+    "split_sizes": {
+      "train": 4881,
+      "val": 677,
+      "test": 833
+    },
+    "class_counts": {
+      "train": {"legit": 3136, "phishing": 1745},
+      "val": {"legit": 391, "phishing": 286},
+      "test": {"legit": 623, "phishing": 210}
+    },
+    "source_label_confound": {
+      "present": true,
+      "legit_source_share": {"spamassassin_ham": 1.0},
+      "phishing_source_share": {"nazario": 1.0}
+    },
+    "exact_normalized_duplicates_removed": 0,
+    "near_duplicate_pairs": {
+      "train": 304,
+      "val": 341,
+      "test": 7,
+      "across_splits": 0,
+      "detection": "0.85 Jaccard MinHash LSH candidates, exact-verified; not exhaustive all-pairs"
+    },
+    "redistribution_allowed": false,
+    "review_only": true
   }
 }

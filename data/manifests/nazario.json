@@ -3,8 +3,13 @@
   "source": "nazario",
   "origin_url": "https://monkey.org/~jose/phishing/",
   "expected_paths": ["data/raw/nazario/phishing3.mbox"],
-  "sha256": null,
-  "record_count": null,
+  "sha256": "b29336d2e31c2dff19639415e98ed2aced5b4d63675ea5e29bea1a7d4e452841",
+  "record_count": 2279,
+  "usable_nonempty_phishing_records": 2241,
+  "quality_exclusions": {
+    "empty_or_mime_placeholder_body": 38,
+    "normalized_exact_duplicates": 0
+  },
   "license": "Source terms; verify",
   "redistribution_allowed": false
 }

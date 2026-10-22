@@ -25,6 +25,23 @@ def test_mbox_round_trip_and_stable_ids(tmp_path: Path) -> None:
     assert first[0]["raw_sha256"] == hashlib.sha256(path.read_bytes()).hexdigest() or first[0]["raw_sha256"]
 
 
+def test_mbox_parses_utf8_body_without_reserializing(tmp_path: Path) -> None:
+    path = tmp_path / "utf8.mbox"
+    path.write_bytes(
+        b"From sender@example.com Thu Jan  1 00:00:00 1970\n"
+        b"From: sender@example.com\n"
+        b"Subject: UTF-8\n"
+        b"Content-Type: text/plain; charset=utf-8\n"
+        b"\n" + "Café update.\n".encode("utf-8")
+    )
+
+    records = parse_mbox(path, source="fixture", label="phishing")
+
+    assert len(records) == 1
+    assert "Café update." in records[0]["text"]
+    assert records[0]["label"] == "phishing"
+
+
 def test_csv_round_trip(tmp_path: Path) -> None:
     path = tmp_path / "sample.csv"
     path.write_text("text,label\nhello,legit\nurgent,phishing\n", encoding="utf-8")

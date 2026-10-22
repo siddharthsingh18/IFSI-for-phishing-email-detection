@@ -51,12 +51,18 @@ def parse_mbox(path: Path, *, source: str, label: str, family: str | None = None
     from mailbox import mbox
 
     records = []
-    for message in mbox(path, factory=None):
-        raw = message.as_bytes() if hasattr(message, "as_bytes") else bytes(message)
-        parsed = BytesParser(policy=policy.default).parsebytes(raw)
-        text = _email_text(parsed)
-        if text:
-            records.append(_record(text, source, label, path, raw, **({"family": family} if family else {})))
+    mailbox = mbox(path, factory=None)
+    try:
+        for key in mailbox.iterkeys():
+            raw = mailbox.get_bytes(key)
+            parsed = BytesParser(policy=policy.default).parsebytes(raw)
+            text = _email_text(parsed)
+            if text:
+                records.append(
+                    _record(text, source, label, path, raw, **({"family": family} if family else {}))
+                )
+    finally:
+        mailbox.close()
     return records
 
 
