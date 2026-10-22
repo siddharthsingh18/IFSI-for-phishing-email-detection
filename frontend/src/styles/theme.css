@@ -154,6 +154,205 @@ html.light .glass-panel-elevated {
   outline-offset: 2px;
 }
 
+/* Landing hero atmosphere and restrained visual hierarchy. */
+.hero-ambient {
+  position: absolute;
+  inset: -4rem -2rem -2rem;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+  opacity: .72;
+}
+
+.hero-ambient-shape {
+  position: absolute;
+  display: block;
+  width: 3rem;
+  height: 3rem;
+  border: 1px solid color-mix(in srgb, var(--ultraviolet) 25%, transparent);
+  opacity: .3;
+  animation: hero-ambient-drift 18s ease-in-out infinite alternate;
+}
+
+.hero-ambient-shape--hex {
+  top: 10%;
+  left: 4%;
+  clip-path: polygon(25% 3%, 75% 3%, 100% 50%, 75% 97%, 25% 97%, 0 50%);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--ultraviolet) 18%, transparent), transparent 65%);
+}
+
+.hero-ambient-shape--ring {
+  top: 18%;
+  right: 6%;
+  border-radius: 50%;
+  border-color: color-mix(in srgb, var(--evidence-amber) 30%, transparent);
+  animation-delay: -5s;
+}
+
+.hero-ambient-shape--diamond {
+  right: 28%;
+  bottom: 8%;
+  width: 2.25rem;
+  height: 2.25rem;
+  transform: rotate(45deg);
+  border-color: color-mix(in srgb, var(--cleared-green) 30%, transparent);
+  animation-delay: -10s;
+}
+
+.hero-ambient-shape--square {
+  left: 38%;
+  bottom: 17%;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 8px;
+  border-color: color-mix(in srgb, var(--ultraviolet) 20%, transparent);
+  animation-delay: -14s;
+}
+
+.hero-ambient-shape--small-ring {
+  top: 48%;
+  left: 48%;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  border-color: color-mix(in srgb, var(--stamp-red) 24%, transparent);
+  animation-delay: -7s;
+}
+
+.hero-primary-cta {
+  background: linear-gradient(110deg, var(--ultraviolet), color-mix(in srgb, var(--ultraviolet) 42%, var(--evidence-amber)));
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--ultraviolet) 20%, transparent);
+}
+
+.hero-primary-cta:hover {
+  filter: brightness(1.08);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ultraviolet) 35%, transparent), 0 10px 30px color-mix(in srgb, var(--ultraviolet) 38%, transparent);
+  transform: translateY(-1px);
+}
+
+.hero-visual-shell {
+  z-index: 1;
+  padding: 1.25rem 0 4.5rem;
+}
+
+.hero-email-card {
+  z-index: 1;
+  border-color: color-mix(in srgb, var(--ultraviolet) 48%, var(--ink));
+  background: color-mix(in srgb, var(--sheet) 82%, transparent);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-sheet), 0 0 26px color-mix(in srgb, var(--ultraviolet) 15%, transparent);
+}
+
+.hero-reveal-button {
+  border: 1px solid color-mix(in srgb, var(--ultraviolet) 55%, transparent);
+  border-radius: var(--radius-control);
+  background: color-mix(in srgb, var(--sheet) 60%, transparent);
+  transition: background-color var(--duration-standard) var(--ease-snap), box-shadow var(--duration-standard) var(--ease-snap);
+}
+
+.hero-reveal-button:hover {
+  background: color-mix(in srgb, var(--ultraviolet) 10%, var(--sheet));
+  box-shadow: 0 0 18px color-mix(in srgb, var(--ultraviolet) 18%, transparent);
+}
+
+.hero-hidden-line {
+  max-height: 2rem;
+  overflow: hidden;
+  opacity: .75;
+  transition: max-height 420ms var(--ease-settle), opacity 220ms var(--ease-settle), color 220ms var(--ease-settle);
+}
+
+.hero-hidden-line:not(.is-revealed) {
+  max-height: 0;
+  opacity: 0;
+}
+
+.hero-hidden-line.is-revealed {
+  max-height: 3rem;
+  opacity: 1;
+}
+
+.hero-callout {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  gap: .25rem;
+  width: 10.5rem;
+  padding: .7rem .75rem;
+  border: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+  border-radius: var(--radius-control);
+  background: color-mix(in srgb, var(--sheet) 76%, transparent);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--ink) 10%, transparent);
+  font-size: .68rem;
+  line-height: 1.25;
+}
+
+.hero-callout strong {
+  display: grid;
+  gap: .15rem;
+  color: var(--ink);
+  font-size: .72rem;
+}
+
+.hero-callout strong span {
+  color: var(--ultraviolet);
+  font: 700 .68rem/1 var(--font-mono, ui-monospace);
+  letter-spacing: .06em;
+}
+
+.hero-callout small {
+  color: var(--graphite);
+  font-size: .65rem;
+}
+
+.hero-callout--01 { top: 0; left: -1.25rem; }
+.hero-callout--02 { bottom: -3rem; left: -1.25rem; }
+.hero-callout--03 { top: 0; right: -1.25rem; }
+.hero-callout--04 { bottom: -3rem; right: -1.25rem; }
+
+@keyframes hero-ambient-drift {
+  from { transform: translate3d(-4px, 5px, 0) rotate(0deg); }
+  to { transform: translate3d(8px, -9px, 0) rotate(12deg); }
+}
+
+@media (max-width: 1023px) {
+  .hero-callout {
+    position: relative;
+    inset: auto;
+    width: auto;
+  }
+
+  .hero-callout--01,
+  .hero-callout--02 {
+    grid-column: span 1;
+  }
+
+  .hero-visual-shell {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .5rem;
+    padding-bottom: 1rem;
+  }
+
+  .hero-email-card,
+  .hero-visual-shell > .mt-5 {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-ambient-shape,
+  .hero-hidden-line,
+  .hero-primary-cta,
+  .hero-reveal-button {
+    animation: none;
+    transition-duration: 0ms;
+  }
+}
+
 /* Common interactive button utilities */
 .interactive-press {
   transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1), filter 150ms ease, background-color 150ms ease;
@@ -444,4 +643,3 @@ html.light .mesh-blob-3 {
     transition-duration: 0.15s !important;
   }
 }
-

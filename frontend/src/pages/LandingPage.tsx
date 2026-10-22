@@ -271,6 +271,13 @@ export const LandingPage: React.FC = () => {
         animate="visible"
         className="pt-6 sm:pt-10 pb-6 relative overflow-visible"
       >
+        <div className="hero-ambient" aria-hidden="true">
+          <span className="hero-ambient-shape hero-ambient-shape--hex" />
+          <span className="hero-ambient-shape hero-ambient-shape--ring" />
+          <span className="hero-ambient-shape hero-ambient-shape--diamond" />
+          <span className="hero-ambient-shape hero-ambient-shape--square" />
+          <span className="hero-ambient-shape hero-ambient-shape--small-ring" />
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
           {/* Left Column: Headline and Call-to-Actions */}
           <motion.div variants={fadeInUp} className="lg:col-span-5 xl:col-span-5 space-y-6">
@@ -280,7 +287,7 @@ export const LandingPage: React.FC = () => {
             </div>
 
             <div className="space-y-4">
-              <h1 className="text-4xl sm:text-6xl font-black text-[var(--ink)] tracking-tight leading-[1.03] font-['Plus_Jakarta_Sans',sans-serif]">
+              <h1 className="text-4xl sm:text-6xl font-black text-[var(--ink)] tracking-[-0.015em] leading-[1.08] font-['Plus_Jakarta_Sans',sans-serif]">
                 Some emails talk to the model reading them.
               </h1>
               <p className="text-base sm:text-xl text-[var(--graphite)] leading-relaxed">
@@ -292,7 +299,7 @@ export const LandingPage: React.FC = () => {
               variants={fadeInUp}
               className="flex flex-wrap items-center gap-3 pt-2"
             >
-              <Link to="/test" className="inline-flex min-h-11 items-center justify-center gap-2 px-5 py-2.5 rounded-[var(--radius-control)] font-bold text-sm text-white bg-[var(--ultraviolet)] hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ultraviolet)] focus-visible:ring-offset-2 transition-[filter] duration-[var(--duration-fast)]">
+              <Link to="/test" className="hero-primary-cta inline-flex min-h-11 items-center justify-center gap-2 px-5 py-2.5 rounded-[var(--radius-control)] font-bold text-sm text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ultraviolet)] focus-visible:ring-offset-2 transition-[filter,box-shadow,transform] duration-[var(--duration-fast)]">
                 <Shield className="h-4 w-4" /> Test an email <ArrowRight className="h-3.5 w-3.5" />
               </Link>
               <Link to="/injection-lab" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-[var(--ink)] underline decoration-[var(--ultraviolet)] underline-offset-4">
@@ -302,7 +309,23 @@ export const LandingPage: React.FC = () => {
           </motion.div>
 
           {/* Right Column: Floating Contrast Recall Card */}
-          <div className="lg:col-span-7 xl:col-span-7 relative w-full min-w-0">
+          <div className="hero-visual-shell lg:col-span-7 xl:col-span-7 relative w-full min-w-0">
+            <div className="hero-callout hero-callout--01">
+              <strong><span>01</span> Paired Evaluation</strong>
+              <small>clean vs attacked, same email, same model.</small>
+            </div>
+            <div className="hero-callout hero-callout--02">
+              <strong><span>02</span> 4 Architectures Compared</strong>
+              <small>baseline to decoupled RAG.</small>
+            </div>
+            <div className="hero-callout hero-callout--03">
+              <strong><span>03</span> Statistically Verified</strong>
+              <small>McNemar + bootstrap CIs, not just a demo.</small>
+            </div>
+            <div className="hero-callout hero-callout--04">
+              <strong><span>04</span> Open &amp; Reproducible</strong>
+              <small>full pipeline, no hidden weights.</small>
+            </div>
             <div
               ref={specimenRef}
               tabIndex={0}
@@ -319,7 +342,7 @@ export const LandingPage: React.FC = () => {
                   }));
                 }
               }}
-              className="relative overflow-hidden bg-[var(--sheet)] text-[var(--ink)] border border-[var(--ink)]/15 p-5 sm:p-8 [box-shadow:var(--shadow-sheet)] focus-visible:outline-2 focus-visible:outline-[var(--ultraviolet)]"
+              className="hero-email-card relative overflow-hidden bg-[var(--sheet)] text-[var(--ink)] border p-5 sm:p-8 focus-visible:outline-2 focus-visible:outline-[var(--ultraviolet)]"
               style={{ '--beam-x': `${beam.x}%`, '--beam-y': `${beam.y}%` } as React.CSSProperties}
             >
               <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_150px_at_var(--beam-x)_var(--beam-y),rgba(106,61,255,.18),transparent_70%)]" aria-hidden="true" />
@@ -330,7 +353,7 @@ export const LandingPage: React.FC = () => {
                   <div><span className="text-[var(--graphite)]">Subject:</span> {syntheticSpecimen.subject}</div>
                 </div>
                 {syntheticSpecimen.lines.map((line, index) => (
-                  <div key={line.text} className={line.hidden ? `relative ${revealed ? 'text-[var(--ultraviolet)] font-semibold' : 'text-[var(--ink)]/35 text-[10px]'}` : ''}>
+                  <div key={line.text} className={line.hidden ? `hero-hidden-line relative ${revealed ? 'is-revealed text-[var(--ultraviolet)] font-semibold' : 'text-[var(--ink)]/35 text-[10px]'}` : ''}>
                     <span className="mr-4 inline-block w-5 select-none text-right text-[var(--graphite)]/60">{String(index + 1).padStart(2, '0')}</span>
                     {line.text}
                     {line.hidden && revealed && <span className="ml-2 inline-flex items-center text-[10px] font-sans font-semibold text-[var(--ultraviolet)]">model instruction</span>}
@@ -339,7 +362,7 @@ export const LandingPage: React.FC = () => {
               </div>
             </div>
             <div className="mt-5 flex flex-wrap items-center gap-3">
-              <button type="button" onClick={() => setRevealed((value) => !value)} className="min-h-11 border border-[var(--ultraviolet)]/50 px-3 py-2 text-xs font-semibold text-[var(--ultraviolet)] [clip-path:var(--clip-tag)]">
+              <button type="button" onClick={() => setRevealed((value) => !value)} className="hero-reveal-button min-h-11 px-3 py-2 text-xs font-semibold text-[var(--ultraviolet)]">
                 {revealed ? 'Hide hidden instructions' : 'Reveal hidden instructions'}
               </button>
               <div aria-live="polite" className="sr-only">{revealed ? '3 hidden instructions found.' : ''}</div>
