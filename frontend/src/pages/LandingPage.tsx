@@ -271,13 +271,6 @@ export const LandingPage: React.FC = () => {
         animate="visible"
         className="pt-6 sm:pt-10 pb-6 relative overflow-visible"
       >
-        <div className="hero-ambient" aria-hidden="true">
-          <span className="hero-ambient-shape hero-ambient-shape--hex" />
-          <span className="hero-ambient-shape hero-ambient-shape--ring" />
-          <span className="hero-ambient-shape hero-ambient-shape--diamond" />
-          <span className="hero-ambient-shape hero-ambient-shape--square" />
-          <span className="hero-ambient-shape hero-ambient-shape--small-ring" />
-        </div>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
           {/* Left Column: Headline and Call-to-Actions */}
           <motion.div variants={fadeInUp} className="lg:col-span-5 xl:col-span-5 space-y-6">
@@ -308,24 +301,8 @@ export const LandingPage: React.FC = () => {
             </motion.div>
           </motion.div>
 
-          {/* Right Column: Floating Contrast Recall Card */}
-          <div className="hero-visual-shell lg:col-span-7 xl:col-span-7 relative w-full min-w-0">
-            <div className="hero-callout hero-callout--01">
-              <strong><span>01</span> Paired Evaluation</strong>
-              <small>clean vs attacked, same email, same model.</small>
-            </div>
-            <div className="hero-callout hero-callout--02">
-              <strong><span>02</span> 4 Architectures Compared</strong>
-              <small>baseline to decoupled RAG.</small>
-            </div>
-            <div className="hero-callout hero-callout--03">
-              <strong><span>03</span> Statistically Verified</strong>
-              <small>McNemar + bootstrap CIs, not just a demo.</small>
-            </div>
-            <div className="hero-callout hero-callout--04">
-              <strong><span>04</span> Open &amp; Reproducible</strong>
-              <small>full pipeline, no hidden weights.</small>
-            </div>
+          {/* Right Column: Injected email specimen */}
+          <div className="lg:col-span-7 xl:col-span-7 w-full min-w-0">
             <div
               ref={specimenRef}
               tabIndex={0}
