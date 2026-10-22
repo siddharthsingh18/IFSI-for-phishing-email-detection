@@ -57,6 +57,12 @@ near-duplicate audit found 304 / 341 / 7 within-split pairs and zero
 cross-split pairs; this candidate still needs a second independent phishing
 source before it can support source-independent model claims.
 
+The live M1 API loader uses `data/splits/review_seed42/train.jsonl` and fails
+with the expected path if that file is missing or empty; it no longer trains
+on fallback examples. Its initialization log reports the loaded row count and
+class balance. Existing dashboard benchmark metrics are historical results and
+are not automatically replaced by an evaluation on this review-only split.
+
 ## Local findings
 
 At the time of this audit, EPVME and IWSPA were present under `~/Downloads`.

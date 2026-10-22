@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+import logging
 from functools import lru_cache
 from pathlib import Path
-from typing import Any
 
 import httpx
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -18,19 +18,30 @@ DATA_DIR = BASE_DIR / "data"
 RESULTS_DIR = BASE_DIR / "results"
 CONFIG_DIR = BASE_DIR / "config"
 RAG_INDEX_DIR = RESULTS_DIR / "rag_index"
+logger = logging.getLogger(__name__)
 
 
 @lru_cache(maxsize=1)
 def get_m1_model() -> tuple[TfidfVectorizer, LogisticRegression]:
     """Train and cache the TF-IDF + LogisticRegression baseline model on train split."""
-    train_path = DATA_DIR / "splits" / "train.jsonl"
-    train_records = read_jsonl(train_path) if train_path.exists() else []
-
+    train_path = DATA_DIR / "splits" / "review_seed42" / "train.jsonl"
+    if not train_path.is_file():
+        raise FileNotFoundError(f"M1 training data file not found: {train_path}")
+    train_records = read_jsonl(train_path)
     if not train_records:
-        train_records = [
-            {"text": "verify password bank login transfer account urgent", "label": 1},
-            {"text": "project update team meeting schedule agenda quarterly", "label": 0},
-        ]
+        raise ValueError(f"M1 training data file is empty: {train_path}")
+
+    class_counts = {
+        label: sum(int(record["label"]) == label for record in train_records)
+        for label in (0, 1)
+    }
+    logger.info(
+        "M1 training data loaded from %s: %d rows (legitimate=%d, phishing=%d)",
+        train_path,
+        len(train_records),
+        class_counts[0],
+        class_counts[1],
+    )
 
     texts = [r["text"] for r in train_records]
     labels = [int(r["label"]) for r in train_records]
