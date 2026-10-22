@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Shield, Terminal, BarChart3, FlaskConical, Sun, Moon, Menu, X } from 'lucide-react';
+import { Terminal, BarChart3, FlaskConical, Sun, Moon, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { apiClient } from '../api/client';
-import { Badge } from './Badge';
 import { useTheme } from '../hooks/useTheme';
+import { brand } from '../content/brand';
+import { Badge } from './Badge';
 
-const GITHUB_REPO_URL = 'https://github.com/siddharthsingh18/IFSI-for-phishing-email-detection';
+const GITHUB_REPO_URL = brand.github;
 
 const GitHubIcon: React.FC<{ className?: string }> = ({ className = 'h-4 w-4' }) => (
   <svg className={`${className} fill-current`} viewBox="0 0 24 24" aria-hidden="true">
@@ -61,10 +62,9 @@ export const Navbar: React.FC = () => {
   }, []);
 
   const navItems = [
-    { to: '/', label: 'About', icon: Shield },
-    { to: '/test', label: 'Live Test', icon: Terminal },
-    { to: '/dashboard', label: 'Dashboard', icon: BarChart3 },
-    { to: '/injection-lab', label: 'Injection Lab', icon: FlaskConical },
+    { to: '/test', label: 'Test an email', icon: Terminal },
+    { to: '/injection-lab', label: 'Injection lab', icon: FlaskConical },
+    { to: '/dashboard', label: 'Results', icon: BarChart3 },
   ];
 
   return (
@@ -82,25 +82,21 @@ export const Navbar: React.FC = () => {
             to="/"
             className="flex items-center gap-3 group transition-all duration-150 hover:scale-[1.02] hover:brightness-105 active:scale-[0.97] rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
           >
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-tr from-teal-500 via-cyan-400 to-emerald-400 p-[1px] elevation-card group-hover:elevation-hover transition-all duration-150 flex-shrink-0">
-              <div className="h-full w-full rounded-[11px] bg-slate-950 flex items-center justify-center transition-colors group-hover:bg-slate-900">
-                <Shield className="h-5 w-5 text-teal-400 group-hover:text-teal-300 transition-colors" />
-              </div>
+            <div className="h-10 w-10 rounded-xl border border-[var(--ultraviolet)]/50 bg-[var(--sheet)] p-2 elevation-card flex-shrink-0">
+              <svg viewBox="0 0 32 32" aria-hidden="true" className="h-full w-full">
+                <path d="M4 7h24v18H4zM5 8l11 9L27 8" fill="none" stroke="currentColor" strokeWidth="2" />
+                <path d="m20 10 5-4" stroke="var(--ultraviolet)" strokeWidth="2" strokeLinecap="round" />
+              </svg>
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-extrabold text-base tracking-tight text-white font-['Plus_Jakarta_Sans',sans-serif]">
-                  IFSI
+                <span className="font-extrabold text-base tracking-tight text-[var(--ink)] font-[var(--font-display)]">
+                  {brand.productName}
                 </span>
-                <span className="text-slate-400 font-medium text-sm hidden sm:inline">
-                  Phishing Detection
-                </span>
-                <Badge variant="accent" size="sm" className="hidden sm:inline-flex">
-                  Benchmark
-                </Badge>
+                <span className="text-[var(--graphite)] font-medium text-sm hidden sm:inline">{brand.descriptor}</span>
               </div>
               <p className="text-xs sm:text-[13px] text-slate-400 font-normal -mt-0.5 hidden sm:block">
-                By <span className="text-slate-200 font-semibold">Siddharth Singh</span> &amp; <span className="text-slate-200 font-semibold">Sanchit Kukreja</span>
+                {brand.tagline}
               </p>
             </div>
           </NavLink>
@@ -151,7 +147,7 @@ export const Navbar: React.FC = () => {
             className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold bg-slate-900 hover:bg-slate-850 text-slate-200 hover:text-teal-300 border border-slate-700/80 hover:border-teal-500/40 transition-all duration-150 hover:scale-[1.02] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 elevation-card hover:elevation-hover"
           >
             <GitHubIcon className="h-4 w-4" />
-            <span>View on GitHub</span>
+            <span>GitHub</span>
           </a>
 
           {/* Dark / Light Mode Toggle */}

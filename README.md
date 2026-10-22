@@ -1,6 +1,6 @@
-# IFSI Phishing Email Detection
+# Hidden Ink
 
-Injection-First Staged Inference (IFSI) is a research application for measuring
+Hidden Ink is a PhishBench research application for measuring
 how phishing detectors behave when untrusted email text contains indirect prompt
 injections. It compares a classical baseline, zero-shot LLM classification,
 single-call RAG, and a decoupled two-call RAG pipeline.

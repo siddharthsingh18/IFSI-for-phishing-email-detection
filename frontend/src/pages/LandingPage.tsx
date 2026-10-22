@@ -33,7 +33,7 @@ import { SectionTransitionDivider } from '../components/SectionTransitionDivider
 import { motion, AnimatePresence, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 import { fadeInUp, staggerContainer } from '../lib/motion';
-import { syntheticSpecimen } from '../content/specimen';
+import { HeroSpecimen } from '../components/HeroSpecimen';
 
 export const LandingPage: React.FC = () => {
   const [summary, setSummary] = useState<BenchmarkSummary | null>(null);
@@ -42,13 +42,6 @@ export const LandingPage: React.FC = () => {
   const [hoveredMethod, setHoveredMethod] = useState<'M1' | 'M2' | 'M3' | 'M4' | null>(null);
   const [expandedMethodology, setExpandedMethodology] = useState<Record<string, boolean>>({});
   const [expandedLimitations, setExpandedLimitations] = useState<Record<string, boolean>>({});
-  const [beam, setBeam] = useState({ x: 66, y: 46 });
-  const [revealed, setRevealed] = useState(() =>
-    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  );
-  const beamFrame = useRef<number | null>(null);
-  const beamTarget = useRef(beam);
-  const specimenRef = useRef<HTMLDivElement>(null);
 
   const toggleMethodology = (id: string) => {
     setExpandedMethodology((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -57,24 +50,6 @@ export const LandingPage: React.FC = () => {
   const toggleLimitation = (id: string) => {
     setExpandedLimitations((prev) => ({ ...prev, [id]: !prev[id] }));
   };
-
-  const moveBeam = (event: React.PointerEvent<HTMLDivElement>) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    beamTarget.current = {
-      x: ((event.clientX - rect.left) / rect.width) * 100,
-      y: ((event.clientY - rect.top) / rect.height) * 100,
-    };
-    if (beamFrame.current === null) {
-      beamFrame.current = requestAnimationFrame(() => {
-        setBeam(beamTarget.current);
-        beamFrame.current = null;
-      });
-    }
-  };
-
-  useEffect(() => () => {
-    if (beamFrame.current !== null) cancelAnimationFrame(beamFrame.current);
-  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -301,49 +276,9 @@ export const LandingPage: React.FC = () => {
             </motion.div>
           </motion.div>
 
-          {/* Right Column: Floating Contrast Recall Card */}
+          {/* Right Column: Email specimen */}
           <div className="lg:col-span-7 xl:col-span-7 relative w-full min-w-0">
-            <div
-              ref={specimenRef}
-              tabIndex={0}
-              role="img"
-              aria-label="Synthetic Northwind Payroll email specimen. Move your pointer over it to reveal hidden instructions aimed at an AI classifier."
-              onPointerMove={moveBeam}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') setRevealed((value) => !value);
-                if (event.key.startsWith('Arrow')) {
-                  event.preventDefault();
-                  setBeam((value) => ({
-                    x: Math.max(5, Math.min(95, value.x + (event.key === 'ArrowLeft' ? -5 : event.key === 'ArrowRight' ? 5 : 0))),
-                    y: Math.max(5, Math.min(95, value.y + (event.key === 'ArrowUp' ? -5 : event.key === 'ArrowDown' ? 5 : 0))),
-                  }));
-                }
-              }}
-              className="relative overflow-hidden bg-[var(--sheet)] text-[var(--ink)] border border-[var(--ink)]/15 p-5 sm:p-8 [box-shadow:var(--shadow-sheet)] focus-visible:outline-2 focus-visible:outline-[var(--ultraviolet)]"
-              style={{ '--beam-x': `${beam.x}%`, '--beam-y': `${beam.y}%` } as React.CSSProperties}
-            >
-              <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_150px_at_var(--beam-x)_var(--beam-y),rgba(106,61,255,.18),transparent_70%)]" aria-hidden="true" />
-              <div className="relative font-mono text-xs sm:text-sm leading-7">
-                <div className="mb-4 border-b border-[var(--ink)]/15 pb-4">
-                  <div><span className="text-[var(--graphite)]">From:</span> {syntheticSpecimen.sender}</div>
-                  <div><span className="text-[var(--graphite)]">To:</span> {syntheticSpecimen.recipient}</div>
-                  <div><span className="text-[var(--graphite)]">Subject:</span> {syntheticSpecimen.subject}</div>
-                </div>
-                {syntheticSpecimen.lines.map((line, index) => (
-                  <div key={line.text} className={line.hidden ? `relative ${revealed ? 'text-[var(--ultraviolet)] font-semibold' : 'text-[var(--ink)]/35 text-[10px]'}` : ''}>
-                    <span className="mr-4 inline-block w-5 select-none text-right text-[var(--graphite)]/60">{String(index + 1).padStart(2, '0')}</span>
-                    {line.text}
-                    {line.hidden && revealed && <span className="ml-2 inline-flex items-center text-[10px] font-sans font-semibold text-[var(--ultraviolet)]">model instruction</span>}
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="mt-5 flex flex-wrap items-center gap-3">
-              <button type="button" onClick={() => setRevealed((value) => !value)} className="min-h-11 border border-[var(--ultraviolet)]/50 px-3 py-2 text-xs font-semibold text-[var(--ultraviolet)] [clip-path:var(--clip-tag)]">
-                {revealed ? 'Hide hidden instructions' : 'Reveal hidden instructions'}
-              </button>
-              <div aria-live="polite" className="sr-only">{revealed ? '3 hidden instructions found.' : ''}</div>
-            </div>
+            <HeroSpecimen />
           </div>
         </div>
       </motion.section>
