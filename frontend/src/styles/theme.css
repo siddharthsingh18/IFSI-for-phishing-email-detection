@@ -154,64 +154,6 @@ html.light .glass-panel-elevated {
   outline-offset: 2px;
 }
 
-.hero-primary-cta {
-  background: linear-gradient(110deg, var(--ultraviolet), color-mix(in srgb, var(--ultraviolet) 42%, var(--evidence-amber)));
-  box-shadow: 0 8px 24px color-mix(in srgb, var(--ultraviolet) 20%, transparent);
-}
-
-.hero-primary-cta:hover {
-  filter: brightness(1.08);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ultraviolet) 35%, transparent), 0 10px 30px color-mix(in srgb, var(--ultraviolet) 38%, transparent);
-  transform: translateY(-1px);
-}
-
-.hero-email-card {
-  z-index: 1;
-  border-color: color-mix(in srgb, var(--ultraviolet) 48%, var(--ink));
-  background: color-mix(in srgb, var(--sheet) 82%, transparent);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-  box-shadow: var(--shadow-sheet), 0 0 26px color-mix(in srgb, var(--ultraviolet) 15%, transparent);
-}
-
-.hero-reveal-button {
-  border: 1px solid color-mix(in srgb, var(--ultraviolet) 55%, transparent);
-  border-radius: var(--radius-control);
-  background: color-mix(in srgb, var(--sheet) 60%, transparent);
-  transition: background-color var(--duration-standard) var(--ease-snap), box-shadow var(--duration-standard) var(--ease-snap);
-}
-
-.hero-reveal-button:hover {
-  background: color-mix(in srgb, var(--ultraviolet) 10%, var(--sheet));
-  box-shadow: 0 0 18px color-mix(in srgb, var(--ultraviolet) 18%, transparent);
-}
-
-.hero-hidden-line {
-  max-height: 2rem;
-  overflow: hidden;
-  opacity: .75;
-  transition: max-height 420ms var(--ease-settle), opacity 220ms var(--ease-settle), color 220ms var(--ease-settle);
-}
-
-.hero-hidden-line:not(.is-revealed) {
-  max-height: 0;
-  opacity: 0;
-}
-
-.hero-hidden-line.is-revealed {
-  max-height: 3rem;
-  opacity: 1;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-hidden-line,
-  .hero-primary-cta,
-  .hero-reveal-button {
-    animation: none;
-    transition-duration: 0ms;
-  }
-}
-
 /* Common interactive button utilities */
 .interactive-press {
   transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1), filter 150ms ease, background-color 150ms ease;

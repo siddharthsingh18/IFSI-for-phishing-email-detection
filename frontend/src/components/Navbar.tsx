@@ -99,7 +99,7 @@ export const Navbar: React.FC = () => {
                   Benchmark
                 </Badge>
               </div>
-              <p className="text-xs sm:text-[13px] text-slate-400 font-normal -mt-0.5 hidden sm:block">
+              <p className="text-sm text-slate-400 font-normal -mt-0.5 hidden sm:block">
                 By <span className="text-slate-200 font-semibold">Siddharth Singh</span> &amp; <span className="text-slate-200 font-semibold">Sanchit Kukreja</span>
               </p>
             </div>

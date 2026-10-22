@@ -1,6 +1,6 @@
-# IFSI Phishing Email Detection
+# IFSI Phishing Detection
 
-Injection-First Staged Inference (IFSI) is a research application for measuring
+IFSI Phishing Detection is a research application for measuring
 how phishing detectors behave when untrusted email text contains indirect prompt
 injections. It compares a classical baseline, zero-shot LLM classification,
 single-call RAG, and a decoupled two-call RAG pipeline.
