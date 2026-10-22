@@ -2,7 +2,6 @@ import React from 'react';
 import { useLocation, useOutlet } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { Navbar } from './Navbar';
-import { brand } from '../content/brand';
 
 export const Layout: React.FC = () => {
   const location = useLocation();
@@ -21,9 +20,9 @@ export const Layout: React.FC = () => {
       <footer className="border-t border-slate-900 bg-slate-950/60 py-6 text-xs text-slate-400">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-slate-300 font-['Bricolage_Grotesque',sans-serif]">{brand.productName}</span>
+            <span className="font-semibold text-slate-300 font-['Plus_Jakarta_Sans',sans-serif]">IFSI</span>
             <span>&bull;</span>
-            <span>{brand.creditLine}</span>
+            <span>By <strong className="text-slate-200 font-medium">Siddharth Singh &amp; Sanchit Kukreja</strong></span>
           </div>
           <div className="flex items-center gap-4 text-slate-400">
             <a
