@@ -58,9 +58,9 @@ def _call_ollama_json(
     user_prompt: str,
     model: str = DEFAULT_LIVE_MODEL,
     api_base: str = "http://127.0.0.1:11434",
-    timeout: float = 30.0,
+    timeout: float = 60.0,
 ) -> tuple[dict[str, Any] | None, str, float, str | None]:
-    """Call Ollama /api/chat with format=json and measure duration."""
+    """Call Ollama /api/chat with format=json, think=False, and measure duration."""
     t0 = time.perf_counter()
     url = f"{api_base.rstrip('/')}/api/chat"
     payload = {
@@ -71,6 +71,7 @@ def _call_ollama_json(
         ],
         "format": "json",
         "stream": False,
+        "think": False,
         "options": {"temperature": 0.0, "num_predict": 512},
     }
 
@@ -79,8 +80,12 @@ def _call_ollama_json(
         duration = time.perf_counter() - t0
         if resp.status_code == 200:
             data = resp.json()
-            raw_text = data.get("message", {}).get("content", "")
-            clean_json_str = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw_text.strip(), flags=re.MULTILINE)
+            raw_text = data.get("message", {}).get("content", "").strip()
+            clean_json_str = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw_text, flags=re.MULTILINE).strip()
+            if not clean_json_str.startswith("{"):
+                match = re.search(r"(\{.*\})", clean_json_str, re.DOTALL)
+                if match:
+                    clean_json_str = match.group(1)
             try:
                 parsed = json.loads(clean_json_str)
                 return parsed, raw_text, duration, None
@@ -109,14 +114,14 @@ def classify_email_m2(
         if verdict not in {"phishing", "legitimate"}:
             return {
                 "method": "M2 (Zero-Shot LLM)",
-                "verdict": "legitimate",
+                "verdict": "error",
                 "is_phishing": False,
                 "confidence": 0.0,
                 "has_prompt_injection": False,
-                "has_prompt_injection_display": "NOT FLAGGED (Unsupported Verdict)",
+                "has_prompt_injection_display": "ERROR (Unsupported Verdict)",
                 "latency_ms": duration * 1000,
                 "latency_seconds": duration,
-                "reasons": ["Error: Model returned an unsupported verdict."],
+                "reasons": [f"Error: Model returned an unsupported verdict '{verdict}'."],
                 "is_valid": False,
                 "raw_response": raw_text,
                 "failure_type": "unsupported_verdict",
@@ -154,14 +159,14 @@ def classify_email_m2(
 
     return {
         "method": "M2 (Zero-Shot LLM)",
-        "verdict": "legitimate",
+        "verdict": "error",
         "is_phishing": False,
         "confidence": 0.0,
         "has_prompt_injection": False,
-        "has_prompt_injection_display": "NOT FLAGGED (Parse Error)",
+        "has_prompt_injection_display": "ERROR (Inference Failure)",
         "latency_ms": duration * 1000,
         "latency_seconds": duration,
-        "reasons": ["Error: Model failed to emit valid JSON conforming to target schema."],
+        "reasons": [f"Error: {raw_text or 'Model failed to emit valid JSON conforming to target schema.'}"],
         "is_valid": False,
         "raw_response": raw_text,
         "failure_type": failure_type or ("schema_error" if parsed else "invalid_json"),
@@ -202,14 +207,14 @@ def classify_email_m3(
         if verdict not in {"phishing", "legitimate"}:
             return {
                 "method": "M3 (RAG Combined)",
-                "verdict": "legitimate",
+                "verdict": "error",
                 "is_phishing": False,
                 "confidence": 0.0,
                 "has_prompt_injection": False,
-                "has_prompt_injection_display": "NOT FLAGGED (Unsupported Verdict)",
+                "has_prompt_injection_display": "ERROR (Unsupported Verdict)",
                 "latency_ms": duration * 1000,
                 "latency_seconds": duration,
-                "reasons": ["Error: Model returned an unsupported verdict."],
+                "reasons": [f"Error: Model returned an unsupported verdict '{verdict}'."],
                 "is_valid": False,
                 "raw_response": raw_text,
                 "retrieved_samples": retrieved_samples,
@@ -249,20 +254,17 @@ def classify_email_m3(
 
     return {
         "method": "M3 (RAG Combined)",
-        "verdict": "legitimate",
+        "verdict": "error",
         "is_phishing": False,
         "confidence": 0.0,
         "has_prompt_injection": False,
-        "has_prompt_injection_display": "NOT FLAGGED (Parse Error)",
+        "has_prompt_injection_display": "ERROR (Inference Failure)",
         "latency_ms": duration * 1000,
         "latency_seconds": duration,
-        "reasons": ["Error: Model failed to emit valid JSON matching RAG schema."],
+        "reasons": [f"Error: {raw_text or 'Model failed to emit valid JSON matching RAG schema.'}"],
         "is_valid": False,
         "raw_response": raw_text,
         "retrieved_samples": retrieved_samples,
-        "failure_type": None,
-        "failure_message": None,
-        "attempts": 2,
         "failure_type": failure_type or ("retrieval_error" if retriever is None else "invalid_json"),
         "failure_message": raw_text,
         "attempts": 1,
@@ -307,11 +309,11 @@ def classify_email_m4(
             failed_calls.append("Stage 2 (Classifier)")
         return {
             "method": "M4 (RAG Decoupled)",
-            "verdict": "legitimate",
+            "verdict": "error",
             "is_phishing": False,
             "has_injection": False,
             "has_prompt_injection": False,
-            "has_prompt_injection_display": "NOT FLAGGED (Execution Error)",
+            "has_prompt_injection_display": "ERROR (Execution Error)",
             "is_phishing_only": False,
             "confidence": 0.0,
             "latency_ms": total_duration * 1000,
@@ -328,7 +330,9 @@ def classify_email_m4(
             "attempts": 1,
         }
 
-    overall_malicious = has_injection or is_phishing_pred
+    # CRITICAL: Separate injection detection from phishing classification verdict.
+    # Call 2 decides whether the email itself is phishing; Call 1 detects injection presence.
+    verdict = "phishing" if is_phishing_pred else "legitimate"
 
     reasons: list[str] = []
     if has_injection:
@@ -341,15 +345,17 @@ def classify_email_m4(
     else:
         reasons.append("✅ [Call 2] Email evaluated as legitimate correspondence.")
 
+    conf = 0.95 if is_phishing_pred else 0.90
+
     return {
         "method": "M4 (RAG Decoupled)",
-        "verdict": "phishing" if overall_malicious else "legitimate",
-        "is_phishing": overall_malicious,
+        "verdict": verdict,
+        "is_phishing": is_phishing_pred,
         "has_injection": has_injection,
         "has_prompt_injection": has_injection,
         "has_prompt_injection_display": "DETECTED 🚨 (Call 1)" if has_injection else "CLEAN ✅ (Call 1)",
         "is_phishing_only": is_phishing_pred,
-        "confidence": 0.95 if overall_malicious else 0.90,
+        "confidence": conf,
         "latency_ms": total_duration * 1000,
         "latency_seconds": total_duration,
         "reasons": reasons,
@@ -357,6 +363,9 @@ def classify_email_m4(
         "raw_response_call1": raw1,
         "raw_response_call2": raw2,
         "retrieved_samples": retrieved_samples,
+        "failure_type": None,
+        "failure_message": None,
+        "attempts": 1,
     }
 
 

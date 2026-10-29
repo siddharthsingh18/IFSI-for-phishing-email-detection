@@ -48,7 +48,7 @@ def get_m1_model() -> tuple[TfidfVectorizer, LogisticRegression]:
 
     vec = TfidfVectorizer(max_features=10000, stop_words="english", sublinear_tf=True)
     X = vec.fit_transform(texts)
-    clf = LogisticRegression(C=1.0, random_state=42, max_iter=200)
+    clf = LogisticRegression(C=1.0, random_state=42, max_iter=200, class_weight="balanced")
     clf.fit(X, labels)
     return vec, clf
 

@@ -52,7 +52,7 @@ def test_health_endpoint_schema() -> None:
 
 def test_model_catalog_does_not_promote_missing_primary_artifact() -> None:
     data = client.get("/models").json()
-    assert data["primary_model"] == "qwen2.5:0.5b"
+    assert data["primary_model"] == "qwen3.5:4b"
     llama = next(item for item in data["available_models"] if item["id"] == "llama3.2:3b")
     assert llama["role"] == "candidate"
 
