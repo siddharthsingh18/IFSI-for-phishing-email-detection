@@ -86,7 +86,7 @@ class OllamaHealth(BaseModel):
 class FaissHealth(BaseModel):
     loaded: bool = Field(..., description="Whether FAISS vector index is successfully loaded")
     status: str = Field(..., description="Index status string ('loaded' or 'not_loaded')")
-    index_path: str = Field("results/rag_index", description="Path to FAISS index files")
+    index_path: str = Field("results/rag_index_clean", description="Path to FAISS index files")
     index_size: int = Field(0, description="Total number of email exemplars indexed")
     message: str = Field(..., description="Human-readable status description matching app.py")
 
@@ -107,7 +107,7 @@ class ClassifyRequest(BaseModel):
     text: str = Field(..., description="Email body text or full raw email content")
     subject: str = Field("", description="Optional email subject line")
     sender: str = Field("", description="Optional sender/from address")
-    method: str = Field("M1", description="Classification method to execute ('M1', 'M2', 'M3', 'M4')")
+    method: str = Field("M4", description="Classification method to execute ('M4', 'M1', or archived 'M2', 'M3')")
     model: str = Field(DEFAULT_LIVE_MODEL, description="Local Ollama model name for M2, M3, M4")
     k: int = Field(3, ge=1, le=10, description="Top-k nearest exemplars for FAISS RAG retrieval (M3, M4)")
 
@@ -118,6 +118,7 @@ class ClassifyCompareRequest(BaseModel):
     sender: str = Field("", description="Optional sender/from address")
     model: str = Field(DEFAULT_LIVE_MODEL, description="Local Ollama model name for M2, M3, M4")
     k: int = Field(3, ge=1, le=10, description="Top-k nearest exemplars for FAISS RAG retrieval (M3, M4)")
+    include_archived: bool = Field(False, description="Whether to include archived research baselines M2 and M3")
 
 
 class ClassificationResult(BaseModel):
@@ -127,6 +128,9 @@ class ClassificationResult(BaseModel):
     confidence: float = Field(..., description="Prediction confidence or probability score (0.0 to 1.0)")
     has_prompt_injection: bool = Field(..., description="Whether prompt injection manipulation was detected")
     has_prompt_injection_display: str = Field(..., description="Formatted display badge string for injection status")
+    phishing_verdict: str = Field("legitimate", description="Phishing classification verdict ('phishing', 'legitimate', 'error')")
+    injection_verdict: str = Field("clean", description="Prompt injection verdict ('detected', 'clean', 'error')")
+    security_action: str = Field("allow", description="Recommended security action ('allow', 'quarantine_review', 'block', 'manual_review')")
     latency_ms: float = Field(..., description="Inference execution duration in milliseconds")
     latency_seconds: float = Field(..., description="Inference execution duration in seconds")
     reasons: list[str] = Field(default_factory=list, description="Reasoning tokens or influential vocabulary features")
@@ -248,7 +252,7 @@ def get_health() -> HealthResponse:
     if rag_retriever is not None:
         index_size = getattr(getattr(rag_retriever, "index", None), "ntotal", 0)
         faiss_status = "loaded"
-        faiss_msg = f"Loaded (results/rag_index) - Index size: {index_size} exemplars"
+        faiss_msg = f"Loaded (results/rag_index_clean) - Index size: {index_size} exemplars"
         faiss_loaded = True
     else:
         index_size = 0
@@ -271,7 +275,7 @@ def get_health() -> HealthResponse:
         faiss=FaissHealth(
             loaded=faiss_loaded,
             status=faiss_status,
-            index_path="results/rag_index",
+            index_path="results/rag_index_clean",
             index_size=index_size,
             message=faiss_msg,
         ),
@@ -340,7 +344,7 @@ def _sse(event: str, payload: dict[str, Any]) -> str:
 
 
 def _stream_analysis(req: ClassifyCompareRequest):
-    methods = ("M1", "M2", "M3", "M4")
+    methods = ("M4", "M1") if not req.include_archived else ("M4", "M1", "M2", "M3")
     for method in methods:
         started = time.perf_counter()
         yield _sse("lane_started", {"method": method})
@@ -358,17 +362,23 @@ def _stream_analysis(req: ClassifyCompareRequest):
             yield _sse("lane_finished", {
                 "method": method,
                 "verdict": result.verdict,
+                "phishing_verdict": result.phishing_verdict,
+                "injection_verdict": result.injection_verdict,
+                "security_action": result.security_action,
                 "confidence": result.confidence,
                 "valid": result.is_valid,
                 "failure_type": result.failure_type,
                 "total_ms": total_ms,
                 "injection_spans": result.injection_spans,
             })
-        except (ValueError, RuntimeError, KeyError) as exc:
+        except Exception as exc:
             total_ms = round((time.perf_counter() - started) * 1000, 3)
             yield _sse("lane_finished", {
                 "method": method,
                 "verdict": "unknown",
+                "phishing_verdict": "error",
+                "injection_verdict": "error",
+                "security_action": "manual_review",
                 "valid": False,
                 "failure_type": "schema_error",
                 "failure_message": str(exc),
@@ -384,24 +394,19 @@ def analyze_stream(req: ClassifyCompareRequest) -> StreamingResponse:
 
 @app.post("/classify/compare", response_model=CompareResponse, tags=["Classification"])
 def classify_and_compare(req: ClassifyCompareRequest) -> CompareResponse:
-    """Classify an email across ALL architectures (M1–M4) and compute consensus/disagreements.
+    """Classify an email across architectures and compute consensus/disagreements.
 
-    Returns an array of results for M1-M4 and a computed consensus/disagreement evaluation.
+    Returns an array of results and a computed consensus/disagreement evaluation.
     """
     email_text = _format_email_text(req.text, req.subject, req.sender)
-    all_results = classify_all_methods(email_text, model=req.model, top_k=req.k)
+    all_results = classify_all_methods(email_text, model=req.model, top_k=req.k, include_archived=req.include_archived)
     disagreement = evaluate_method_disagreements(all_results)
 
     typed_results_map = {
         m: ClassificationResult(**_with_injection_spans(res, email_text))
         for m, res in all_results.items()
     }
-    typed_results_list = [
-        typed_results_map["M1"],
-        typed_results_map["M2"],
-        typed_results_map["M3"],
-        typed_results_map["M4"],
-    ]
+    typed_results_list = [typed_results_map[m] for m in all_results.keys()]
 
     return CompareResponse(
         results=typed_results_list,

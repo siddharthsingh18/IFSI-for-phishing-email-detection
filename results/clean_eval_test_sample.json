@@ -1,0 +1,1339 @@
+{
+  "dataset_name": "clean_test_sample",
+  "sample_count": 30,
+  "metrics": {
+    "M1_default": {
+      "confusion_matrix": [
+        [
+          15,
+          0
+        ],
+        [
+          15,
+          0
+        ]
+      ],
+      "true_negatives": 15,
+      "false_positives": 0,
+      "false_negatives": 15,
+      "true_positives": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "fpr": 0.0,
+      "accuracy": 0.5,
+      "total_samples": 30,
+      "fnr": 1.0,
+      "latencies_mean_ms": 2.4242166666833027,
+      "latencies_p95_ms": 4.1244650000408,
+      "failure_count": 0,
+      "failure_rate": 0.0
+    },
+    "M1_tuned": {
+      "confusion_matrix": [
+        [
+          15,
+          0
+        ],
+        [
+          0,
+          15
+        ]
+      ],
+      "true_negatives": 15,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "true_positives": 15,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "fpr": 0.0,
+      "accuracy": 1.0,
+      "total_samples": 30,
+      "fnr": 0.0,
+      "latencies_mean_ms": 1.9505166666628309,
+      "latencies_p95_ms": 3.0549800002745537,
+      "failure_count": 0,
+      "failure_rate": 0.0
+    },
+    "M2_zero_shot": {
+      "confusion_matrix": [
+        [
+          13,
+          2
+        ],
+        [
+          0,
+          15
+        ]
+      ],
+      "true_negatives": 13,
+      "false_positives": 2,
+      "false_negatives": 0,
+      "true_positives": 15,
+      "precision": 0.8823529411764706,
+      "recall": 1.0,
+      "f1": 0.9375,
+      "fpr": 0.13333333333333333,
+      "accuracy": 0.9333333333333333,
+      "total_samples": 30,
+      "fnr": 0.0,
+      "latencies_mean_ms": 4387.322193333284,
+      "latencies_p95_ms": 5971.244734999616,
+      "failure_count": 0,
+      "failure_rate": 0.0
+    },
+    "M3_rag_combined": {
+      "confusion_matrix": [
+        [
+          14,
+          1
+        ],
+        [
+          0,
+          15
+        ]
+      ],
+      "true_negatives": 14,
+      "false_positives": 1,
+      "false_negatives": 0,
+      "true_positives": 15,
+      "precision": 0.9375,
+      "recall": 1.0,
+      "f1": 0.967741935483871,
+      "fpr": 0.06666666666666667,
+      "accuracy": 0.9666666666666667,
+      "total_samples": 30,
+      "fnr": 0.0,
+      "latencies_mean_ms": 4769.780323333347,
+      "latencies_p95_ms": 5488.38020500002,
+      "failure_count": 0,
+      "failure_rate": 0.0
+    },
+    "M4_decoupled": {
+      "confusion_matrix": [
+        [
+          15,
+          0
+        ],
+        [
+          0,
+          15
+        ]
+      ],
+      "true_negatives": 15,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "true_positives": 15,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "fpr": 0.0,
+      "accuracy": 1.0,
+      "total_samples": 30,
+      "fnr": 0.0,
+      "latencies_mean_ms": 3023.33411333337,
+      "latencies_p95_ms": 3685.5575649997463,
+      "failure_count": 0,
+      "failure_rate": 0.0
+    },
+    "M4_stage1_injection": {
+      "confusion_matrix": [
+        [
+          30,
+          0
+        ],
+        [
+          0,
+          0
+        ]
+      ],
+      "true_negatives": 30,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "true_positives": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "fpr": 0.0,
+      "accuracy": 1.0,
+      "total_samples": 30,
+      "fnr": 0.0,
+      "latencies_mean_ms": 1446.3571966666527,
+      "latencies_p95_ms": 1770.110494999698,
+      "failure_count": 0,
+      "failure_rate": 0.0
+    },
+    "M4_stage2_phishing": {
+      "confusion_matrix": [
+        [
+          15,
+          0
+        ],
+        [
+          0,
+          15
+        ]
+      ],
+      "true_negatives": 15,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "true_positives": 15,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "fpr": 0.0,
+      "accuracy": 1.0,
+      "total_samples": 30,
+      "fnr": 0.0,
+      "latencies_mean_ms": 1576.9769166667174,
+      "latencies_p95_ms": 1994.8192850000382,
+      "failure_count": 0,
+      "failure_rate": 0.0
+    }
+  },
+  "records": [
+    {
+      "id": "train-phish-0465",
+      "category": "held_out_test_phishing",
+      "true_label": 1,
+      "true_injection": false,
+      "m1_def": 0,
+      "m1_tuned": 1,
+      "m2": 1,
+      "m3": 1,
+      "m4": 1,
+      "m4_s1_inj": false,
+      "m4_s2_phish": true,
+      "durations": {
+        "m1": 0.0011002999999618623,
+        "m2": 4.437219299999924,
+        "m3": 4.586657899999864,
+        "m4": 2.9552355999999236
+      },
+      "failures": {
+        "m2": null,
+        "m3": null,
+        "m4": null
+      },
+      "m2_reasons": [
+        "The sender domain (postmaster@mail-storage-service-portal.org) is suspicious and does not match standard legitimate mail service domains.",
+        "The email uses urgency tactics by claiming messages are being deleted to compel immediate action.",
+        "The email contains a malicious-looking URL (http://webmail-storage-quota-manager.info/renew) designed to redirect the user to a fake login or payment page.",
+        "The request to 'upgrade storage' is a common social engineering tactic used to harvest credit card information."
+      ],
+      "m3_reasons": [
+        "The email uses a classic social engineering tactic by mimicking a system notification about mailbox storage limits to create urgency.",
+        "It includes a suspicious external domain (mail-storage-service-portal.org) that does not match standard legitimate service providers like Gmail or Outlook.",
+        "The content contains a malicious link designed to redirect the user to a fake page for credential harvesting or payment fraud.",
+        "The threat of message deletion and the demand to 'upgrade storage' are common indicators of phishing campaigns targeting users with full inboxes."
+      ],
+      "m4_s1_raw": "{\n  \"has_prompt_injection\": false\n}",
+      "m4_s2_raw": "{\n  \"is_phishing\": true\n}"
+    },
+    {
+      "id": "train-legit-0337",
+      "category": "held_out_test_legitimate",
+      "true_label": 0,
+      "true_injection": false,
+      "m1_def": 0,
+      "m1_tuned": 0,
+      "m2": 0,
+      "m3": 0,
+      "m4": 0,
+      "m4_s1_inj": false,
+      "m4_s2_phish": false,
+      "durations": {
+        "m1": 0.0022730000000592554,
+        "m2": 3.9400390999999217,
+        "m3": 4.724326799999744,
+        "m4": 3.127756400000635
+      },
+      "failures": {
+        "m2": null,
+        "m3": null,
+        "m4": null
+      },
+      "m2_reasons": [
+        "Email content describes standard business operations regarding contract renewal and rate adjustments.",
+        "Sender domain (business-corp.com) matches the context of a corporate procurement department.",
+        "No indicators of credential harvesting, financial fraud, impersonation, or panic/urgency threats.",
+        "Includes specific internal reference codes (Memo Code: L-0337) consistent with legitimate business correspondence."
+      ],
+      "m3_reasons": [
+        "The email discusses a standard business operation: finalizing contract extension terms with a cloud hosting vendor.",
+        "It provides specific, verifiable details such as a 5% volume discount and a memo code (L-0337), which are typical of legitimate internal communications.",
+        "There is no indication of credential harvesting, financial fraud, impersonation, or panic/urgency tactics associated with phishing.",
+        "The sender address (procurement@business-corp.com) appears consistent with the context of a procurement-related update."
+      ],
+      "m4_s1_raw": "{\n  \"has_prompt_injection\": false\n}",
+      "m4_s2_raw": "{\n  \"is_phishing\": false\n}"
+    },
+    {
+      "id": "train-phish-0175",
+      "category": "held_out_test_phishing",
+      "true_label": 1,
+      "true_injection": false,
+      "m1_def": 0,
+      "m1_tuned": 1,
+      "m2": 1,
+      "m3": 1,
+      "m4": 1,
+      "m4_s1_inj": false,
+      "m4_s2_phish": true,
+      "durations": {
+        "m1": 0.0018052000000352564,
+        "m2": 4.367491399999835,
+        "m3": 4.417083299999831,
+        "m4": 3.138758399999915
+      },
+      "failures": {
+        "m2": null,
+        "m3": null,
+        "m4": null
+      },
+      "m2_reasons": [
+        "The sender domain (postmaster@mail-storage-service-portal.org) is suspicious and does not match standard legitimate mail service domains.",
+        "The email uses urgency tactics by claiming messages are being deleted to compel immediate action.",
+        "The email contains a malicious-looking URL (http://webmail-storage-quota-manager.info/renew) designed to redirect the user to a fake login or payment page.",
+        "The request to 'upgrade storage' is a common social engineering tactic used to harvest credentials or financial information."
+      ],
+      "m3_reasons": [
+        "The email uses urgency and threat tactics by stating messages are being deleted to coerce immediate action.",
+        "The sender domain 'mail-storage-service-portal.org' is suspicious and does not match standard legitimate service providers like Gmail or Outlook.",
+        "The email contains a malicious-looking link ('webmail-storage-quota-manager.info') designed to redirect the user to a fake login page for credential harvesting.",
+        "The generic subject line mimics common spam patterns used to trick users into clicking links."
+      ],
+      "m4_s1_raw": "{\n  \"has_prompt_injection\": false\n}",
+      "m4_s2_raw": "{\n  \"is_phishing\": true\n}"
+    },
+    {
+      "id": "enron-1b0d17740947",
+      "category": "held_out_test_legitimate",
+      "true_label": 0,
+      "true_injection": false,
+      "m1_def": 0,
+      "m1_tuned": 0,
+      "m2": 1,
+      "m3": 1,
+      "m4": 0,
+      "m4_s1_inj": false,
+      "m4_s2_phish": false,
+      "durations": {
+        "m1": 0.004219999999804713,
+        "m2": 4.50486090000004,
+        "m3": 5.460662899999988,
+        "m4": 2.9314266000001226
+      },
+      "failures": {
+        "m2": null,
+        "m3": null,
+        "m4": null
+      },
+      "m2_reasons": [
+        "The email contains a malicious link to an unverified external domain (politicsandpotest.org) disguised as a 'tribute'.",
+        "The sender address (sheila.nacey@enron.com) is associated with Enron, a company involved in major historical fraud and collapse, which often appears in social engineering attacks.",
+        "The email uses emotional manipulation ('very moving tribute') to bypass user scrutiny and direct them to an external site.",
+        "The content lacks legitimate business context or official communication markers typical of corporate emails."
+      ],
+      "m3_reasons": [
+        "The email contains a suspicious external URL (politicsandpotest.org) that appears unrelated to the sender's domain or typical business context.",
+        "The content urges the recipient to take action ('Call up this address') regarding a specific website, which is a common tactic in phishing attempts to drive traffic to malicious sites.",
+        "The subject line and body reference sensitive events (WTC & Pentagon) combined with an external link, creating a pattern often used to distract or manipulate recipients into visiting unverified domains.",
+        "The sender address (sheila.nacey@enron.com) matches a known entity from the reference examples, but the content deviates significantly from legitimate internal communication patterns seen in the training data."
+      ],
+      "m4_s1_raw": "{\n  \"has_prompt_injection\": false\n}",
+      "m4_s2_raw": "{\n  \"is_phishing\": false\n}"
+    },
+    {
+      "id": "enron-894ceafa6aa2",
+      "category": "held_out_test_legitimate",
+      "true_label": 0,
+      "true_injection": false,
+      "m1_def": 0,
+      "m1_tuned": 0,
+      "m2": 0,
+      "m3": 0,
+      "m4": 0,
+      "m4_s1_inj": false,
+      "m4_s2_phish": false,
+      "durations": {
+        "m1": 0.0015708999999333173,
+        "m2": 4.176085899999634,
+        "m3": 4.079053899999963,
+        "m4": 3.0568318000000545
+      },
+      "failures": {
+        "m2": null,
+        "m3": null,
+        "m4": null
+      },
+      "m2_reasons": [
+        "The email appears to be an internal business communication requesting specific data (Personal Account Number) for a legal matter.",
+        "There are no indicators of credential harvesting, financial fraud, or impersonation of authority.",
+        "The sender address (bradley.holmes@enron.com) matches the context of an internal corporate request.",
+        "The content lacks urgency threats, suspicious external domains, or requests for sensitive personal information beyond standard business data."
+      ],
+      "m3_reasons": [
+        "The email originates from a verified internal domain (enron.com) matching the sender's name.",
+        "The content discusses internal business operations (PAA for Legale, missing employee numbers), which aligns with legitimate project updates or requests.",
+        "There are no indicators of credential harvesting, financial fraud, impersonation of authority, or panic/urgency threats.",
+        "The tone is professional and consistent with routine internal communication."
+      ],
+      "m4_s1_raw": "{\n  \"has_prompt_injection\": false\n}",
+      "m4_s2_raw": "{\n  \"is_phishing\": false\n}"
+    },
+    {
+      "id": "train-legit-0457",
+      "category": "held_out_test_legitimate",
+      "true_label": 0,
+      "true_injection": false,
+      "m1_def": 0,
+      "m1_tuned": 0,
+      "m2": 0,
+      "m3": 0,
+      "m4": 0,
+      "m4_s1_inj": false,
+      "m4_s2_phish": false,
+      "durations": {
+        "m1": 0.0016246000000137428,
+        "m2": 3.9261093000000074,
+        "m3": 4.528548400000091,
+        "m4": 2.754877800000031
+      },
+      "failures": {
+        "m2": null,
+        "m3": null,
+        "m4": null
+      },
+      "m2_reasons": [
+        "Email content describes standard business operations regarding contract renewal and rate adjustments.",
+        "Sender domain (business-corp.com) matches the context of a corporate procurement department.",
+        "No indicators of credential harvesting, financial fraud, impersonation, or panic/urgency threats.",
+        "Includes specific internal reference codes (Memo Code: L-0457) consistent with legitimate business correspondence."
+      ],
+      "m3_reasons": [
+        "The email discusses a standard business operation: finalizing contract extension terms with a cloud hosting vendor.",
+        "It contains specific, verifiable details such as a 'Memo Code' (L-0457) and a clear statement about documentation being filed in the legal repository.",
+        "The tone is professional and informative, lacking the panic, urgency, or threats typical of phishing attempts.",
+        "There are no requests for personal credentials, financial transfers, or links to unverified external domains."
+      ],
+      "m4_s1_raw": "{\n  \"has_prompt_injection\": false\n}",
+      "m4_s2_raw": "{\n  \"is_phishing\": false\n}"
+    },
+    {
+      "id": "train-legit-0317",
+      "category": "held_out_test_legitimate",
+      "true_label": 0,
+      "true_injection": false,
+      "m1_def": 0,
+      "m1_tuned": 0,
+      "m2": 0,
+      "m3": 0,
+      "m4": 0,
+      "m4_s1_inj": false,
+      "m4_s2_phish": false,
+      "durations": {
+        "m1": 0.0036064999999325664,
+        "m2": 3.6771143999999367,
+        "m3": 4.518025100000159,
+        "m4": 2.8201819999999316
+      },
+      "failures": {
+        "m2": null,
+        "m3": null,
+        "m4": null
+      },
+      "m2_reasons": [
+        "Email content describes standard business operations regarding contract renewal and rate adjustments.",
+        "Sender domain (business-corp.com) matches the context of a corporate procurement department.",
+        "No indicators of credential harvesting, financial fraud, impersonation, or panic/urgency threats.",
+        "Includes specific internal reference codes (Memo Code: L-0317) consistent with legitimate business correspondence."
+      ],
+      "m3_reasons": [
+        "The email discusses a standard business operation: finalizing contract extension terms with a cloud hosting vendor.",
+        "It contains specific, verifiable details such as a 'Memo Code' (L-0317) and a clear statement about documentation being filed in the legal repository.",
+        "The tone is professional and informative, lacking the panic, urgency, or threats typical of phishing attempts.",
+        "The sender address (procurement@business-corp.com) appears consistent with a legitimate business domain."
+      ],
+      "m4_s1_raw": "{\n  \"has_prompt_injection\": false\n}",
+      "m4_s2_raw": "{\n  \"is_phishing\": false\n}"
+    },
+    {
+      "id": "enron-37f3f2891ea8",
+      "category": "held_out_test_legitimate",
+      "true_label": 0,
+      "true_injection": false,
+      "m1_def": 0,
+      "m1_tuned": 0,
+      "m2": 0,
+      "m3": 0,
+      "m4": 0,
+      "m4_s1_inj": false,
+      "m4_s2_phish": false,
+      "durations": {
+        "m1": 0.0032073000002128538,
+        "m2": 4.3322745000000396,
+        "m3": 4.486435900000288,
+        "m4": 2.899192299999413
+      },
+      "failures": {
+        "m2": null,
+        "m3": null,
+        "m4": null
+      },
+      "m2_reasons": [
+        "The email discusses specific technical issues (TBS/End User volumes, billing discrepancies) related to utility providers (Wisconsin Power and Light, Wisconsin Gas).",
+        "It references a prior conversation with a colleague (Chris) and proposes a meeting for further discussion.",
+        "There are no indicators of credential harvesting, financial fraud, impersonation, or panic-inducing threats.",
+        "The sender address (raetta.zadow@enron.com) matches the context of business operations."
+      ],
+      "m3_reasons": [
+        "The email discusses specific technical issues regarding TBS/End User volume measurements and billing discrepancies with known entities (Wisconsin Power and Light, Wisconsin Gas).",
+        "It references internal systems (16 and 31 day charts) and previous conversations, indicating an ongoing operational context.",
+        "The sender (raetta.zadow@enron.com) uses a consistent domain pattern seen in reference examples.",
+        "There is no attempt to harvest credentials, request unauthorized payments, or create artificial urgency."
+      ],
+      "m4_s1_raw": "{\n  \"has_prompt_injection\": false\n}",
+      "m4_s2_raw": "{\n  \"is_phishing\": false\n}"
+    },
+    {
+      "id": "enron-cf1ac464918b",
+      "category": "held_out_test_legitimate",
+      "true_label": 0,
+      "true_injection": false,
+      "m1_def": 0,
+      "m1_tuned": 0,
+      "m2": 0,
+      "m3": 0,
+      "m4": 0,
+      "m4_s1_inj": false,
+      "m4_s2_phish": false,
+      "durations": {
+        "m1": 0.002915699999903154,
+        "m2": 3.8632196999997177,
+        "m3": 4.048471399999926,
+        "m4": 2.990034200000082
+      },
+      "failures": {
+        "m2": null,
+        "m3": null,
+        "m4": null
+      },
+      "m2_reasons": [
+        "The email content is a simple, low-stakes business message regarding team collaboration.",
+        "There are no indicators of credential harvesting, financial fraud, or impersonation.",
+        "The sender domain (enron.com) matches the context of a potential internal or external business communication.",
+        "No urgency threats, panic tactics, or suspicious external links are present."
+      ],
+      "m3_reasons": [
+        "The email content discusses collaborative work on Customer Service Teams, which aligns with legitimate business operations.",
+        "The sender address (donna.scott@enron.com) matches the domain pattern seen in verified reference examples.",
+        "There are no indicators of credential harvesting, financial fraud, impersonation, or panic/urgency threats.",
+        "The tone is professional and supportive, consistent with routine internal communication."
+      ],
+      "m4_s1_raw": "{\"has_prompt_injection\": false}",
+      "m4_s2_raw": "{\n  \"is_phishing\": false\n}"
+    },
+    {
+      "id": "train-phish-0225",
+      "category": "held_out_test_phishing",
+      "true_label": 1,
+      "true_injection": false,
+      "m1_def": 0,
+      "m1_tuned": 1,
+      "m2": 1,
+      "m3": 1,
+      "m4": 1,
+      "m4_s1_inj": false,
+      "m4_s2_phish": true,
+      "durations": {
+        "m1": 0.002540700000281504,
+        "m2": 4.5942973999999595,
+        "m3": 5.110933499999646,
+        "m4": 3.0948597999999947
+      },
+      "failures": {
+        "m2": null,
+        "m3": null,
+        "m4": null
+      },
+      "m2_reasons": [
+        "The sender domain (postmaster@mail-storage-service-portal.org) does not match the recipient's actual email provider, indicating impersonation.",
+        "The email uses urgency and threat tactics ('quota reached', 'messages will be deleted') to coerce immediate action.",
+        "The link provided (http://webmail-storage-quota-manager.info/renew) redirects to a suspicious external domain unrelated to legitimate mail services.",
+        "The request to 'upgrade storage' is a common tactic used in phishing campaigns to harvest payment credentials or install malware."
+      ],
+      "m3_reasons": [
+        "The email uses a common social engineering tactic (fear of data loss/quarantined messages) to create urgency.",
+        "The sender domain 'mail-storage-service-portal.org' is suspicious and does not match standard legitimate mail service domains (e.g., gmail.com, outlook.com).",
+        "The email contains a malicious-looking link ('webmail-storage-quota-manager.info') designed to redirect the user to a fake page for credential harvesting or malware delivery.",
+        "The request to 'upgrade storage' is a typical pretext used in phishing campaigns to trick users into paying for non-existent services or entering payment credentials."
+      ],
+      "m4_s1_raw": "{\n  \"has_prompt_injection\": false\n}",
+      "m4_s2_raw": "{\n  \"is_phishing\": true\n}"
+    },
+    {
+      "id": "train-phish-0255",
+      "category": "held_out_test_phishing",
+      "true_label": 1,
+      "true_injection": false,
+      "m1_def": 0,
+      "m1_tuned": 1,
+      "m2": 1,
+      "m3": 1,
+      "m4": 1,
+      "m4_s1_inj": false,
+      "m4_s2_phish": true,
+      "durations": {
+        "m1": 0.0015404999999191205,
+        "m2": 4.61067950000006,
+        "m3": 4.69471620000013,
+        "m4": 2.7236980999996376
+      },
+      "failures": {
+        "m2": null,
+        "m3": null,
+        "m4": null
+      },
+      "m2_reasons": [
+        "The sender domain (postmaster@mail-storage-service-portal.org) does not match the recipient's actual email provider, indicating impersonation.",
+        "The email uses urgency and threat tactics ('quota reached', 'messages will be deleted') to coerce immediate action.",
+        "The link provided (http://webmail-storage-quota-manager.info/renew) redirects to a suspicious external domain unrelated to legitimate mail services.",
+        "The request to 'upgrade storage' is a common social engineering tactic used to harvest payment credentials or install malware."
+      ],
+      "m3_reasons": [
+        "The email uses urgency and threat tactics by stating messages are 'quarantined' and will be 'deleted' to induce panic.",
+        "The sender domain (mail-storage-service-portal.org) is suspicious and does not match standard legitimate mail service domains like Gmail, Outlook, or corporate internal addresses.",
+        "The email contains a malicious-looking link (http://webmail-storage-quota-manager.info/renew) designed to redirect the user to a fake upgrade page for credential harvesting or malware delivery.",
+        "The generic subject line mimics common spam patterns regarding mailbox storage limits."
+      ],
+      "m4_s1_raw": "{\"has_prompt_injection\": false}",
+      "m4_s2_raw": "{\n  \"is_phishing\": true\n}"
+    },
+    {
+      "id": "enron-15b463c4bc29",
+      "category": "held_out_test_legitimate",
+      "true_label": 0,
+      "true_injection": false,
+      "m1_def": 0,
+      "m1_tuned": 0,
+      "m2": 0,
+      "m3": 0,
+      "m4": 0,
+      "m4_s1_inj": false,
+      "m4_s2_phish": false,
+      "durations": {
+        "m1": 0.0022526000002471847,
+        "m2": 3.5906537000000753,
+        "m3": 3.6705603000000337,
+        "m4": 2.5120084000000134
+      },
+      "failures": {
+        "m2": null,
+        "m3": null,
+        "m4": null
+      },
+      "m2_reasons": [
+        "Email content is a standard vacation schedule notification.",
+        "Sender address (donna.scott@enron.com) matches the name provided in the signature.",
+        "No requests for credentials, financial transactions, or urgent actions are present.",
+        "Subject line and body text are consistent with routine internal business communication."
+      ],
+      "m3_reasons": [
+        "The email follows the established pattern of legitimate vacation notifications seen in reference examples.",
+        "It contains specific, verifiable details (dates, locations) consistent with a personal schedule update.",
+        "The sender address matches the format of known legitimate internal communications from the training set.",
+        "There are no indicators of phishing such as urgency, credential requests, or suspicious links."
+      ],
+      "m4_s1_raw": "{\"has_prompt_injection\": false}",
+      "m4_s2_raw": "{\"is_phishing\": false}"
+    },
+    {
+      "id": "train-legit-0427",
+      "category": "held_out_test_legitimate",
+      "true_label": 0,
+      "true_injection": false,
+      "m1_def": 0,
+      "m1_tuned": 0,
+      "m2": 0,
+      "m3": 0,
+      "m4": 0,
+      "m4_s1_inj": false,
+      "m4_s2_phish": false,
+      "durations": {
+        "m1": 0.002013199999964854,
+        "m2": 3.8247731999999814,
+        "m3": 4.400660600000265,
+        "m4": 2.8285329999998794
+      },
+      "failures": {
+        "m2": null,
+        "m3": null,
+        "m4": null
+      },
+      "m2_reasons": [
+        "Email content describes standard business operations regarding contract renewal and rate adjustments.",
+        "Sender domain (business-corp.com) matches the context of a corporate procurement department.",
+        "No indicators of credential harvesting, financial fraud, impersonation, or panic/urgency threats.",
+        "Includes specific internal reference codes (Memo Code: L-0427) consistent with legitimate business correspondence."
+      ],
+      "m3_reasons": [
+        "The email discusses a standard business operation: finalizing contract extension terms with a cloud hosting vendor.",
+        "It provides specific, verifiable details such as a 5% volume discount and a memo code (L-0427), which are typical of legitimate internal communications.",
+        "There is no indication of credential harvesting, financial fraud, impersonation, or panic/urgency tactics.",
+        "The sender domain (business-corp.com) appears consistent with the context of vendor management."
+      ],
+      "m4_s1_raw": "{\n  \"has_prompt_injection\": false\n}",
+      "m4_s2_raw": "{\n  \"is_phishing\": false\n}"
+    },
+    {
+      "id": "enron-76665e1aacfe",
+      "category": "held_out_test_legitimate",
+      "true_label": 0,
+      "true_injection": false,
+      "m1_def": 0,
+      "m1_tuned": 0,
+      "m2": 0,
+      "m3": 0,
+      "m4": 0,
+      "m4_s1_inj": false,
+      "m4_s2_phish": false,
+      "durations": {
+        "m1": 0.005041900000378519,
+        "m2": 5.634043199999724,
+        "m3": 6.681427600000006,
+        "m4": 5.56164039999976
+      },
+      "failures": {
+        "m2": null,
+        "m3": null,
+        "m4": null
+      },
+      "m2_reasons": [
+        "The email is part of a legitimate business correspondence chain regarding operational safety and payment disputes between Northern Natural Gas Company and Oneok.",
+        "The sender (Rick Kile) is an employee of Enron communicating with colleagues about site operations and sample collection protocols.",
+        "The content discusses technical pipeline issues, contractual obligations, and internal management follow-ups without any indicators of credential harvesting or financial fraud.",
+        "The email thread includes historical context and data tables related to business transactions, consistent with legitimate corporate communication."
+      ],
+      "m3_reasons": [
+        "The email is part of an established internal thread regarding a specific business dispute (Mt. Jesus condensate payment) between Enron and Oneok.",
+        "The sender (Rick Kile) is a known participant in the correspondence chain, responding to Charlie Graham's previous message.",
+        "The content discusses operational logistics, safety protocols for sampling, and project management rather than credential harvesting or financial fraud.",
+        "The email structure includes standard internal headers, CC lists, and references to specific employees and prior messages, indicating authentic business communication.",
+        "No indicators of phishing such as urgent threats, suspicious external domains (other than legitimate partners like Oneok), or requests for sensitive data are present."
+      ],
+      "m4_s1_raw": "{\n  \"has_prompt_injection\": false\n}",
+      "m4_s2_raw": "{\n  \"is_phishing\": false\n}"
+    },
+    {
+      "id": "train-phish-0095",
+      "category": "held_out_test_phishing",
+      "true_label": 1,
+      "true_injection": false,
+      "m1_def": 0,
+      "m1_tuned": 1,
+      "m2": 1,
+      "m3": 1,
+      "m4": 1,
+      "m4_s1_inj": false,
+      "m4_s2_phish": true,
+      "durations": {
+        "m1": 0.002157299999907991,
+        "m2": 4.4061649999998735,
+        "m3": 5.148485900000196,
+        "m4": 2.946259199999986
+      },
+      "failures": {
+        "m2": null,
+        "m3": null,
+        "m4": null
+      },
+      "m2_reasons": [
+        "The sender domain (postmaster@mail-storage-service-portal.org) is suspicious and does not match standard legitimate mail service domains.",
+        "The email uses urgency tactics by claiming messages are being deleted to compel immediate action.",
+        "The email contains a malicious-looking URL (http://webmail-storage-quota-manager.info/renew) designed to redirect the user to a fake login or payment page.",
+        "The request to 'upgrade storage' is a common social engineering tactic used to harvest credentials or financial information."
+      ],
+      "m3_reasons": [
+        "The email uses a common social engineering tactic (fear of data loss/quarantined messages) to create urgency.",
+        "The sender domain 'mail-storage-service-portal.org' is suspicious and does not match standard legitimate service providers like Gmail or Outlook.",
+        "The email contains a malicious-looking link ('webmail-storage-quota-manager.info') designed to redirect the user to a fake login page for credential harvesting.",
+        "The use of specific case numbers and 'Notice Codes' mimics official system alerts but is used here to deceive the recipient into clicking the link."
+      ],
+      "m4_s1_raw": "{\n  \"has_prompt_injection\": false\n}",
+      "m4_s2_raw": "{\n  \"is_phishing\": true\n}"
+    },
+    {
+      "id": "train-phish-0045",
+      "category": "held_out_test_phishing",
+      "true_label": 1,
+      "true_injection": false,
+      "m1_def": 0,
+      "m1_tuned": 1,
+      "m2": 1,
+      "m3": 1,
+      "m4": 1,
+      "m4_s1_inj": false,
+      "m4_s2_phish": true,
+      "durations": {
+        "m1": 0.0014462999997704173,
+        "m2": 4.142667799999799,
+        "m3": 4.579898199999661,
+        "m4": 2.7151023000005807
+      },
+      "failures": {
+        "m2": null,
+        "m3": null,
+        "m4": null
+      },
+      "m2_reasons": [
+        "The sender domain (postmaster@mail-storage-service-portal.org) is suspicious and does not match standard legitimate mail service domains.",
+        "The email uses urgency tactics by claiming messages are being deleted to compel immediate action.",
+        "The email contains a malicious-looking URL (http://webmail-storage-quota-manager.info/renew) designed to harvest credentials or redirect the user.",
+        "Legitimate storage providers typically do not require users to pay for basic storage upgrades via external links."
+      ],
+      "m3_reasons": [
+        "The email uses urgency and threat tactics by stating messages are being deleted to coerce immediate action.",
+        "The sender domain 'mail-storage-service-portal.org' is suspicious and does not match standard legitimate service providers like Gmail or Outlook.",
+        "The email contains a malicious-looking link ('webmail-storage-quota-manager.info') designed to redirect the user to a fake page for credential harvesting or payment fraud.",
+        "The subject line mimics a legitimate system notification but includes specific case numbers and codes to appear authoritative."
+      ],
+      "m4_s1_raw": "{\n  \"has_prompt_injection\": false\n}",
+      "m4_s2_raw": "{\n  \"is_phishing\": true\n}"
+    },
+    {
+      "id": "enron-d2ce9845afc1",
+      "category": "held_out_test_legitimate",
+      "true_label": 0,
+      "true_injection": false,
+      "m1_def": 0,
+      "m1_tuned": 0,
+      "m2": 0,
+      "m3": 0,
+      "m4": 0,
+      "m4_s1_inj": false,
+      "m4_s2_phish": false,
+      "durations": {
+        "m1": 0.0021673000001101173,
+        "m2": 3.364282299999104,
+        "m3": 5.394084699999439,
+        "m4": 3.0223607000007178
+      },
+      "failures": {
+        "m2": null,
+        "m3": null,
+        "m4": null
+      },
+      "m2_reasons": [
+        "The email content is a standard business communication regarding accounts receivable.",
+        "It contains no requests for credentials, financial transfers, or sensitive data.",
+        "There are no indicators of urgency, threats, or impersonation.",
+        "The sender and recipient names appear consistent with the original message header."
+      ],
+      "m3_reasons": [
+        "The email follows a standard business format with a clear subject line referencing 'Outstanding Accounts Receivable' and includes sender details (name, phone, email) consistent with the reference examples.",
+        "The content is informational ('FYI') and provides an attachment as requested in the original message thread, without any requests for credentials, financial transfers, or urgent threats.",
+        "The email structure includes a proper 'Original Message' header indicating it is a forwarded internal communication, matching the pattern of legitimate business correspondence seen in the training data.",
+        "No indicators of phishing such as suspicious links, impersonation of authority, or panic-inducing language are present."
+      ],
+      "m4_s1_raw": "{\n  \"has_prompt_injection\": false\n}",
+      "m4_s2_raw": "{\n  \"is_phishing\": false\n}"
+    },
+    {
+      "id": "email-00005",
+      "category": "held_out_test_phishing",
+      "true_label": 1,
+      "true_injection": false,
+      "m1_def": 0,
+      "m1_tuned": 1,
+      "m2": 1,
+      "m3": 1,
+      "m4": 1,
+      "m4_s1_inj": false,
+      "m4_s2_phish": true,
+      "durations": {
+        "m1": 0.0029451000000335625,
+        "m2": 4.344033800000034,
+        "m3": 4.8155838000002404,
+        "m4": 2.862984100000176
+      },
+      "failures": {
+        "m2": null,
+        "m3": null,
+        "m4": null
+      },
+      "m2_reasons": [
+        "The sender domain (postmaster@mail-storage-service-portal.org) is suspicious and does not match standard legitimate mail service domains.",
+        "The email uses urgency tactics by claiming messages are being deleted to compel immediate action.",
+        "The email contains a malicious-looking link (http://webmail-storage-quota-manager.info/renew) designed to redirect the user to a fake upgrade page for credential harvesting or malware delivery.",
+        "The request to 'upgrade storage' is a common social engineering tactic used in phishing campaigns."
+      ],
+      "m3_reasons": [
+        "The email uses urgency and threat tactics by stating messages are being deleted to coerce immediate action.",
+        "The sender domain 'mail-storage-service-portal.org' appears suspicious and does not match standard legitimate service providers like Gmail or Outlook.",
+        "The email contains a malicious-looking link ('webmail-storage-quota-manager.info') designed to redirect the user to a fake page for credential harvesting or malware delivery.",
+        "The subject line mimics a legitimate system notification but includes specific reference numbers and truncated text patterns common in phishing templates."
+      ],
+      "m4_s1_raw": "{\n  \"has_prompt_injection\": false\n}",
+      "m4_s2_raw": "{\n  \"is_phishing\": true\n}"
+    },
+    {
+      "id": "email-00115",
+      "category": "held_out_test_phishing",
+      "true_label": 1,
+      "true_injection": false,
+      "m1_def": 0,
+      "m1_tuned": 1,
+      "m2": 1,
+      "m3": 1,
+      "m4": 1,
+      "m4_s1_inj": false,
+      "m4_s2_phish": true,
+      "durations": {
+        "m1": 0.0019279999996797414,
+        "m2": 4.282065399999738,
+        "m3": 4.731220099999518,
+        "m4": 2.769750900000872
+      },
+      "failures": {
+        "m2": null,
+        "m3": null,
+        "m4": null
+      },
+      "m2_reasons": [
+        "The sender domain (postmaster@mail-storage-service-portal.org) is suspicious and does not match standard legitimate mail service domains.",
+        "The email uses urgency tactics by claiming messages are being deleted to compel immediate action.",
+        "The email contains a malicious-looking URL (http://webmail-storage-quota-manager.info/renew) designed to redirect the user to a fake login or payment page.",
+        "The request to 'upgrade storage' is a common social engineering tactic used to harvest credit card information."
+      ],
+      "m3_reasons": [
+        "The email uses urgency and threat tactics by stating messages are 'quarantined' and will be 'deleted' to induce panic.",
+        "The sender domain (mail-storage-service-portal.org) appears suspicious and does not match standard legitimate service providers like Gmail or Outlook.",
+        "The email contains a malicious-looking link (webmail-storage-quota-manager.info) designed to redirect the user to a fake page for credential harvesting or payment.",
+        "The subject line mimics a legitimate system notification but includes specific reference numbers and formatting typical of social engineering attacks."
+      ],
+      "m4_s1_raw": "{\n  \"has_prompt_injection\": false\n}",
+      "m4_s2_raw": "{\n  \"is_phishing\": true\n}"
+    },
+    {
+      "id": "enron-3145affcbb19",
+      "category": "held_out_test_legitimate",
+      "true_label": 0,
+      "true_injection": false,
+      "m1_def": 0,
+      "m1_tuned": 0,
+      "m2": 1,
+      "m3": 0,
+      "m4": 0,
+      "m4_s1_inj": false,
+      "m4_s2_phish": false,
+      "durations": {
+        "m1": 0.004007700000329351,
+        "m2": 7.138024900000346,
+        "m3": 5.402970400000413,
+        "m4": 4.132938699999613
+      },
+      "failures": {
+        "m2": null,
+        "m3": null,
+        "m4": null
+      },
+      "m2_reasons": [
+        "The email uses a deceptive sender address (chairman.ken@enron.com) which does not match the standard corporate domain structure for Enron's Chairman.",
+        "The content describes catastrophic financial failures, massive losses, and credit downgrades that contradict historical records of Enron's actual collapse in 2001-2002.",
+        "The email contains specific factual errors regarding dates (claiming events happened in late 2002 when the company had already collapsed) and business statuses (claiming core businesses remain strong while admitting to $8 billion losses).",
+        "The text mimics a corporate announcement but uses panic-inducing language about 'bad investments' and 'loss of investor confidence' to create urgency.",
+        "The email references specific entities like Dynegy and Osprey/Marlin/Yosemite in a context that suggests a fraudulent transaction scheme rather than legitimate business operations."
+      ],
+      "m3_reasons": [
+        "The email is from a verified corporate domain (enron.com) with a plausible sender address format.",
+        "The content details specific business operations, financial restatements, and investor relations updates consistent with legitimate corporate communications during a crisis.",
+        "There are no indicators of credential harvesting, fake invoices, unauthorized wire transfer requests, or panic/urgency threats designed to deceive.",
+        "The email references real entities (Dynegy, SEC) and specific business units in a manner consistent with historical public records regarding Enron's restructuring."
+      ],
+      "m4_s1_raw": "{\n  \"has_prompt_injection\": false\n}",
+      "m4_s2_raw": "{\n  \"is_phishing\": false\n}"
+    },
+    {
+      "id": "email-00035",
+      "category": "held_out_test_phishing",
+      "true_label": 1,
+      "true_injection": false,
+      "m1_def": 0,
+      "m1_tuned": 1,
+      "m2": 1,
+      "m3": 1,
+      "m4": 1,
+      "m4_s1_inj": false,
+      "m4_s2_phish": true,
+      "durations": {
+        "m1": 0.0023235999997268664,
+        "m2": 4.440484199999446,
+        "m3": 4.704617000000326,
+        "m4": 3.1223649000003206
+      },
+      "failures": {
+        "m2": null,
+        "m3": null,
+        "m4": null
+      },
+      "m2_reasons": [
+        "The sender domain (postmaster@mail-storage-service-portal.org) is suspicious and does not match standard legitimate mail service domains.",
+        "The email uses urgency tactics by claiming messages are being deleted to compel immediate action.",
+        "The email contains a malicious-looking URL (http://webmail-storage-quota-manager.info/renew) designed to redirect the user to a fake login or payment page.",
+        "The request to 'upgrade storage' is a common social engineering tactic used to harvest credentials or financial information."
+      ],
+      "m3_reasons": [
+        "The email uses urgency and threat tactics by stating messages are being deleted to coerce immediate action.",
+        "The sender domain 'mail-storage-service-portal.org' appears suspicious and does not match standard legitimate service providers like Gmail or Outlook.",
+        "The email contains a malicious-looking link ('webmail-storage-quota-manager.info') designed to redirect the user to a fake page for credential harvesting or malware delivery.",
+        "The subject line mimics a legitimate system notification but includes specific reference numbers and formatting typical of social engineering attacks."
+      ],
+      "m4_s1_raw": "{\n  \"has_prompt_injection\": false\n}",
+      "m4_s2_raw": "{\n  \"is_phishing\": true\n}"
+    },
+    {
+      "id": "train-phish-0285",
+      "category": "held_out_test_phishing",
+      "true_label": 1,
+      "true_injection": false,
+      "m1_def": 0,
+      "m1_tuned": 1,
+      "m2": 1,
+      "m3": 1,
+      "m4": 1,
+      "m4_s1_inj": false,
+      "m4_s2_phish": true,
+      "durations": {
+        "m1": 0.003000100000463135,
+        "m2": 6.247136899999532,
+        "m3": 5.511058000000048,
+        "m4": 2.869473200000357
+      },
+      "failures": {
+        "m2": null,
+        "m3": null,
+        "m4": null
+      },
+      "m2_reasons": [
+        "The sender domain (postmaster@mail-storage-service-portal.org) is suspicious and does not match standard legitimate mail service domains.",
+        "The email uses urgency tactics by claiming messages are being deleted to compel immediate action.",
+        "The email contains a malicious-looking URL (http://webmail-storage-quota-manager.info/renew) designed to harvest credentials or redirect the user.",
+        "Legitimate storage providers typically do not use generic 'portal' domains or send emails with specific case numbers and codes for quota upgrades via external links."
+      ],
+      "m3_reasons": [
+        "The email uses urgency and threat tactics by stating messages are 'quarantined' and will be 'deleted' to compel immediate action.",
+        "The sender domain (mail-storage-service-portal.org) is suspicious and does not match standard legitimate mail service domains like Gmail, Outlook, or corporate internal addresses.",
+        "The email contains a malicious-looking link (webmail-storage-quota-manager.info) designed to redirect the user to a fake page for credential harvesting or payment.",
+        "The generic subject line mimics common spam patterns regarding mailbox storage limits."
+      ],
+      "m4_s1_raw": "{\n  \"has_prompt_injection\": false\n}",
+      "m4_s2_raw": "{\n  \"is_phishing\": true\n}"
+    },
+    {
+      "id": "train-legit-0467",
+      "category": "held_out_test_legitimate",
+      "true_label": 0,
+      "true_injection": false,
+      "m1_def": 0,
+      "m1_tuned": 0,
+      "m2": 0,
+      "m3": 0,
+      "m4": 0,
+      "m4_s1_inj": false,
+      "m4_s2_phish": false,
+      "durations": {
+        "m1": 0.001960099999450904,
+        "m2": 3.8149342999995497,
+        "m3": 4.729403100000127,
+        "m4": 2.9002972999996928
+      },
+      "failures": {
+        "m2": null,
+        "m3": null,
+        "m4": null
+      },
+      "m2_reasons": [
+        "Email content describes standard business operations regarding contract renewal and rate adjustments.",
+        "Sender domain (business-corp.com) matches the context of a corporate procurement department.",
+        "No indicators of credential harvesting, financial fraud, impersonation, or panic/urgency threats.",
+        "Includes specific internal reference codes (Memo Code: L-0467) consistent with legitimate business correspondence."
+      ],
+      "m3_reasons": [
+        "The email discusses a standard business operation: finalizing contract extension terms with a cloud hosting vendor.",
+        "It provides specific, verifiable details such as a 5% volume discount and a memo code (L-0467), which are typical of legitimate internal or external business communications.",
+        "There is no indication of credential harvesting, financial fraud, impersonation, panic, urgency, or suspicious external domains.",
+        "The tone is professional and informative, consistent with the reference examples of legitimate business correspondence."
+      ],
+      "m4_s1_raw": "{\n  \"has_prompt_injection\": false\n}",
+      "m4_s2_raw": "{\n  \"is_phishing\": false\n}"
+    },
+    {
+      "id": "train-phish-0155",
+      "category": "held_out_test_phishing",
+      "true_label": 1,
+      "true_injection": false,
+      "m1_def": 0,
+      "m1_tuned": 1,
+      "m2": 1,
+      "m3": 1,
+      "m4": 1,
+      "m4_s1_inj": false,
+      "m4_s2_phish": true,
+      "durations": {
+        "m1": 0.0030729000000064843,
+        "m2": 4.442168500000662,
+        "m3": 4.797886100000142,
+        "m4": 2.8992449000006673
+      },
+      "failures": {
+        "m2": null,
+        "m3": null,
+        "m4": null
+      },
+      "m2_reasons": [
+        "The sender domain (postmaster@mail-storage-service-portal.org) is suspicious and does not match standard legitimate mail service domains.",
+        "The email uses urgency tactics by claiming messages are being deleted to compel immediate action.",
+        "The email contains a malicious-looking URL (http://webmail-storage-quota-manager.info/renew) designed to redirect the user to a fake login or payment page.",
+        "The request to 'upgrade storage' is a common social engineering tactic used to harvest credit card information."
+      ],
+      "m3_reasons": [
+        "The email uses urgency and threat tactics by stating messages are being deleted to coerce immediate action.",
+        "The sender domain 'mail-storage-service-portal.org' is suspicious and does not match standard legitimate service providers like Gmail or Outlook.",
+        "The email contains a malicious-looking link ('webmail-storage-quota-manager.info') designed to redirect the user to a fake page for credential harvesting or malware delivery.",
+        "The generic subject line mimics common spam patterns used to trick users into clicking links."
+      ],
+      "m4_s1_raw": "{\n  \"has_prompt_injection\": false\n}",
+      "m4_s2_raw": "{\n  \"is_phishing\": true\n}"
+    },
+    {
+      "id": "train-phish-0165",
+      "category": "held_out_test_phishing",
+      "true_label": 1,
+      "true_injection": false,
+      "m1_def": 0,
+      "m1_tuned": 1,
+      "m2": 1,
+      "m3": 1,
+      "m4": 1,
+      "m4_s1_inj": false,
+      "m4_s2_phish": true,
+      "durations": {
+        "m1": 0.0015647999998691375,
+        "m2": 4.2047756000001755,
+        "m3": 4.377386000000115,
+        "m4": 2.7195221000001766
+      },
+      "failures": {
+        "m2": null,
+        "m3": null,
+        "m4": null
+      },
+      "m2_reasons": [
+        "The sender domain (postmaster@mail-storage-service-portal.org) is suspicious and does not match standard legitimate mail service domains.",
+        "The email uses urgency tactics by claiming messages are being deleted to compel immediate action.",
+        "The email contains a malicious-looking URL (http://webmail-storage-quota-manager.info/renew) designed to harvest credentials or redirect the user.",
+        "Legitimate storage services typically do not require users to click external links to manage quotas or release messages."
+      ],
+      "m3_reasons": [
+        "The email uses urgency and threat tactics by stating messages are being deleted to coerce immediate action.",
+        "The sender domain 'mail-storage-service-portal.org' is suspicious and does not match standard legitimate service providers like Gmail or Outlook.",
+        "The email contains a malicious-looking link ('webmail-storage-quota-manager.info') designed to redirect the user to a fake upgrade page for credential harvesting or malware delivery.",
+        "The generic subject line mimics common spam patterns regarding mailbox storage limits."
+      ],
+      "m4_s1_raw": "{\n  \"has_prompt_injection\": false\n}",
+      "m4_s2_raw": "{\n  \"is_phishing\": true\n}"
+    },
+    {
+      "id": "enron-7263cdb1195d",
+      "category": "held_out_test_legitimate",
+      "true_label": 0,
+      "true_injection": false,
+      "m1_def": 0,
+      "m1_tuned": 0,
+      "m2": 0,
+      "m3": 0,
+      "m4": 0,
+      "m4_s1_inj": false,
+      "m4_s2_phish": false,
+      "durations": {
+        "m1": 0.002786500000183878,
+        "m2": 4.091472600000088,
+        "m3": 4.515312800000174,
+        "m4": 3.0958622999996805
+      },
+      "failures": {
+        "m2": null,
+        "m3": null,
+        "m4": null
+      },
+      "m2_reasons": [
+        "The email contains specific internal business details (Carlton Resolution, TMS, EBB, North End Reps) consistent with a legitimate operational update.",
+        "It references an original message from a known colleague (Nancy Callans) regarding the same topic.",
+        "There are no indicators of credential harvesting, financial fraud, impersonation, or panic/urgency threats.",
+        "The content focuses on routine reporting procedures and deadlines."
+      ],
+      "m3_reasons": [
+        "The email originates from a verified internal domain (enron.com) and follows standard corporate communication patterns.",
+        "The content describes routine operational procedures regarding gas control reporting and data entry deadlines.",
+        "There are no indicators of credential harvesting, financial fraud, impersonation, or panic-inducing urgency.",
+        "The email includes a clear reference to an original message thread from a colleague (Nancy Callans), indicating internal collaboration."
+      ],
+      "m4_s1_raw": "{\n  \"has_prompt_injection\": false\n}",
+      "m4_s2_raw": "{\n  \"is_phishing\": false\n}"
+    },
+    {
+      "id": "train-phish-0265",
+      "category": "held_out_test_phishing",
+      "true_label": 1,
+      "true_injection": false,
+      "m1_def": 0,
+      "m1_tuned": 1,
+      "m2": 1,
+      "m3": 1,
+      "m4": 1,
+      "m4_s1_inj": false,
+      "m4_s2_phish": true,
+      "durations": {
+        "m1": 0.0023017000003164867,
+        "m2": 4.762403500000801,
+        "m3": 4.812441099999887,
+        "m4": 2.7821119000009276
+      },
+      "failures": {
+        "m2": null,
+        "m3": null,
+        "m4": null
+      },
+      "m2_reasons": [
+        "The sender domain (postmaster@mail-storage-service-portal.org) does not match the recipient's actual email provider or a known legitimate service.",
+        "The email uses urgency and threat tactics ('quota reached', 'messages will be deleted') to compel immediate action.",
+        "The link provided (http://webmail-storage-quota-manager.info/renew) redirects to an external, suspicious domain unrelated to the claimed service.",
+        "The request asks the user to perform a financial transaction or credential update ('upgrade storage') via an unverified URL."
+      ],
+      "m3_reasons": [
+        "The email uses urgency and threat tactics by stating messages are being deleted to coerce immediate action.",
+        "The sender domain 'mail-storage-service-portal.org' is suspicious and does not match standard legitimate service providers like Gmail or Outlook.",
+        "The email contains a malicious-looking link ('webmail-storage-quota-manager.info') designed to redirect the user to a fake page for credential harvesting or malware delivery.",
+        "The request to 'upgrade storage' via an external link is a common social engineering pattern used in quota overflow scams."
+      ],
+      "m4_s1_raw": "{\n  \"has_prompt_injection\": false\n}",
+      "m4_s2_raw": "{\n  \"is_phishing\": true\n}"
+    },
+    {
+      "id": "train-legit-0387",
+      "category": "held_out_test_legitimate",
+      "true_label": 0,
+      "true_injection": false,
+      "m1_def": 0,
+      "m1_tuned": 0,
+      "m2": 0,
+      "m3": 0,
+      "m4": 0,
+      "m4_s1_inj": false,
+      "m4_s2_phish": false,
+      "durations": {
+        "m1": 0.0016381000004912494,
+        "m2": 3.917641800000638,
+        "m3": 4.484094700000242,
+        "m4": 2.8740014999993946
+      },
+      "failures": {
+        "m2": null,
+        "m3": null,
+        "m4": null
+      },
+      "m2_reasons": [
+        "Email content describes standard business operations (contract renewal and rate changes).",
+        "Sender domain (business-corp.com) matches the context of a corporate procurement department.",
+        "No indicators of credential harvesting, financial fraud, impersonation, or panic/urgency threats.",
+        "Includes specific internal reference codes (Memo Code: L-0387) consistent with legitimate business correspondence."
+      ],
+      "m3_reasons": [
+        "The email discusses a standard business operation: finalizing contract extension terms with a cloud hosting vendor.",
+        "It contains specific, verifiable details such as a 'Memo Code' (L-0387) and a clear statement about documentation being filed in the legal repository.",
+        "The tone is professional and informative, lacking the panic, urgency, or threats typical of phishing attempts.",
+        "There are no requests for personal credentials, unauthorized wire transfers, or links to suspicious external domains."
+      ],
+      "m4_s1_raw": "{\n  \"has_prompt_injection\": false\n}",
+      "m4_s2_raw": "{\n  \"is_phishing\": false\n}"
+    },
+    {
+      "id": "email-00085",
+      "category": "held_out_test_phishing",
+      "true_label": 1,
+      "true_injection": false,
+      "m1_def": 0,
+      "m1_tuned": 1,
+      "m2": 1,
+      "m3": 1,
+      "m4": 1,
+      "m4_s1_inj": false,
+      "m4_s2_phish": true,
+      "durations": {
+        "m1": 0.0006618999996135244,
+        "m2": 4.2118156999995335,
+        "m3": 5.304995899999994,
+        "m4": 2.868260899998859
+      },
+      "failures": {
+        "m2": null,
+        "m3": null,
+        "m4": null
+      },
+      "m2_reasons": [
+        "The sender domain (postmaster@mail-storage-service-portal.org) is suspicious and does not match standard legitimate mail service domains.",
+        "The email uses urgency tactics by claiming messages are being deleted to compel immediate action.",
+        "The email contains a malicious-looking link (http://webmail-storage-quota-manager.info/renew) designed to harvest credentials or redirect the user.",
+        "Legitimate storage services typically do not require users to click external links to manage quotas or release held messages."
+      ],
+      "m3_reasons": [
+        "The email uses a common social engineering tactic by mimicking a system notification about mailbox storage limits to create urgency.",
+        "The sender domain 'postmaster@mail-storage-service-portal.org' appears suspicious and does not match standard legitimate service providers (e.g., Gmail, Outlook, corporate mail servers).",
+        "The email contains a direct link ('http://webmail-storage-quota-manager.info/renew') designed to redirect the user to a fake page for credential harvesting or malware delivery.",
+        "The content claims messages are being deleted due to quota issues and offers an unauthorized solution (upgrading storage) to bypass security controls, which is a hallmark of phishing campaigns."
+      ],
+      "m4_s1_raw": "{\n  \"has_prompt_injection\": false\n}",
+      "m4_s2_raw": "{\n  \"is_phishing\": true\n}"
+    },
+    {
+      "id": "email-00105",
+      "category": "held_out_test_phishing",
+      "true_label": 1,
+      "true_injection": false,
+      "m1_def": 0,
+      "m1_tuned": 1,
+      "m2": 1,
+      "m3": 1,
+      "m4": 1,
+      "m4_s1_inj": false,
+      "m4_s2_phish": true,
+      "durations": {
+        "m1": 0.003052699999898323,
+        "m2": 4.330732000000353,
+        "m3": 4.376408099999935,
+        "m4": 2.7244536999996853
+      },
+      "failures": {
+        "m2": null,
+        "m3": null,
+        "m4": null
+      },
+      "m2_reasons": [
+        "The sender domain (postmaster@mail-storage-service-portal.org) is suspicious and does not match standard legitimate mail service domains.",
+        "The email uses urgency tactics by claiming messages are being deleted to compel immediate action.",
+        "The email contains a malicious-looking URL (http://webmail-storage-quota-manager.info/renew) designed to redirect the user to a fake login or payment page.",
+        "The request to 'upgrade storage' is a common social engineering tactic used to harvest credit card information."
+      ],
+      "m3_reasons": [
+        "The email uses urgency and threat tactics by stating messages are being deleted to coerce immediate action.",
+        "The sender domain 'mail-storage-service-portal.org' appears suspicious and does not match standard legitimate service providers (e.g., Gmail, Outlook).",
+        "The email contains a malicious-looking link ('webmail-storage-quota-manager.info') designed to redirect the user to a fake page for credential harvesting or malware delivery.",
+        "The subject line mimics a common phishing template regarding mailbox storage limits."
+      ],
+      "m4_s1_raw": "{\n  \"has_prompt_injection\": false\n}",
+      "m4_s2_raw": "{\n  \"is_phishing\": true\n}"
+    }
+  ]
+}

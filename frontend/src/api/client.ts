@@ -79,6 +79,7 @@ export interface ClassifyCompareRequest {
   sender?: string;
   model?: string;
   k?: number;
+  include_archived?: boolean;
 }
 
 export interface ClassificationResult {
@@ -88,6 +89,9 @@ export interface ClassificationResult {
   confidence: number;
   has_prompt_injection: boolean;
   has_prompt_injection_display: string;
+  phishing_verdict?: 'phishing' | 'legitimate' | 'error' | string;
+  injection_verdict?: 'detected' | 'clean' | 'error' | string;
+  security_action?: 'allow' | 'quarantine_review' | 'block' | 'manual_review' | string;
   latency_ms: number;
   latency_seconds: number;
   reasons: string[];

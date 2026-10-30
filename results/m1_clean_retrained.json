@@ -1,0 +1,277 @@
+{
+  "model_name": "M1_TFIDF_LogisticRegression_Clean",
+  "best_hyperparameters": {
+    "ngram_range": [
+      1,
+      1
+    ],
+    "C": 0.1,
+    "class_weight": null,
+    "sublinear_tf": true
+  },
+  "validation_tuned_threshold": 0.29,
+  "clean_test_metrics_default_tau": {
+    "confusion_matrix": [
+      [
+        110,
+        0
+      ],
+      [
+        63,
+        0
+      ]
+    ],
+    "true_negatives": 110,
+    "false_positives": 0,
+    "false_negatives": 63,
+    "true_positives": 0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "fpr": 0.0,
+    "accuracy": 0.6358381502890174,
+    "total_samples": 173,
+    "fnr": 1.0,
+    "threshold": 0.5
+  },
+  "clean_test_metrics_tuned_tau": {
+    "confusion_matrix": [
+      [
+        110,
+        0
+      ],
+      [
+        0,
+        63
+      ]
+    ],
+    "true_negatives": 110,
+    "false_positives": 0,
+    "false_negatives": 0,
+    "true_positives": 63,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "fpr": 0.0,
+    "accuracy": 1.0,
+    "total_samples": 173,
+    "fnr": 0.0,
+    "threshold": 0.29
+  },
+  "diagnostic_metrics_default_tau": {
+    "confusion_matrix": [
+      [
+        10,
+        0
+      ],
+      [
+        8,
+        2
+      ]
+    ],
+    "true_negatives": 10,
+    "false_positives": 0,
+    "false_negatives": 8,
+    "true_positives": 2,
+    "precision": 1.0,
+    "recall": 0.2,
+    "f1": 0.33333333333333337,
+    "fpr": 0.0,
+    "accuracy": 0.6,
+    "total_samples": 20,
+    "fnr": 0.8,
+    "threshold": 0.5
+  },
+  "diagnostic_metrics_tuned_tau": {
+    "confusion_matrix": [
+      [
+        6,
+        4
+      ],
+      [
+        0,
+        10
+      ]
+    ],
+    "true_negatives": 6,
+    "false_positives": 4,
+    "false_negatives": 0,
+    "true_positives": 10,
+    "precision": 0.7142857142857143,
+    "recall": 1.0,
+    "f1": 0.8333333333333333,
+    "fpr": 0.4,
+    "accuracy": 0.8,
+    "total_samples": 20,
+    "fnr": 0.0,
+    "threshold": 0.29
+  },
+  "baseline_old_metrics_clean_test": {
+    "confusion_matrix": [
+      [
+        106,
+        4
+      ],
+      [
+        0,
+        63
+      ]
+    ],
+    "true_negatives": 106,
+    "false_positives": 4,
+    "false_negatives": 0,
+    "true_positives": 63,
+    "precision": 0.9402985074626866,
+    "recall": 1.0,
+    "f1": 0.9692307692307692,
+    "fpr": 0.03636363636363636,
+    "accuracy": 0.976878612716763,
+    "total_samples": 173
+  },
+  "baseline_old_metrics_diagnostic": {
+    "confusion_matrix": [
+      [
+        5,
+        5
+      ],
+      [
+        0,
+        10
+      ]
+    ],
+    "true_negatives": 5,
+    "false_positives": 5,
+    "false_negatives": 0,
+    "true_positives": 10,
+    "precision": 0.6666666666666666,
+    "recall": 1.0,
+    "f1": 0.8,
+    "fpr": 0.5,
+    "accuracy": 0.75,
+    "total_samples": 20
+  },
+  "top_phishing_features": [
+    [
+      "notice",
+      1.3491011247828992
+    ],
+    [
+      "http",
+      0.9840487736761839
+    ],
+    [
+      "case",
+      0.9781389978122145
+    ],
+    [
+      "secure",
+      0.889274718145667
+    ],
+    [
+      "verify",
+      0.8271845289837675
+    ],
+    [
+      "payroll",
+      0.7847886486656092
+    ],
+    [
+      "direct",
+      0.7619414181812889
+    ],
+    [
+      "login",
+      0.7524628524608749
+    ],
+    [
+      "account",
+      0.7450321709635469
+    ],
+    [
+      "docusign",
+      0.6925496041670657
+    ],
+    [
+      "tax",
+      0.6916469868552668
+    ],
+    [
+      "biz",
+      0.6531445450031936
+    ],
+    [
+      "authentication",
+      0.6468862363582332
+    ],
+    [
+      "refund",
+      0.6305965967905485
+    ],
+    [
+      "immediately",
+      0.6271988557730132
+    ]
+  ],
+  "top_legitimate_features": [
+    [
+      "note",
+      -0.6646749189501616
+    ],
+    [
+      "memo",
+      -0.6136083897996046
+    ],
+    [
+      "team",
+      -0.4689191729971161
+    ],
+    [
+      "enron",
+      -0.46536946499351173
+    ],
+    [
+      "internal",
+      -0.40805006552041806
+    ],
+    [
+      "attached",
+      -0.35409550022526115
+    ],
+    [
+      "tech",
+      -0.3140891520485889
+    ],
+    [
+      "benefits",
+      -0.2968881171930212
+    ],
+    [
+      "training",
+      -0.2952606171422285
+    ],
+    [
+      "corp",
+      -0.2945765401981237
+    ],
+    [
+      "let",
+      -0.2806713462379757
+    ],
+    [
+      "scheduled",
+      -0.27736183495631767
+    ],
+    [
+      "2001",
+      -0.27029696617851134
+    ],
+    [
+      "thanks",
+      -0.26894718154059083
+    ],
+    [
+      "end",
+      -0.2657895306276703
+    ]
+  ]
+}

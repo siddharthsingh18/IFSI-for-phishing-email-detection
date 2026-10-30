@@ -1,0 +1,131 @@
+{
+  "metadata": {
+    "evaluation_dataset": "data/evaluation/live_benchmark_v1.jsonl",
+    "total_samples": 40,
+    "genuine_count": 20,
+    "phishing_count": 20,
+    "prompt_injection_count": 2,
+    "model_name": "qwen3.5:4b",
+    "faiss_index_path": "results/rag_index_clean",
+    "start_time_utc": "2026-10-30T15:31:03.634917+00:00",
+    "end_time_utc": "2026-10-30T15:39:34.545318+00:00",
+    "total_duration_seconds": 510.91
+  },
+  "architectures": {
+    "M1": {
+      "total_samples": 40,
+      "true_positives": 18,
+      "true_negatives": 16,
+      "false_positives": 4,
+      "false_negatives": 2,
+      "accuracy": 0.85,
+      "precision": 0.8182,
+      "recall": 0.9,
+      "f1": 0.8571,
+      "fpr": 0.2,
+      "fnr": 0.1,
+      "avg_latency_seconds": 0.0375,
+      "median_latency_seconds": 0.0229,
+      "failed_inference_count": 0,
+      "confusion_matrix": [
+        [
+          16,
+          4
+        ],
+        [
+          2,
+          18
+        ]
+      ]
+    },
+    "M2": {
+      "total_samples": 40,
+      "true_positives": 20,
+      "true_negatives": 19,
+      "false_positives": 1,
+      "false_negatives": 0,
+      "accuracy": 0.975,
+      "precision": 0.9524,
+      "recall": 1.0,
+      "f1": 0.9756,
+      "fpr": 0.05,
+      "fnr": 0.0,
+      "avg_latency_seconds": 4.6775,
+      "median_latency_seconds": 4.3123,
+      "failed_inference_count": 0,
+      "confusion_matrix": [
+        [
+          19,
+          1
+        ],
+        [
+          0,
+          20
+        ]
+      ]
+    },
+    "M3": {
+      "total_samples": 40,
+      "true_positives": 20,
+      "true_negatives": 20,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "fpr": 0.0,
+      "fnr": 0.0,
+      "avg_latency_seconds": 5.0456,
+      "median_latency_seconds": 4.7753,
+      "failed_inference_count": 0,
+      "confusion_matrix": [
+        [
+          20,
+          0
+        ],
+        [
+          0,
+          20
+        ]
+      ]
+    },
+    "M4": {
+      "total_samples": 40,
+      "true_positives": 20,
+      "true_negatives": 20,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "fpr": 0.0,
+      "fnr": 0.0,
+      "avg_latency_seconds": 3.0119,
+      "median_latency_seconds": 2.9958,
+      "failed_inference_count": 0,
+      "confusion_matrix": [
+        [
+          20,
+          0
+        ],
+        [
+          0,
+          20
+        ]
+      ]
+    }
+  },
+  "m4_prompt_injection_detection": {
+    "total_samples": 40,
+    "true_injection_count": 2,
+    "true_positives": 2,
+    "true_negatives": 38,
+    "false_positives": 0,
+    "false_negatives": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+  }
+}

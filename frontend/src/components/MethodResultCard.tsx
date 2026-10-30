@@ -138,6 +138,50 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
   const isDecoupledM4 = result.method.includes('M4');
   const confidencePercent = (result.confidence * 100).toFixed(1);
   const isSimple = viewDensity === 'simple';
+
+  const getActionMeta = () => {
+    if (!result.is_valid || result.failure_type) {
+      return {
+        variant: 'neutral' as const,
+        label: 'ACTION: MANUAL REVIEW',
+        badgeText: 'MANUAL REVIEW',
+        pulse: false,
+      };
+    }
+    const act = (result.security_action || '').toLowerCase();
+    if (act === 'block') {
+      return {
+        variant: 'phishing' as const,
+        label: 'ACTION: BLOCK',
+        badgeText: 'BLOCK',
+        pulse: false,
+      };
+    }
+    if (act === 'quarantine_review') {
+      return {
+        variant: 'injection' as const,
+        label: 'ACTION: QUARANTINE / REVIEW',
+        badgeText: 'QUARANTINE / REVIEW',
+        pulse: true,
+      };
+    }
+    if (act === 'manual_review') {
+      return {
+        variant: 'injection' as const,
+        label: 'ACTION: MANUAL REVIEW',
+        badgeText: 'MANUAL REVIEW',
+        pulse: true,
+      };
+    }
+    return {
+      variant: 'legitimate' as const,
+      label: 'ACTION: ALLOW',
+      badgeText: 'ALLOW',
+      pulse: false,
+    };
+  };
+
+  const actionMeta = getActionMeta();
   const shortMethodMatch = result.method.match(/\bM[1-4]\b/i);
   const shortMethodName = shortMethodMatch ? shortMethodMatch[0].toUpperCase() : result.method.split(/[:(]/)[0].trim();
   const methodMeta = getMethodMeta(result.method);
@@ -230,8 +274,8 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
                 </div>
               </div>
 
-              {/* Large, Prominent Verdict Badge with scale-in pop (1.0 -> 1.08 -> 1.0) */}
-              <div className="py-2.5 flex items-center justify-center">
+              {/* Security Action Badge & Independent Dual Statuses */}
+              <div className="py-2 flex flex-col items-center justify-center gap-2">
                 <motion.div
                   initial={shouldReduceMotion ? { scale: 1, opacity: 1 } : { scale: 1.0, opacity: 0 }}
                   animate={
@@ -262,14 +306,25 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
                   }`}
                 >
                   <Badge
-                    variant={!result.is_valid ? 'neutral' : isPhishing ? 'phishing' : 'legitimate'}
+                    variant={actionMeta.variant}
                     size="lg"
                     dot
-                    className="w-full justify-center py-2.5 text-sm font-extrabold tracking-wider shadow-lg"
+                    pulse={actionMeta.pulse}
+                    className="w-full justify-center py-2 text-xs sm:text-sm font-extrabold tracking-wider shadow-lg"
                   >
-                    {!result.is_valid ? 'FALLBACK' : isPhishing ? 'PHISHING' : 'LEGITIMATE'}
+                    {actionMeta.label}
                   </Badge>
                 </motion.div>
+
+                {/* Independent Dual Verdicts Sub-bar */}
+                <div className="w-full flex items-center justify-between text-[11px] px-1 text-slate-400 font-mono">
+                  <span>
+                    Phish: <strong className={isPhishing ? 'text-rose-400' : 'text-emerald-400'}>{result.phishing_verdict ? result.phishing_verdict.toUpperCase() : (isPhishing ? 'PHISH' : 'CLEAN')}</strong>
+                  </span>
+                  <span>
+                    Inj: <strong className={result.has_prompt_injection ? 'text-amber-400' : 'text-slate-400'}>{result.method.startsWith('M1') ? 'N/A' : (result.injection_verdict ? result.injection_verdict.toUpperCase() : (result.has_prompt_injection ? 'DETECTED' : 'CLEAN'))}</strong>
+                  </span>
+                </div>
               </div>
 
               {/* One-Line Confidence Bar (no numbers, clean visual bar) */}
@@ -389,39 +444,38 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
                   </div>
                 )}
 
-                {/* Verdict Badge & Prompt Injection Indicator */}
-                <div className="space-y-2">
+                {/* Security Action & Independent Verdicts */}
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between pb-2 border-b border-slate-800/60">
+                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                      Security Action:
+                    </span>
+                    <Badge variant={actionMeta.variant} size="md" dot pulse={actionMeta.pulse}>
+                      {actionMeta.badgeText}
+                    </Badge>
+                  </div>
+
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                      Verdict:
+                      Phishing Verdict:
                     </span>
                     <div className="flex items-center gap-1.5">
                       {!result.is_valid && (
                         <span
-                          title="Model response could not be parsed or service was offline; default fallback verdict applied."
+                          title="Inference failure or schema mismatch."
                           className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/40 font-medium inline-flex items-center gap-1"
                         >
                           <AlertTriangle className="h-2.5 w-2.5 text-amber-400" />
                           Fallback
                         </span>
                       )}
-                      <motion.div
-                        initial={shouldReduceMotion ? { scale: 1, opacity: 1 } : { scale: 1.0, opacity: 0 }}
-                        animate={shouldReduceMotion ? { scale: 1, opacity: 1 } : { scale: [1.0, 1.08, 1.0], opacity: 1 }}
-                        transition={shouldReduceMotion ? { duration: 0 } : {
-                          scale: { duration: 0.42, times: [0, 0.5, 1], ease: [0.16, 1, 0.3, 1], delay: 0.1 },
-                          opacity: { duration: 0.2, ease: 'easeOut' },
-                        }}
-                        className="inline-flex items-center"
+                      <Badge
+                        variant={!result.is_valid ? 'neutral' : isPhishing ? 'phishing' : 'legitimate'}
+                        size="md"
+                        dot
                       >
-                        <Badge
-                          variant={!result.is_valid ? 'neutral' : isPhishing ? 'phishing' : 'legitimate'}
-                          size="md"
-                          dot
-                        >
-                          {isPhishing ? 'PHISHING' : 'LEGITIMATE'}
-                        </Badge>
-                      </motion.div>
+                        {result.phishing_verdict ? result.phishing_verdict.toUpperCase() : (isPhishing ? 'PHISHING' : 'LEGITIMATE')}
+                      </Badge>
                     </div>
                   </div>
 
@@ -429,17 +483,17 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
                     <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
                       Prompt Injection:
                     </span>
-                    {result.has_prompt_injection ? (
-                      <Badge variant="injection" size="sm" dot pulse>
-                        DETECTED
-                      </Badge>
-                    ) : result.method.startsWith('M1') ? (
+                    {result.method.startsWith('M1') ? (
                       <Badge variant="neutral" size="sm">
                         N/A (Linear)
                       </Badge>
+                    ) : result.has_prompt_injection ? (
+                      <Badge variant="injection" size="sm" dot pulse>
+                        {result.injection_verdict ? result.injection_verdict.toUpperCase() : 'DETECTED'}
+                      </Badge>
                     ) : (
                       <Badge variant="neutral" size="sm">
-                        None Detected
+                        {result.injection_verdict ? result.injection_verdict.toUpperCase() : 'None Detected'}
                       </Badge>
                     )}
                   </div>
@@ -573,6 +627,17 @@ export const MethodResultCard: React.FC<MethodResultCardProps> = ({
                               {result.raw_response_call2}
                             </div>
                           )}
+                        </div>
+
+                        <div className="rounded-lg bg-slate-900/80 backdrop-blur-sm p-2.5 border border-slate-800/80 border-t-slate-700/60 space-y-1">
+                          <div className="font-semibold text-slate-100 flex items-center justify-between">
+                            <span>Stage 3: Independent Security Policy</span>
+                            <span className="font-mono text-xs text-teal-400 font-bold">{actionMeta.label}</span>
+                          </div>
+                          <div className="text-[11px] text-slate-300">
+                            Phishing: <span className="font-mono text-white font-medium">{result.phishing_verdict || (result.is_phishing ? 'phishing' : 'legitimate')}</span> |
+                            Injection: <span className="font-mono text-white font-medium">{result.injection_verdict || (result.has_prompt_injection ? 'detected' : 'clean')}</span>
+                          </div>
                         </div>
                       </div>
                     )}

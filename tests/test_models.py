@@ -18,14 +18,14 @@ def clear_m1_model_cache() -> Iterator[None]:
 
 def test_m1_raises_when_training_file_is_missing(tmp_path, monkeypatch) -> None:
     monkeypatch.setattr(models, "DATA_DIR", tmp_path)
-    expected_path = tmp_path / "splits" / "review_seed42" / "train.jsonl"
+    expected_path = tmp_path / "splits" / "clean_split_v1" / "train.jsonl"
 
     with pytest.raises(FileNotFoundError, match=re.escape(str(expected_path))):
         models.get_m1_model()
 
 
 def test_m1_raises_when_training_file_is_empty(tmp_path, monkeypatch) -> None:
-    train_path = tmp_path / "splits" / "review_seed42" / "train.jsonl"
+    train_path = tmp_path / "splits" / "clean_split_v1" / "train.jsonl"
     train_path.parent.mkdir(parents=True)
     train_path.touch()
     monkeypatch.setattr(models, "DATA_DIR", tmp_path)
@@ -37,7 +37,7 @@ def test_m1_raises_when_training_file_is_empty(tmp_path, monkeypatch) -> None:
 def test_m1_logs_loaded_row_count_and_class_balance(
     tmp_path, monkeypatch, caplog
 ) -> None:
-    train_path = tmp_path / "splits" / "review_seed42" / "train.jsonl"
+    train_path = tmp_path / "splits" / "clean_split_v1" / "train.jsonl"
     train_path.parent.mkdir(parents=True)
     train_path.write_text(
         '{"text":"ordinary team project update","label":0}\n'

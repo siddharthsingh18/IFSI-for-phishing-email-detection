@@ -34,28 +34,16 @@ import { ViewDensityToggle } from '../components/ViewDensityToggle';
 
 const ARCHITECTURE_OPTIONS: SelectOption<string>[] = [
   {
-    value: 'M1',
-    label: 'M1: TF-IDF + Logistic Regression',
-    description: 'Traditional ML Baseline (No LLM, zero injection risk)',
-    badge: 'Classical ML',
-  },
-  {
-    value: 'M2',
-    label: 'M2: Zero-Shot LLM',
-    description: 'Direct Prompting Baseline (Vulnerable to injection)',
-    badge: 'Zero-Shot',
-  },
-  {
-    value: 'M3',
-    label: 'M3: RAG Combined (Single-Call)',
-    description: 'Standard RAG (Direct context concatenation)',
-    badge: 'Combined RAG',
-  },
-  {
     value: 'M4',
     label: 'M4: RAG Decoupled (IFSI Two-Stage)',
-    description: 'IFSI Defense Architecture (Sanitizer + Isolated classifier)',
-    badge: 'IFSI Decoupled',
+    description: 'Primary Production Engine (Independent Injection & Phishing Stages)',
+    badge: 'Primary Engine',
+  },
+  {
+    value: 'M1',
+    label: 'M1: TF-IDF + Logistic Regression',
+    description: 'Lightweight Local Baseline (Classical ML, non-overriding diagnostic)',
+    badge: 'Local Baseline',
   },
 ];
 
@@ -170,8 +158,8 @@ export const LiveTestPage: React.FC = () => {
   const [subject, setSubject] = useState('');
   const [sender, setSender] = useState('');
   const [emailText, setEmailText] = useState('');
-  const [method, setMethod] = useState<'M1' | 'M2' | 'M3' | 'M4'>('M1');
-  const [model, setModel] = useState('qwen2.5:0.5b');
+  const [method, setMethod] = useState<'M1' | 'M2' | 'M3' | 'M4'>('M4');
+  const [model, setModel] = useState('qwen3.5:4b');
   const [modelCatalog, setModelCatalog] = useState<ModelCatalog | null>(null);
   const [topK, setTopK] = useState(3);
 
@@ -377,7 +365,7 @@ export const LiveTestPage: React.FC = () => {
 
       await minLoadingPromise;
       setCompareResult(res);
-      setRunStatus('Ran on all four');
+      setRunStatus('Ran comparison');
       // Default: collapse detail drawers in 4-column compare grid to keep cards compact
       setOpenDetailsMap({});
     } catch (err: any) {
@@ -429,7 +417,7 @@ export const LiveTestPage: React.FC = () => {
           Inspection bench
         </h1>
         <p className="text-slate-400 text-sm mt-1 max-w-3xl leading-relaxed">
-          Put a synthetic or non-confidential email on the bench and inspect how four classifier architectures respond.
+          Put a synthetic or non-confidential email on the bench and inspect the M4 Decoupled Two-Stage engine with independent phishing and prompt injection security status, alongside the M1 classical baseline.
         </p>
         <p className="mt-3 max-w-3xl border-l-2 border-[var(--evidence-amber)] pl-3 text-xs text-[var(--graphite)]">
           Do not paste confidential email. Text is sent only to your local backend and is never saved in localStorage.
@@ -1044,7 +1032,7 @@ export const LiveTestPage: React.FC = () => {
                         >
                           {isLoading && executionMode === 'compare'
                             ? 'Classifying…'
-                            : 'Run on all four'}
+                            : 'Compare M4 vs M1'}
                         </motion.span>
                       </AnimatePresence>
                     </div>
