@@ -1,0 +1,695 @@
+{
+  "metadata": {
+    "evaluation_dataset": "data/evaluation/live_benchmark_v2.jsonl",
+    "total_samples": 150,
+    "genuine_count": 75,
+    "phishing_count": 75,
+    "prompt_injection_count": 30,
+    "model_name": "qwen3.5:4b",
+    "faiss_index_path": "results/rag_index_clean",
+    "start_time_utc": "2026-10-30T16:23:41.064126+00:00",
+    "end_time_utc": "2026-10-30T16:48:55.835888+00:00",
+    "total_duration_seconds": 1514.77
+  },
+  "architectures": {
+    "M1": {
+      "total_samples": 150,
+      "true_positives": 59,
+      "true_negatives": 55,
+      "false_positives": 20,
+      "false_negatives": 16,
+      "accuracy": 0.76,
+      "precision": 0.7468,
+      "recall": 0.7867,
+      "f1": 0.7662,
+      "fpr": 0.2667,
+      "fnr": 0.2133,
+      "avg_latency_seconds": 0.0146,
+      "median_latency_seconds": 0.0123,
+      "failed_inference_count": 0,
+      "confusion_matrix": [
+        [
+          55,
+          20
+        ],
+        [
+          16,
+          59
+        ]
+      ]
+    },
+    "M2": {
+      "total_samples": 150,
+      "true_positives": 75,
+      "true_negatives": 61,
+      "false_positives": 14,
+      "false_negatives": 0,
+      "accuracy": 0.9067,
+      "precision": 0.8427,
+      "recall": 1.0,
+      "f1": 0.9146,
+      "fpr": 0.1867,
+      "fnr": 0.0,
+      "avg_latency_seconds": 3.9408,
+      "median_latency_seconds": 3.8714,
+      "failed_inference_count": 0,
+      "confusion_matrix": [
+        [
+          61,
+          14
+        ],
+        [
+          0,
+          75
+        ]
+      ]
+    },
+    "M3": {
+      "total_samples": 150,
+      "true_positives": 71,
+      "true_negatives": 69,
+      "false_positives": 6,
+      "false_negatives": 4,
+      "accuracy": 0.9333,
+      "precision": 0.9221,
+      "recall": 0.9467,
+      "f1": 0.9342,
+      "fpr": 0.08,
+      "fnr": 0.0533,
+      "avg_latency_seconds": 4.0899,
+      "median_latency_seconds": 4.0491,
+      "failed_inference_count": 0,
+      "confusion_matrix": [
+        [
+          69,
+          6
+        ],
+        [
+          4,
+          71
+        ]
+      ]
+    },
+    "M4": {
+      "total_samples": 150,
+      "true_positives": 71,
+      "true_negatives": 72,
+      "false_positives": 3,
+      "false_negatives": 4,
+      "accuracy": 0.9533,
+      "precision": 0.9595,
+      "recall": 0.9467,
+      "f1": 0.953,
+      "fpr": 0.04,
+      "fnr": 0.0533,
+      "avg_latency_seconds": 2.0526,
+      "median_latency_seconds": 2.0427,
+      "failed_inference_count": 0,
+      "confusion_matrix": [
+        [
+          72,
+          3
+        ],
+        [
+          4,
+          71
+        ]
+      ]
+    }
+  },
+  "category_breakdown": {
+    "ordinary_genuine": {
+      "M1": {
+        "total_samples": 30,
+        "true_positives": 0,
+        "true_negatives": 28,
+        "false_positives": 2,
+        "false_negatives": 0,
+        "accuracy": 0.9333,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "fpr": 0.0667,
+        "fnr": 0.0,
+        "avg_latency_seconds": 0.0222,
+        "median_latency_seconds": 0.0132,
+        "failed_inference_count": 0,
+        "confusion_matrix": [
+          [
+            28,
+            2
+          ],
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      "M2": {
+        "total_samples": 30,
+        "true_positives": 0,
+        "true_negatives": 28,
+        "false_positives": 2,
+        "false_negatives": 0,
+        "accuracy": 0.9333,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "fpr": 0.0667,
+        "fnr": 0.0,
+        "avg_latency_seconds": 3.7642,
+        "median_latency_seconds": 3.3701,
+        "failed_inference_count": 0,
+        "confusion_matrix": [
+          [
+            28,
+            2
+          ],
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      "M3": {
+        "total_samples": 30,
+        "true_positives": 0,
+        "true_negatives": 30,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "accuracy": 1.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "fpr": 0.0,
+        "fnr": 0.0,
+        "avg_latency_seconds": 3.7476,
+        "median_latency_seconds": 3.5196,
+        "failed_inference_count": 0,
+        "confusion_matrix": [
+          [
+            30,
+            0
+          ],
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      "M4": {
+        "total_samples": 30,
+        "true_positives": 0,
+        "true_negatives": 30,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "accuracy": 1.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "fpr": 0.0,
+        "fnr": 0.0,
+        "avg_latency_seconds": 2.0382,
+        "median_latency_seconds": 2.0238,
+        "failed_inference_count": 0,
+        "confusion_matrix": [
+          [
+            30,
+            0
+          ],
+          [
+            0,
+            0
+          ]
+        ]
+      }
+    },
+    "difficult_genuine": {
+      "M1": {
+        "total_samples": 30,
+        "true_positives": 0,
+        "true_negatives": 13,
+        "false_positives": 17,
+        "false_negatives": 0,
+        "accuracy": 0.4333,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "fpr": 0.5667,
+        "fnr": 0.0,
+        "avg_latency_seconds": 0.0123,
+        "median_latency_seconds": 0.0121,
+        "failed_inference_count": 0,
+        "confusion_matrix": [
+          [
+            13,
+            17
+          ],
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      "M2": {
+        "total_samples": 30,
+        "true_positives": 0,
+        "true_negatives": 26,
+        "false_positives": 4,
+        "false_negatives": 0,
+        "accuracy": 0.8667,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "fpr": 0.1333,
+        "fnr": 0.0,
+        "avg_latency_seconds": 3.7388,
+        "median_latency_seconds": 3.685,
+        "failed_inference_count": 0,
+        "confusion_matrix": [
+          [
+            26,
+            4
+          ],
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      "M3": {
+        "total_samples": 30,
+        "true_positives": 0,
+        "true_negatives": 29,
+        "false_positives": 1,
+        "false_negatives": 0,
+        "accuracy": 0.9667,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "fpr": 0.0333,
+        "fnr": 0.0,
+        "avg_latency_seconds": 3.8511,
+        "median_latency_seconds": 3.8586,
+        "failed_inference_count": 0,
+        "confusion_matrix": [
+          [
+            29,
+            1
+          ],
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      "M4": {
+        "total_samples": 30,
+        "true_positives": 0,
+        "true_negatives": 28,
+        "false_positives": 2,
+        "false_negatives": 0,
+        "accuracy": 0.9333,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "fpr": 0.0667,
+        "fnr": 0.0,
+        "avg_latency_seconds": 2.0144,
+        "median_latency_seconds": 1.9884,
+        "failed_inference_count": 0,
+        "confusion_matrix": [
+          [
+            28,
+            2
+          ],
+          [
+            0,
+            0
+          ]
+        ]
+      }
+    },
+    "conventional_phishing": {
+      "M1": {
+        "total_samples": 30,
+        "true_positives": 27,
+        "true_negatives": 0,
+        "false_positives": 0,
+        "false_negatives": 3,
+        "accuracy": 0.9,
+        "precision": 1.0,
+        "recall": 0.9,
+        "f1": 0.9474,
+        "fpr": 0.0,
+        "fnr": 0.1,
+        "avg_latency_seconds": 0.0122,
+        "median_latency_seconds": 0.0121,
+        "failed_inference_count": 0,
+        "confusion_matrix": [
+          [
+            0,
+            0
+          ],
+          [
+            3,
+            27
+          ]
+        ]
+      },
+      "M2": {
+        "total_samples": 30,
+        "true_positives": 30,
+        "true_negatives": 0,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "fpr": 0.0,
+        "fnr": 0.0,
+        "avg_latency_seconds": 3.9033,
+        "median_latency_seconds": 3.923,
+        "failed_inference_count": 0,
+        "confusion_matrix": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            30
+          ]
+        ]
+      },
+      "M3": {
+        "total_samples": 30,
+        "true_positives": 30,
+        "true_negatives": 0,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "fpr": 0.0,
+        "fnr": 0.0,
+        "avg_latency_seconds": 4.0955,
+        "median_latency_seconds": 4.0624,
+        "failed_inference_count": 0,
+        "confusion_matrix": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            30
+          ]
+        ]
+      },
+      "M4": {
+        "total_samples": 30,
+        "true_positives": 30,
+        "true_negatives": 0,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "fpr": 0.0,
+        "fnr": 0.0,
+        "avg_latency_seconds": 2.0409,
+        "median_latency_seconds": 2.0339,
+        "failed_inference_count": 0,
+        "confusion_matrix": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            30
+          ]
+        ]
+      }
+    },
+    "sophisticated_phishing": {
+      "M1": {
+        "total_samples": 30,
+        "true_positives": 18,
+        "true_negatives": 0,
+        "false_positives": 0,
+        "false_negatives": 12,
+        "accuracy": 0.6,
+        "precision": 1.0,
+        "recall": 0.6,
+        "f1": 0.75,
+        "fpr": 0.0,
+        "fnr": 0.4,
+        "avg_latency_seconds": 0.0126,
+        "median_latency_seconds": 0.0132,
+        "failed_inference_count": 0,
+        "confusion_matrix": [
+          [
+            0,
+            0
+          ],
+          [
+            12,
+            18
+          ]
+        ]
+      },
+      "M2": {
+        "total_samples": 30,
+        "true_positives": 30,
+        "true_negatives": 0,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "fpr": 0.0,
+        "fnr": 0.0,
+        "avg_latency_seconds": 4.101,
+        "median_latency_seconds": 4.1135,
+        "failed_inference_count": 0,
+        "confusion_matrix": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            30
+          ]
+        ]
+      },
+      "M3": {
+        "total_samples": 30,
+        "true_positives": 26,
+        "true_negatives": 0,
+        "false_positives": 0,
+        "false_negatives": 4,
+        "accuracy": 0.8667,
+        "precision": 1.0,
+        "recall": 0.8667,
+        "f1": 0.9286,
+        "fpr": 0.0,
+        "fnr": 0.1333,
+        "avg_latency_seconds": 4.4483,
+        "median_latency_seconds": 4.2725,
+        "failed_inference_count": 0,
+        "confusion_matrix": [
+          [
+            0,
+            0
+          ],
+          [
+            4,
+            26
+          ]
+        ]
+      },
+      "M4": {
+        "total_samples": 30,
+        "true_positives": 28,
+        "true_negatives": 0,
+        "false_positives": 0,
+        "false_negatives": 2,
+        "accuracy": 0.9333,
+        "precision": 1.0,
+        "recall": 0.9333,
+        "f1": 0.9655,
+        "fpr": 0.0,
+        "fnr": 0.0667,
+        "avg_latency_seconds": 2.0718,
+        "median_latency_seconds": 2.0538,
+        "failed_inference_count": 0,
+        "confusion_matrix": [
+          [
+            0,
+            0
+          ],
+          [
+            2,
+            28
+          ]
+        ]
+      }
+    },
+    "prompt_injection": {
+      "M1": {
+        "total_samples": 30,
+        "true_positives": 14,
+        "true_negatives": 14,
+        "false_positives": 1,
+        "false_negatives": 1,
+        "accuracy": 0.9333,
+        "precision": 0.9333,
+        "recall": 0.9333,
+        "f1": 0.9333,
+        "fpr": 0.0667,
+        "fnr": 0.0667,
+        "avg_latency_seconds": 0.0134,
+        "median_latency_seconds": 0.0119,
+        "failed_inference_count": 0,
+        "confusion_matrix": [
+          [
+            14,
+            1
+          ],
+          [
+            1,
+            14
+          ]
+        ]
+      },
+      "M2": {
+        "total_samples": 30,
+        "true_positives": 15,
+        "true_negatives": 7,
+        "false_positives": 8,
+        "false_negatives": 0,
+        "accuracy": 0.7333,
+        "precision": 0.6522,
+        "recall": 1.0,
+        "f1": 0.7895,
+        "fpr": 0.5333,
+        "fnr": 0.0,
+        "avg_latency_seconds": 4.1965,
+        "median_latency_seconds": 4.1083,
+        "failed_inference_count": 0,
+        "confusion_matrix": [
+          [
+            7,
+            8
+          ],
+          [
+            0,
+            15
+          ]
+        ]
+      },
+      "M3": {
+        "total_samples": 30,
+        "true_positives": 15,
+        "true_negatives": 10,
+        "false_positives": 5,
+        "false_negatives": 0,
+        "accuracy": 0.8333,
+        "precision": 0.75,
+        "recall": 1.0,
+        "f1": 0.8571,
+        "fpr": 0.3333,
+        "fnr": 0.0,
+        "avg_latency_seconds": 4.3071,
+        "median_latency_seconds": 4.3072,
+        "failed_inference_count": 0,
+        "confusion_matrix": [
+          [
+            10,
+            5
+          ],
+          [
+            0,
+            15
+          ]
+        ]
+      },
+      "M4": {
+        "total_samples": 30,
+        "true_positives": 13,
+        "true_negatives": 14,
+        "false_positives": 1,
+        "false_negatives": 2,
+        "accuracy": 0.9,
+        "precision": 0.9286,
+        "recall": 0.8667,
+        "f1": 0.8966,
+        "fpr": 0.0667,
+        "fnr": 0.1333,
+        "avg_latency_seconds": 2.0976,
+        "median_latency_seconds": 2.0864,
+        "failed_inference_count": 0,
+        "confusion_matrix": [
+          [
+            14,
+            1
+          ],
+          [
+            2,
+            13
+          ]
+        ]
+      }
+    }
+  },
+  "m4_prompt_injection_detection": {
+    "total_samples": 150,
+    "true_injection_count": 30,
+    "true_positives": 25,
+    "true_negatives": 120,
+    "false_positives": 0,
+    "false_negatives": 5,
+    "accuracy": 0.9667,
+    "precision": 1.0,
+    "recall": 0.8333,
+    "f1": 0.9091
+  },
+  "m4_security_policy_matrix": {
+    "genuine_clean": {
+      "total": 60,
+      "actions": {
+        "allow": 58,
+        "block": 2
+      }
+    },
+    "phishing_clean": {
+      "total": 60,
+      "actions": {
+        "block": 58,
+        "allow": 2
+      }
+    },
+    "genuine_injection": {
+      "total": 15,
+      "actions": {
+        "quarantine_review": 9,
+        "allow": 5,
+        "block": 1
+      }
+    },
+    "phishing_injection": {
+      "total": 15,
+      "actions": {
+        "block": 13,
+        "quarantine_review": 2
+      }
+    }
+  }
+}
