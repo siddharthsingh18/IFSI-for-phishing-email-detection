@@ -1,0 +1,2683 @@
+{
+  "configurations": {
+    "A0": {
+      "combined_250": {
+        "sample_count": 250,
+        "phishing_accuracy": 0.916,
+        "phishing_precision": 0.8768,
+        "phishing_recall": 0.968,
+        "phishing_f1": 0.9202,
+        "false_positive_rate": 0.136,
+        "false_negative_rate": 0.032,
+        "confusion_matrix": {
+          "tp": 121,
+          "fp": 17,
+          "tn": 108,
+          "fn": 4,
+          "tp_formula": "121/125 (96.8%)",
+          "fp_formula": "17/125 (13.6%)",
+          "tn_formula": "108/125 (86.4%)",
+          "fn_formula": "4/125 (3.2%)"
+        },
+        "injection_metrics": {
+          "injection_precision": 0.9762,
+          "injection_recall": 0.82,
+          "injection_f1": 0.8913,
+          "active_injection_recall": 1.0,
+          "active_injection_formula": "25/25",
+          "quoted_injection_accuracy": 0.0,
+          "quoted_injection_formula": "0/25"
+        },
+        "category_accuracy": {
+          "ordinary_genuine": {
+            "correct": 49,
+            "total": 50,
+            "accuracy": 0.98
+          },
+          "difficult_genuine": {
+            "correct": 41,
+            "total": 50,
+            "accuracy": 0.82
+          },
+          "conventional_phishing": {
+            "correct": 50,
+            "total": 50,
+            "accuracy": 1.0
+          },
+          "sophisticated_phishing": {
+            "correct": 47,
+            "total": 50,
+            "accuracy": 0.94
+          },
+          "prompt_injection": {
+            "correct": 42,
+            "total": 50,
+            "accuracy": 0.84
+          }
+        },
+        "latency_stats": {
+          "stage1_mean_ms": 1576.0,
+          "stage1_median_ms": 1385.1,
+          "stage1_p95_ms": 2573.4,
+          "stage2_mean_ms": 1582.1,
+          "stage2_median_ms": 1452.2,
+          "stage2_p95_ms": 2723.3,
+          "total_mean_ms": 3399.7,
+          "total_median_ms": 3066.9,
+          "total_p95_ms": 4979.0
+        },
+        "inference_failures": 0
+      },
+      "v2_150": {
+        "sample_count": 150,
+        "phishing_accuracy": 0.9133,
+        "phishing_precision": 0.878,
+        "phishing_recall": 0.96,
+        "phishing_f1": 0.9172,
+        "false_positive_rate": 0.1333,
+        "false_negative_rate": 0.04,
+        "confusion_matrix": {
+          "tp": 72,
+          "fp": 10,
+          "tn": 65,
+          "fn": 3,
+          "tp_formula": "72/75 (96.0%)",
+          "fp_formula": "10/75 (13.3%)",
+          "tn_formula": "65/75 (86.7%)",
+          "fn_formula": "3/75 (4.0%)"
+        },
+        "injection_metrics": {
+          "injection_precision": 1.0,
+          "injection_recall": 0.8667,
+          "injection_f1": 0.9286,
+          "active_injection_recall": 1.0,
+          "active_injection_formula": "15/15",
+          "quoted_injection_accuracy": 0.0,
+          "quoted_injection_formula": "0/15"
+        },
+        "category_accuracy": {
+          "ordinary_genuine": {
+            "correct": 29,
+            "total": 30,
+            "accuracy": 0.9667
+          },
+          "difficult_genuine": {
+            "correct": 24,
+            "total": 30,
+            "accuracy": 0.8
+          },
+          "conventional_phishing": {
+            "correct": 30,
+            "total": 30,
+            "accuracy": 1.0
+          },
+          "sophisticated_phishing": {
+            "correct": 28,
+            "total": 30,
+            "accuracy": 0.9333
+          },
+          "prompt_injection": {
+            "correct": 26,
+            "total": 30,
+            "accuracy": 0.8667
+          }
+        },
+        "latency_stats": {
+          "stage1_mean_ms": 1652.0,
+          "stage1_median_ms": 1411.3,
+          "stage1_p95_ms": 2857.4,
+          "stage2_mean_ms": 1651.1,
+          "stage2_median_ms": 1502.8,
+          "stage2_p95_ms": 2932.6,
+          "total_mean_ms": 3585.2,
+          "total_median_ms": 3143.1,
+          "total_p95_ms": 6295.7
+        },
+        "inference_failures": 0
+      },
+      "heldout_100": {
+        "sample_count": 100,
+        "phishing_accuracy": 0.92,
+        "phishing_precision": 0.875,
+        "phishing_recall": 0.98,
+        "phishing_f1": 0.9245,
+        "false_positive_rate": 0.14,
+        "false_negative_rate": 0.02,
+        "confusion_matrix": {
+          "tp": 49,
+          "fp": 7,
+          "tn": 43,
+          "fn": 1,
+          "tp_formula": "49/50 (98.0%)",
+          "fp_formula": "7/50 (14.0%)",
+          "tn_formula": "43/50 (86.0%)",
+          "fn_formula": "1/50 (2.0%)"
+        },
+        "injection_metrics": {
+          "injection_precision": 0.9375,
+          "injection_recall": 0.75,
+          "injection_f1": 0.8333,
+          "active_injection_recall": 1.0,
+          "active_injection_formula": "10/10",
+          "quoted_injection_accuracy": 0.0,
+          "quoted_injection_formula": "0/10"
+        },
+        "category_accuracy": {
+          "ordinary_genuine": {
+            "correct": 20,
+            "total": 20,
+            "accuracy": 1.0
+          },
+          "difficult_genuine": {
+            "correct": 17,
+            "total": 20,
+            "accuracy": 0.85
+          },
+          "conventional_phishing": {
+            "correct": 20,
+            "total": 20,
+            "accuracy": 1.0
+          },
+          "sophisticated_phishing": {
+            "correct": 19,
+            "total": 20,
+            "accuracy": 0.95
+          },
+          "prompt_injection": {
+            "correct": 16,
+            "total": 20,
+            "accuracy": 0.8
+          }
+        },
+        "latency_stats": {
+          "stage1_mean_ms": 1462.0,
+          "stage1_median_ms": 1370.9,
+          "stage1_p95_ms": 2062.9,
+          "stage2_mean_ms": 1478.6,
+          "stage2_median_ms": 1422.9,
+          "stage2_p95_ms": 1880.6,
+          "total_mean_ms": 3121.5,
+          "total_median_ms": 3020.7,
+          "total_p95_ms": 4148.7
+        },
+        "inference_failures": 0
+      }
+    },
+    "ISO-4": {
+      "combined_250": {
+        "sample_count": 250,
+        "phishing_accuracy": 0.92,
+        "phishing_precision": 0.8832,
+        "phishing_recall": 0.968,
+        "phishing_f1": 0.9237,
+        "false_positive_rate": 0.128,
+        "false_negative_rate": 0.032,
+        "confusion_matrix": {
+          "tp": 121,
+          "fp": 16,
+          "tn": 109,
+          "fn": 4,
+          "tp_formula": "121/125 (96.8%)",
+          "fp_formula": "16/125 (12.8%)",
+          "tn_formula": "109/125 (87.2%)",
+          "fn_formula": "4/125 (3.2%)"
+        },
+        "injection_metrics": {
+          "injection_precision": 0.7937,
+          "injection_recall": 1.0,
+          "injection_f1": 0.885,
+          "active_injection_recall": 1.0,
+          "active_injection_formula": "25/25",
+          "quoted_injection_accuracy": 0.92,
+          "quoted_injection_formula": "23/25"
+        },
+        "category_accuracy": {
+          "ordinary_genuine": {
+            "correct": 49,
+            "total": 50,
+            "accuracy": 0.98
+          },
+          "difficult_genuine": {
+            "correct": 40,
+            "total": 50,
+            "accuracy": 0.8
+          },
+          "conventional_phishing": {
+            "correct": 50,
+            "total": 50,
+            "accuracy": 1.0
+          },
+          "sophisticated_phishing": {
+            "correct": 47,
+            "total": 50,
+            "accuracy": 0.94
+          },
+          "prompt_injection": {
+            "correct": 44,
+            "total": 50,
+            "accuracy": 0.88
+          }
+        },
+        "latency_stats": {
+          "stage1_mean_ms": 2972.4,
+          "stage1_median_ms": 2772.3,
+          "stage1_p95_ms": 3991.2,
+          "stage2_mean_ms": 1686.9,
+          "stage2_median_ms": 1561.3,
+          "stage2_p95_ms": 2682.3,
+          "total_mean_ms": 4876.1,
+          "total_median_ms": 4666.1,
+          "total_p95_ms": 6442.9
+        },
+        "inference_failures": 0
+      },
+      "v2_150": {
+        "sample_count": 150,
+        "phishing_accuracy": 0.92,
+        "phishing_precision": 0.8889,
+        "phishing_recall": 0.96,
+        "phishing_f1": 0.9231,
+        "false_positive_rate": 0.12,
+        "false_negative_rate": 0.04,
+        "confusion_matrix": {
+          "tp": 72,
+          "fp": 9,
+          "tn": 66,
+          "fn": 3,
+          "tp_formula": "72/75 (96.0%)",
+          "fp_formula": "9/75 (12.0%)",
+          "tn_formula": "66/75 (88.0%)",
+          "fn_formula": "3/75 (4.0%)"
+        },
+        "injection_metrics": {
+          "injection_precision": 0.7317,
+          "injection_recall": 1.0,
+          "injection_f1": 0.8451,
+          "active_injection_recall": 1.0,
+          "active_injection_formula": "15/15",
+          "quoted_injection_accuracy": 0.8667,
+          "quoted_injection_formula": "13/15"
+        },
+        "category_accuracy": {
+          "ordinary_genuine": {
+            "correct": 29,
+            "total": 30,
+            "accuracy": 0.9667
+          },
+          "difficult_genuine": {
+            "correct": 24,
+            "total": 30,
+            "accuracy": 0.8
+          },
+          "conventional_phishing": {
+            "correct": 30,
+            "total": 30,
+            "accuracy": 1.0
+          },
+          "sophisticated_phishing": {
+            "correct": 28,
+            "total": 30,
+            "accuracy": 0.9333
+          },
+          "prompt_injection": {
+            "correct": 27,
+            "total": 30,
+            "accuracy": 0.9
+          }
+        },
+        "latency_stats": {
+          "stage1_mean_ms": 3129.0,
+          "stage1_median_ms": 3020.4,
+          "stage1_p95_ms": 4102.5,
+          "stage2_mean_ms": 1761.4,
+          "stage2_median_ms": 1622.3,
+          "stage2_p95_ms": 2765.1,
+          "total_mean_ms": 5146.4,
+          "total_median_ms": 4902.4,
+          "total_p95_ms": 6977.0
+        },
+        "inference_failures": 0
+      },
+      "heldout_100": {
+        "sample_count": 100,
+        "phishing_accuracy": 0.92,
+        "phishing_precision": 0.875,
+        "phishing_recall": 0.98,
+        "phishing_f1": 0.9245,
+        "false_positive_rate": 0.14,
+        "false_negative_rate": 0.02,
+        "confusion_matrix": {
+          "tp": 49,
+          "fp": 7,
+          "tn": 43,
+          "fn": 1,
+          "tp_formula": "49/50 (98.0%)",
+          "fp_formula": "7/50 (14.0%)",
+          "tn_formula": "43/50 (86.0%)",
+          "fn_formula": "1/50 (2.0%)"
+        },
+        "injection_metrics": {
+          "injection_precision": 0.9091,
+          "injection_recall": 1.0,
+          "injection_f1": 0.9524,
+          "active_injection_recall": 1.0,
+          "active_injection_formula": "10/10",
+          "quoted_injection_accuracy": 1.0,
+          "quoted_injection_formula": "10/10"
+        },
+        "category_accuracy": {
+          "ordinary_genuine": {
+            "correct": 20,
+            "total": 20,
+            "accuracy": 1.0
+          },
+          "difficult_genuine": {
+            "correct": 16,
+            "total": 20,
+            "accuracy": 0.8
+          },
+          "conventional_phishing": {
+            "correct": 20,
+            "total": 20,
+            "accuracy": 1.0
+          },
+          "sophisticated_phishing": {
+            "correct": 19,
+            "total": 20,
+            "accuracy": 0.95
+          },
+          "prompt_injection": {
+            "correct": 17,
+            "total": 20,
+            "accuracy": 0.85
+          }
+        },
+        "latency_stats": {
+          "stage1_mean_ms": 2737.4,
+          "stage1_median_ms": 2610.1,
+          "stage1_p95_ms": 3707.0,
+          "stage2_mean_ms": 1575.2,
+          "stage2_median_ms": 1530.6,
+          "stage2_p95_ms": 2039.5,
+          "total_mean_ms": 4470.6,
+          "total_median_ms": 4330.7,
+          "total_p95_ms": 5630.4
+        },
+        "inference_failures": 0
+      }
+    },
+    "A1": {
+      "combined_250": {
+        "sample_count": 250,
+        "phishing_accuracy": 0.928,
+        "phishing_precision": 0.9023,
+        "phishing_recall": 0.96,
+        "phishing_f1": 0.9302,
+        "false_positive_rate": 0.104,
+        "false_negative_rate": 0.04,
+        "confusion_matrix": {
+          "tp": 120,
+          "fp": 13,
+          "tn": 112,
+          "fn": 5,
+          "tp_formula": "120/125 (96.0%)",
+          "fp_formula": "13/125 (10.4%)",
+          "tn_formula": "112/125 (89.6%)",
+          "fn_formula": "5/125 (4.0%)"
+        },
+        "injection_metrics": {
+          "injection_precision": 0.8065,
+          "injection_recall": 1.0,
+          "injection_f1": 0.8929,
+          "active_injection_recall": 1.0,
+          "active_injection_formula": "25/25",
+          "quoted_injection_accuracy": 0.92,
+          "quoted_injection_formula": "23/25"
+        },
+        "category_accuracy": {
+          "ordinary_genuine": {
+            "correct": 49,
+            "total": 50,
+            "accuracy": 0.98
+          },
+          "difficult_genuine": {
+            "correct": 41,
+            "total": 50,
+            "accuracy": 0.82
+          },
+          "conventional_phishing": {
+            "correct": 50,
+            "total": 50,
+            "accuracy": 1.0
+          },
+          "sophisticated_phishing": {
+            "correct": 46,
+            "total": 50,
+            "accuracy": 0.92
+          },
+          "prompt_injection": {
+            "correct": 46,
+            "total": 50,
+            "accuracy": 0.92
+          }
+        },
+        "latency_stats": {
+          "stage1_mean_ms": 2698.2,
+          "stage1_median_ms": 2595.9,
+          "stage1_p95_ms": 3641.3,
+          "stage2_mean_ms": 1359.2,
+          "stage2_median_ms": 1337.8,
+          "stage2_p95_ms": 1857.8,
+          "total_mean_ms": 4181.4,
+          "total_median_ms": 4133.0,
+          "total_p95_ms": 5286.2
+        },
+        "inference_failures": 0
+      },
+      "v2_150": {
+        "sample_count": 150,
+        "phishing_accuracy": 0.92,
+        "phishing_precision": 0.8987,
+        "phishing_recall": 0.9467,
+        "phishing_f1": 0.9221,
+        "false_positive_rate": 0.1067,
+        "false_negative_rate": 0.0533,
+        "confusion_matrix": {
+          "tp": 71,
+          "fp": 8,
+          "tn": 67,
+          "fn": 4,
+          "tp_formula": "71/75 (94.7%)",
+          "fp_formula": "8/75 (10.7%)",
+          "tn_formula": "67/75 (89.3%)",
+          "fn_formula": "4/75 (5.3%)"
+        },
+        "injection_metrics": {
+          "injection_precision": 0.75,
+          "injection_recall": 1.0,
+          "injection_f1": 0.8571,
+          "active_injection_recall": 1.0,
+          "active_injection_formula": "15/15",
+          "quoted_injection_accuracy": 0.8667,
+          "quoted_injection_formula": "13/15"
+        },
+        "category_accuracy": {
+          "ordinary_genuine": {
+            "correct": 29,
+            "total": 30,
+            "accuracy": 0.9667
+          },
+          "difficult_genuine": {
+            "correct": 24,
+            "total": 30,
+            "accuracy": 0.8
+          },
+          "conventional_phishing": {
+            "correct": 30,
+            "total": 30,
+            "accuracy": 1.0
+          },
+          "sophisticated_phishing": {
+            "correct": 27,
+            "total": 30,
+            "accuracy": 0.9
+          },
+          "prompt_injection": {
+            "correct": 28,
+            "total": 30,
+            "accuracy": 0.9333
+          }
+        },
+        "latency_stats": {
+          "stage1_mean_ms": 2673.0,
+          "stage1_median_ms": 2583.7,
+          "stage1_p95_ms": 3423.6,
+          "stage2_mean_ms": 1324.7,
+          "stage2_median_ms": 1375.6,
+          "stage2_p95_ms": 1698.1,
+          "total_mean_ms": 4118.0,
+          "total_median_ms": 4133.0,
+          "total_p95_ms": 4793.5
+        },
+        "inference_failures": 0
+      },
+      "heldout_100": {
+        "sample_count": 100,
+        "phishing_accuracy": 0.94,
+        "phishing_precision": 0.9074,
+        "phishing_recall": 0.98,
+        "phishing_f1": 0.9423,
+        "false_positive_rate": 0.1,
+        "false_negative_rate": 0.02,
+        "confusion_matrix": {
+          "tp": 49,
+          "fp": 5,
+          "tn": 45,
+          "fn": 1,
+          "tp_formula": "49/50 (98.0%)",
+          "fp_formula": "5/50 (10.0%)",
+          "tn_formula": "45/50 (90.0%)",
+          "fn_formula": "1/50 (2.0%)"
+        },
+        "injection_metrics": {
+          "injection_precision": 0.9091,
+          "injection_recall": 1.0,
+          "injection_f1": 0.9524,
+          "active_injection_recall": 1.0,
+          "active_injection_formula": "10/10",
+          "quoted_injection_accuracy": 1.0,
+          "quoted_injection_formula": "10/10"
+        },
+        "category_accuracy": {
+          "ordinary_genuine": {
+            "correct": 20,
+            "total": 20,
+            "accuracy": 1.0
+          },
+          "difficult_genuine": {
+            "correct": 17,
+            "total": 20,
+            "accuracy": 0.85
+          },
+          "conventional_phishing": {
+            "correct": 20,
+            "total": 20,
+            "accuracy": 1.0
+          },
+          "sophisticated_phishing": {
+            "correct": 19,
+            "total": 20,
+            "accuracy": 0.95
+          },
+          "prompt_injection": {
+            "correct": 18,
+            "total": 20,
+            "accuracy": 0.9
+          }
+        },
+        "latency_stats": {
+          "stage1_mean_ms": 2736.0,
+          "stage1_median_ms": 2617.0,
+          "stage1_p95_ms": 3792.3,
+          "stage2_mean_ms": 1410.9,
+          "stage2_median_ms": 1320.3,
+          "stage2_p95_ms": 1948.9,
+          "total_mean_ms": 4276.4,
+          "total_median_ms": 4131.0,
+          "total_p95_ms": 6079.4
+        },
+        "inference_failures": 0
+      }
+    },
+    "A2": {
+      "combined_250": {
+        "sample_count": 250,
+        "phishing_accuracy": 0.892,
+        "phishing_precision": 0.8952,
+        "phishing_recall": 0.888,
+        "phishing_f1": 0.8916,
+        "false_positive_rate": 0.104,
+        "false_negative_rate": 0.112,
+        "confusion_matrix": {
+          "tp": 111,
+          "fp": 13,
+          "tn": 112,
+          "fn": 14,
+          "tp_formula": "111/125 (88.8%)",
+          "fp_formula": "13/125 (10.4%)",
+          "tn_formula": "112/125 (89.6%)",
+          "fn_formula": "14/125 (11.2%)"
+        },
+        "injection_metrics": {
+          "injection_precision": 0.8065,
+          "injection_recall": 1.0,
+          "injection_f1": 0.8929,
+          "active_injection_recall": 1.0,
+          "active_injection_formula": "25/25",
+          "quoted_injection_accuracy": 0.92,
+          "quoted_injection_formula": "23/25"
+        },
+        "category_accuracy": {
+          "ordinary_genuine": {
+            "correct": 49,
+            "total": 50,
+            "accuracy": 0.98
+          },
+          "difficult_genuine": {
+            "correct": 41,
+            "total": 50,
+            "accuracy": 0.82
+          },
+          "conventional_phishing": {
+            "correct": 47,
+            "total": 50,
+            "accuracy": 0.94
+          },
+          "sophisticated_phishing": {
+            "correct": 39,
+            "total": 50,
+            "accuracy": 0.78
+          },
+          "prompt_injection": {
+            "correct": 47,
+            "total": 50,
+            "accuracy": 0.94
+          }
+        },
+        "latency_stats": {
+          "stage1_mean_ms": 2661.1,
+          "stage1_median_ms": 2616.9,
+          "stage1_p95_ms": 3528.8,
+          "stage2_mean_ms": 4066.7,
+          "stage2_median_ms": 4036.2,
+          "stage2_p95_ms": 5071.1,
+          "total_mean_ms": 6833.3,
+          "total_median_ms": 6854.4,
+          "total_p95_ms": 8345.7
+        },
+        "inference_failures": 0
+      },
+      "v2_150": {
+        "sample_count": 150,
+        "phishing_accuracy": 0.8867,
+        "phishing_precision": 0.9028,
+        "phishing_recall": 0.8667,
+        "phishing_f1": 0.8844,
+        "false_positive_rate": 0.0933,
+        "false_negative_rate": 0.1333,
+        "confusion_matrix": {
+          "tp": 65,
+          "fp": 7,
+          "tn": 68,
+          "fn": 10,
+          "tp_formula": "65/75 (86.7%)",
+          "fp_formula": "7/75 (9.3%)",
+          "tn_formula": "68/75 (90.7%)",
+          "fn_formula": "10/75 (13.3%)"
+        },
+        "injection_metrics": {
+          "injection_precision": 0.75,
+          "injection_recall": 1.0,
+          "injection_f1": 0.8571,
+          "active_injection_recall": 1.0,
+          "active_injection_formula": "15/15",
+          "quoted_injection_accuracy": 0.8667,
+          "quoted_injection_formula": "13/15"
+        },
+        "category_accuracy": {
+          "ordinary_genuine": {
+            "correct": 29,
+            "total": 30,
+            "accuracy": 0.9667
+          },
+          "difficult_genuine": {
+            "correct": 26,
+            "total": 30,
+            "accuracy": 0.8667
+          },
+          "conventional_phishing": {
+            "correct": 28,
+            "total": 30,
+            "accuracy": 0.9333
+          },
+          "sophisticated_phishing": {
+            "correct": 22,
+            "total": 30,
+            "accuracy": 0.7333
+          },
+          "prompt_injection": {
+            "correct": 28,
+            "total": 30,
+            "accuracy": 0.9333
+          }
+        },
+        "latency_stats": {
+          "stage1_mean_ms": 2634.7,
+          "stage1_median_ms": 2563.3,
+          "stage1_p95_ms": 3584.4,
+          "stage2_mean_ms": 4034.3,
+          "stage2_median_ms": 3952.8,
+          "stage2_p95_ms": 5062.6,
+          "total_mean_ms": 6767.2,
+          "total_median_ms": 6771.2,
+          "total_p95_ms": 8461.7
+        },
+        "inference_failures": 0
+      },
+      "heldout_100": {
+        "sample_count": 100,
+        "phishing_accuracy": 0.9,
+        "phishing_precision": 0.8846,
+        "phishing_recall": 0.92,
+        "phishing_f1": 0.902,
+        "false_positive_rate": 0.12,
+        "false_negative_rate": 0.08,
+        "confusion_matrix": {
+          "tp": 46,
+          "fp": 6,
+          "tn": 44,
+          "fn": 4,
+          "tp_formula": "46/50 (92.0%)",
+          "fp_formula": "6/50 (12.0%)",
+          "tn_formula": "44/50 (88.0%)",
+          "fn_formula": "4/50 (8.0%)"
+        },
+        "injection_metrics": {
+          "injection_precision": 0.9091,
+          "injection_recall": 1.0,
+          "injection_f1": 0.9524,
+          "active_injection_recall": 1.0,
+          "active_injection_formula": "10/10",
+          "quoted_injection_accuracy": 1.0,
+          "quoted_injection_formula": "10/10"
+        },
+        "category_accuracy": {
+          "ordinary_genuine": {
+            "correct": 20,
+            "total": 20,
+            "accuracy": 1.0
+          },
+          "difficult_genuine": {
+            "correct": 15,
+            "total": 20,
+            "accuracy": 0.75
+          },
+          "conventional_phishing": {
+            "correct": 19,
+            "total": 20,
+            "accuracy": 0.95
+          },
+          "sophisticated_phishing": {
+            "correct": 17,
+            "total": 20,
+            "accuracy": 0.85
+          },
+          "prompt_injection": {
+            "correct": 19,
+            "total": 20,
+            "accuracy": 0.95
+          }
+        },
+        "latency_stats": {
+          "stage1_mean_ms": 2700.7,
+          "stage1_median_ms": 2636.9,
+          "stage1_p95_ms": 3366.8,
+          "stage2_mean_ms": 4115.4,
+          "stage2_median_ms": 4066.6,
+          "stage2_p95_ms": 5069.8,
+          "total_mean_ms": 6932.4,
+          "total_median_ms": 7001.1,
+          "total_p95_ms": 8060.3
+        },
+        "inference_failures": 0
+      }
+    },
+    "A3": {
+      "combined_250": {
+        "sample_count": 250,
+        "phishing_accuracy": 0.896,
+        "phishing_precision": 0.9091,
+        "phishing_recall": 0.88,
+        "phishing_f1": 0.8943,
+        "false_positive_rate": 0.088,
+        "false_negative_rate": 0.12,
+        "confusion_matrix": {
+          "tp": 110,
+          "fp": 11,
+          "tn": 114,
+          "fn": 15,
+          "tp_formula": "110/125 (88.0%)",
+          "fp_formula": "11/125 (8.8%)",
+          "tn_formula": "114/125 (91.2%)",
+          "fn_formula": "15/125 (12.0%)"
+        },
+        "injection_metrics": {
+          "injection_precision": 0.8065,
+          "injection_recall": 1.0,
+          "injection_f1": 0.8929,
+          "active_injection_recall": 1.0,
+          "active_injection_formula": "25/25",
+          "quoted_injection_accuracy": 0.92,
+          "quoted_injection_formula": "23/25"
+        },
+        "category_accuracy": {
+          "ordinary_genuine": {
+            "correct": 49,
+            "total": 50,
+            "accuracy": 0.98
+          },
+          "difficult_genuine": {
+            "correct": 42,
+            "total": 50,
+            "accuracy": 0.84
+          },
+          "conventional_phishing": {
+            "correct": 48,
+            "total": 50,
+            "accuracy": 0.96
+          },
+          "sophisticated_phishing": {
+            "correct": 38,
+            "total": 50,
+            "accuracy": 0.76
+          },
+          "prompt_injection": {
+            "correct": 47,
+            "total": 50,
+            "accuracy": 0.94
+          }
+        },
+        "latency_stats": {
+          "stage1_mean_ms": 2454.2,
+          "stage1_median_ms": 2296.4,
+          "stage1_p95_ms": 3505.7,
+          "stage2_mean_ms": 4348.8,
+          "stage2_median_ms": 4301.7,
+          "stage2_p95_ms": 5247.5,
+          "total_mean_ms": 6880.6,
+          "total_median_ms": 6744.5,
+          "total_p95_ms": 8474.9
+        },
+        "inference_failures": 0
+      },
+      "v2_150": {
+        "sample_count": 150,
+        "phishing_accuracy": 0.88,
+        "phishing_precision": 0.913,
+        "phishing_recall": 0.84,
+        "phishing_f1": 0.875,
+        "false_positive_rate": 0.08,
+        "false_negative_rate": 0.16,
+        "confusion_matrix": {
+          "tp": 63,
+          "fp": 6,
+          "tn": 69,
+          "fn": 12,
+          "tp_formula": "63/75 (84.0%)",
+          "fp_formula": "6/75 (8.0%)",
+          "tn_formula": "69/75 (92.0%)",
+          "fn_formula": "12/75 (16.0%)"
+        },
+        "injection_metrics": {
+          "injection_precision": 0.75,
+          "injection_recall": 1.0,
+          "injection_f1": 0.8571,
+          "active_injection_recall": 1.0,
+          "active_injection_formula": "15/15",
+          "quoted_injection_accuracy": 0.8667,
+          "quoted_injection_formula": "13/15"
+        },
+        "category_accuracy": {
+          "ordinary_genuine": {
+            "correct": 29,
+            "total": 30,
+            "accuracy": 0.9667
+          },
+          "difficult_genuine": {
+            "correct": 26,
+            "total": 30,
+            "accuracy": 0.8667
+          },
+          "conventional_phishing": {
+            "correct": 29,
+            "total": 30,
+            "accuracy": 0.9667
+          },
+          "sophisticated_phishing": {
+            "correct": 20,
+            "total": 30,
+            "accuracy": 0.6667
+          },
+          "prompt_injection": {
+            "correct": 28,
+            "total": 30,
+            "accuracy": 0.9333
+          }
+        },
+        "latency_stats": {
+          "stage1_mean_ms": 2551.9,
+          "stage1_median_ms": 2403.0,
+          "stage1_p95_ms": 3572.5,
+          "stage2_mean_ms": 4453.0,
+          "stage2_median_ms": 4420.4,
+          "stage2_p95_ms": 5314.1,
+          "total_mean_ms": 7104.0,
+          "total_median_ms": 6961.6,
+          "total_p95_ms": 8637.1
+        },
+        "inference_failures": 0
+      },
+      "heldout_100": {
+        "sample_count": 100,
+        "phishing_accuracy": 0.92,
+        "phishing_precision": 0.9038,
+        "phishing_recall": 0.94,
+        "phishing_f1": 0.9216,
+        "false_positive_rate": 0.1,
+        "false_negative_rate": 0.06,
+        "confusion_matrix": {
+          "tp": 47,
+          "fp": 5,
+          "tn": 45,
+          "fn": 3,
+          "tp_formula": "47/50 (94.0%)",
+          "fp_formula": "5/50 (10.0%)",
+          "tn_formula": "45/50 (90.0%)",
+          "fn_formula": "3/50 (6.0%)"
+        },
+        "injection_metrics": {
+          "injection_precision": 0.9091,
+          "injection_recall": 1.0,
+          "injection_f1": 0.9524,
+          "active_injection_recall": 1.0,
+          "active_injection_formula": "10/10",
+          "quoted_injection_accuracy": 1.0,
+          "quoted_injection_formula": "10/10"
+        },
+        "category_accuracy": {
+          "ordinary_genuine": {
+            "correct": 20,
+            "total": 20,
+            "accuracy": 1.0
+          },
+          "difficult_genuine": {
+            "correct": 16,
+            "total": 20,
+            "accuracy": 0.8
+          },
+          "conventional_phishing": {
+            "correct": 19,
+            "total": 20,
+            "accuracy": 0.95
+          },
+          "sophisticated_phishing": {
+            "correct": 18,
+            "total": 20,
+            "accuracy": 0.9
+          },
+          "prompt_injection": {
+            "correct": 19,
+            "total": 20,
+            "accuracy": 0.95
+          }
+        },
+        "latency_stats": {
+          "stage1_mean_ms": 2307.6,
+          "stage1_median_ms": 2151.5,
+          "stage1_p95_ms": 3254.1,
+          "stage2_mean_ms": 4192.4,
+          "stage2_median_ms": 4177.1,
+          "stage2_p95_ms": 4777.1,
+          "total_mean_ms": 6545.4,
+          "total_median_ms": 6458.7,
+          "total_p95_ms": 7722.1
+        },
+        "inference_failures": 0
+      }
+    },
+    "A4": {
+      "combined_250": {
+        "sample_count": 250,
+        "phishing_accuracy": 0.896,
+        "phishing_precision": 0.9091,
+        "phishing_recall": 0.88,
+        "phishing_f1": 0.8943,
+        "false_positive_rate": 0.088,
+        "false_negative_rate": 0.12,
+        "confusion_matrix": {
+          "tp": 110,
+          "fp": 11,
+          "tn": 114,
+          "fn": 15,
+          "tp_formula": "110/125 (88.0%)",
+          "fp_formula": "11/125 (8.8%)",
+          "tn_formula": "114/125 (91.2%)",
+          "fn_formula": "15/125 (12.0%)"
+        },
+        "injection_metrics": {
+          "injection_precision": 0.8065,
+          "injection_recall": 1.0,
+          "injection_f1": 0.8929,
+          "active_injection_recall": 1.0,
+          "active_injection_formula": "25/25",
+          "quoted_injection_accuracy": 0.92,
+          "quoted_injection_formula": "23/25"
+        },
+        "category_accuracy": {
+          "ordinary_genuine": {
+            "correct": 49,
+            "total": 50,
+            "accuracy": 0.98
+          },
+          "difficult_genuine": {
+            "correct": 42,
+            "total": 50,
+            "accuracy": 0.84
+          },
+          "conventional_phishing": {
+            "correct": 48,
+            "total": 50,
+            "accuracy": 0.96
+          },
+          "sophisticated_phishing": {
+            "correct": 38,
+            "total": 50,
+            "accuracy": 0.76
+          },
+          "prompt_injection": {
+            "correct": 47,
+            "total": 50,
+            "accuracy": 0.94
+          }
+        },
+        "latency_stats": {
+          "stage1_mean_ms": 2374.3,
+          "stage1_median_ms": 2215.1,
+          "stage1_p95_ms": 3308.1,
+          "stage2_mean_ms": 4258.1,
+          "stage2_median_ms": 4282.4,
+          "stage2_p95_ms": 5058.5,
+          "total_mean_ms": 6704.8,
+          "total_median_ms": 6626.6,
+          "total_p95_ms": 7877.3
+        },
+        "inference_failures": 0
+      },
+      "v2_150": {
+        "sample_count": 150,
+        "phishing_accuracy": 0.88,
+        "phishing_precision": 0.913,
+        "phishing_recall": 0.84,
+        "phishing_f1": 0.875,
+        "false_positive_rate": 0.08,
+        "false_negative_rate": 0.16,
+        "confusion_matrix": {
+          "tp": 63,
+          "fp": 6,
+          "tn": 69,
+          "fn": 12,
+          "tp_formula": "63/75 (84.0%)",
+          "fp_formula": "6/75 (8.0%)",
+          "tn_formula": "69/75 (92.0%)",
+          "fn_formula": "12/75 (16.0%)"
+        },
+        "injection_metrics": {
+          "injection_precision": 0.75,
+          "injection_recall": 1.0,
+          "injection_f1": 0.8571,
+          "active_injection_recall": 1.0,
+          "active_injection_formula": "15/15",
+          "quoted_injection_accuracy": 0.8667,
+          "quoted_injection_formula": "13/15"
+        },
+        "category_accuracy": {
+          "ordinary_genuine": {
+            "correct": 29,
+            "total": 30,
+            "accuracy": 0.9667
+          },
+          "difficult_genuine": {
+            "correct": 26,
+            "total": 30,
+            "accuracy": 0.8667
+          },
+          "conventional_phishing": {
+            "correct": 29,
+            "total": 30,
+            "accuracy": 0.9667
+          },
+          "sophisticated_phishing": {
+            "correct": 20,
+            "total": 30,
+            "accuracy": 0.6667
+          },
+          "prompt_injection": {
+            "correct": 28,
+            "total": 30,
+            "accuracy": 0.9333
+          }
+        },
+        "latency_stats": {
+          "stage1_mean_ms": 2307.6,
+          "stage1_median_ms": 2145.7,
+          "stage1_p95_ms": 3308.1,
+          "stage2_mean_ms": 4168.4,
+          "stage2_median_ms": 4193.0,
+          "stage2_p95_ms": 5017.8,
+          "total_mean_ms": 6525.6,
+          "total_median_ms": 6481.5,
+          "total_p95_ms": 7642.1
+        },
+        "inference_failures": 0
+      },
+      "heldout_100": {
+        "sample_count": 100,
+        "phishing_accuracy": 0.92,
+        "phishing_precision": 0.9038,
+        "phishing_recall": 0.94,
+        "phishing_f1": 0.9216,
+        "false_positive_rate": 0.1,
+        "false_negative_rate": 0.06,
+        "confusion_matrix": {
+          "tp": 47,
+          "fp": 5,
+          "tn": 45,
+          "fn": 3,
+          "tp_formula": "47/50 (94.0%)",
+          "fp_formula": "5/50 (10.0%)",
+          "tn_formula": "45/50 (90.0%)",
+          "fn_formula": "3/50 (6.0%)"
+        },
+        "injection_metrics": {
+          "injection_precision": 0.9091,
+          "injection_recall": 1.0,
+          "injection_f1": 0.9524,
+          "active_injection_recall": 1.0,
+          "active_injection_formula": "10/10",
+          "quoted_injection_accuracy": 1.0,
+          "quoted_injection_formula": "10/10"
+        },
+        "category_accuracy": {
+          "ordinary_genuine": {
+            "correct": 20,
+            "total": 20,
+            "accuracy": 1.0
+          },
+          "difficult_genuine": {
+            "correct": 16,
+            "total": 20,
+            "accuracy": 0.8
+          },
+          "conventional_phishing": {
+            "correct": 19,
+            "total": 20,
+            "accuracy": 0.95
+          },
+          "sophisticated_phishing": {
+            "correct": 18,
+            "total": 20,
+            "accuracy": 0.9
+          },
+          "prompt_injection": {
+            "correct": 19,
+            "total": 20,
+            "accuracy": 0.95
+          }
+        },
+        "latency_stats": {
+          "stage1_mean_ms": 2474.3,
+          "stage1_median_ms": 2426.5,
+          "stage1_p95_ms": 3191.8,
+          "stage2_mean_ms": 4392.6,
+          "stage2_median_ms": 4403.9,
+          "stage2_p95_ms": 5140.7,
+          "total_mean_ms": 6973.6,
+          "total_median_ms": 7084.0,
+          "total_p95_ms": 8178.9
+        },
+        "inference_failures": 0
+      }
+    },
+    "ISO-1": {
+      "combined_250": {
+        "sample_count": 250,
+        "phishing_accuracy": 0.88,
+        "phishing_precision": 0.8926,
+        "phishing_recall": 0.864,
+        "phishing_f1": 0.878,
+        "false_positive_rate": 0.104,
+        "false_negative_rate": 0.136,
+        "confusion_matrix": {
+          "tp": 108,
+          "fp": 13,
+          "tn": 112,
+          "fn": 17,
+          "tp_formula": "108/125 (86.4%)",
+          "fp_formula": "13/125 (10.4%)",
+          "tn_formula": "112/125 (89.6%)",
+          "fn_formula": "17/125 (13.6%)"
+        },
+        "injection_metrics": {
+          "injection_precision": 0.8065,
+          "injection_recall": 1.0,
+          "injection_f1": 0.8929,
+          "active_injection_recall": 1.0,
+          "active_injection_formula": "25/25",
+          "quoted_injection_accuracy": 0.92,
+          "quoted_injection_formula": "23/25"
+        },
+        "category_accuracy": {
+          "ordinary_genuine": {
+            "correct": 50,
+            "total": 50,
+            "accuracy": 1.0
+          },
+          "difficult_genuine": {
+            "correct": 41,
+            "total": 50,
+            "accuracy": 0.82
+          },
+          "conventional_phishing": {
+            "correct": 48,
+            "total": 50,
+            "accuracy": 0.96
+          },
+          "sophisticated_phishing": {
+            "correct": 36,
+            "total": 50,
+            "accuracy": 0.72
+          },
+          "prompt_injection": {
+            "correct": 45,
+            "total": 50,
+            "accuracy": 0.9
+          }
+        },
+        "latency_stats": {
+          "stage1_mean_ms": 2471.8,
+          "stage1_median_ms": 2363.5,
+          "stage1_p95_ms": 3335.5,
+          "stage2_mean_ms": 1625.7,
+          "stage2_median_ms": 1609.3,
+          "stage2_p95_ms": 1822.1,
+          "total_mean_ms": 4207.3,
+          "total_median_ms": 4095.7,
+          "total_p95_ms": 5168.7
+        },
+        "inference_failures": 0
+      },
+      "v2_150": {
+        "sample_count": 150,
+        "phishing_accuracy": 0.88,
+        "phishing_precision": 0.913,
+        "phishing_recall": 0.84,
+        "phishing_f1": 0.875,
+        "false_positive_rate": 0.08,
+        "false_negative_rate": 0.16,
+        "confusion_matrix": {
+          "tp": 63,
+          "fp": 6,
+          "tn": 69,
+          "fn": 12,
+          "tp_formula": "63/75 (84.0%)",
+          "fp_formula": "6/75 (8.0%)",
+          "tn_formula": "69/75 (92.0%)",
+          "fn_formula": "12/75 (16.0%)"
+        },
+        "injection_metrics": {
+          "injection_precision": 0.75,
+          "injection_recall": 1.0,
+          "injection_f1": 0.8571,
+          "active_injection_recall": 1.0,
+          "active_injection_formula": "15/15",
+          "quoted_injection_accuracy": 0.8667,
+          "quoted_injection_formula": "13/15"
+        },
+        "category_accuracy": {
+          "ordinary_genuine": {
+            "correct": 30,
+            "total": 30,
+            "accuracy": 1.0
+          },
+          "difficult_genuine": {
+            "correct": 26,
+            "total": 30,
+            "accuracy": 0.8667
+          },
+          "conventional_phishing": {
+            "correct": 29,
+            "total": 30,
+            "accuracy": 0.9667
+          },
+          "sophisticated_phishing": {
+            "correct": 20,
+            "total": 30,
+            "accuracy": 0.6667
+          },
+          "prompt_injection": {
+            "correct": 27,
+            "total": 30,
+            "accuracy": 0.9
+          }
+        },
+        "latency_stats": {
+          "stage1_mean_ms": 2515.2,
+          "stage1_median_ms": 2381.5,
+          "stage1_p95_ms": 3445.1,
+          "stage2_mean_ms": 1649.8,
+          "stage2_median_ms": 1621.8,
+          "stage2_p95_ms": 1876.1,
+          "total_mean_ms": 4291.5,
+          "total_median_ms": 4164.9,
+          "total_p95_ms": 5248.8
+        },
+        "inference_failures": 0
+      },
+      "heldout_100": {
+        "sample_count": 100,
+        "phishing_accuracy": 0.88,
+        "phishing_precision": 0.8654,
+        "phishing_recall": 0.9,
+        "phishing_f1": 0.8824,
+        "false_positive_rate": 0.14,
+        "false_negative_rate": 0.1,
+        "confusion_matrix": {
+          "tp": 45,
+          "fp": 7,
+          "tn": 43,
+          "fn": 5,
+          "tp_formula": "45/50 (90.0%)",
+          "fp_formula": "7/50 (14.0%)",
+          "tn_formula": "43/50 (86.0%)",
+          "fn_formula": "5/50 (10.0%)"
+        },
+        "injection_metrics": {
+          "injection_precision": 0.9091,
+          "injection_recall": 1.0,
+          "injection_f1": 0.9524,
+          "active_injection_recall": 1.0,
+          "active_injection_formula": "10/10",
+          "quoted_injection_accuracy": 1.0,
+          "quoted_injection_formula": "10/10"
+        },
+        "category_accuracy": {
+          "ordinary_genuine": {
+            "correct": 20,
+            "total": 20,
+            "accuracy": 1.0
+          },
+          "difficult_genuine": {
+            "correct": 15,
+            "total": 20,
+            "accuracy": 0.75
+          },
+          "conventional_phishing": {
+            "correct": 19,
+            "total": 20,
+            "accuracy": 0.95
+          },
+          "sophisticated_phishing": {
+            "correct": 16,
+            "total": 20,
+            "accuracy": 0.8
+          },
+          "prompt_injection": {
+            "correct": 18,
+            "total": 20,
+            "accuracy": 0.9
+          }
+        },
+        "latency_stats": {
+          "stage1_mean_ms": 2406.8,
+          "stage1_median_ms": 2310.7,
+          "stage1_p95_ms": 2882.1,
+          "stage2_mean_ms": 1589.6,
+          "stage2_median_ms": 1592.1,
+          "stage2_p95_ms": 1712.0,
+          "total_mean_ms": 4081.1,
+          "total_median_ms": 3974.5,
+          "total_p95_ms": 4573.3
+        },
+        "inference_failures": 0
+      }
+    },
+    "ISO-2": {
+      "combined_250": {
+        "sample_count": 250,
+        "phishing_accuracy": 0.912,
+        "phishing_precision": 0.8705,
+        "phishing_recall": 0.968,
+        "phishing_f1": 0.9167,
+        "false_positive_rate": 0.144,
+        "false_negative_rate": 0.032,
+        "confusion_matrix": {
+          "tp": 121,
+          "fp": 18,
+          "tn": 107,
+          "fn": 4,
+          "tp_formula": "121/125 (96.8%)",
+          "fp_formula": "18/125 (14.4%)",
+          "tn_formula": "107/125 (85.6%)",
+          "fn_formula": "4/125 (3.2%)"
+        },
+        "injection_metrics": {
+          "injection_precision": 0.8065,
+          "injection_recall": 1.0,
+          "injection_f1": 0.8929,
+          "active_injection_recall": 1.0,
+          "active_injection_formula": "25/25",
+          "quoted_injection_accuracy": 0.92,
+          "quoted_injection_formula": "23/25"
+        },
+        "category_accuracy": {
+          "ordinary_genuine": {
+            "correct": 49,
+            "total": 50,
+            "accuracy": 0.98
+          },
+          "difficult_genuine": {
+            "correct": 38,
+            "total": 50,
+            "accuracy": 0.76
+          },
+          "conventional_phishing": {
+            "correct": 50,
+            "total": 50,
+            "accuracy": 1.0
+          },
+          "sophisticated_phishing": {
+            "correct": 48,
+            "total": 50,
+            "accuracy": 0.96
+          },
+          "prompt_injection": {
+            "correct": 43,
+            "total": 50,
+            "accuracy": 0.86
+          }
+        },
+        "latency_stats": {
+          "stage1_mean_ms": 2559.2,
+          "stage1_median_ms": 2406.7,
+          "stage1_p95_ms": 3568.6,
+          "stage2_mean_ms": 1385.6,
+          "stage2_median_ms": 1357.7,
+          "stage2_p95_ms": 1620.6,
+          "total_mean_ms": 4057.4,
+          "total_median_ms": 3883.3,
+          "total_p95_ms": 5099.3
+        },
+        "inference_failures": 0
+      },
+      "v2_150": {
+        "sample_count": 150,
+        "phishing_accuracy": 0.92,
+        "phishing_precision": 0.8889,
+        "phishing_recall": 0.96,
+        "phishing_f1": 0.9231,
+        "false_positive_rate": 0.12,
+        "false_negative_rate": 0.04,
+        "confusion_matrix": {
+          "tp": 72,
+          "fp": 9,
+          "tn": 66,
+          "fn": 3,
+          "tp_formula": "72/75 (96.0%)",
+          "fp_formula": "9/75 (12.0%)",
+          "tn_formula": "66/75 (88.0%)",
+          "fn_formula": "3/75 (4.0%)"
+        },
+        "injection_metrics": {
+          "injection_precision": 0.75,
+          "injection_recall": 1.0,
+          "injection_f1": 0.8571,
+          "active_injection_recall": 1.0,
+          "active_injection_formula": "15/15",
+          "quoted_injection_accuracy": 0.8667,
+          "quoted_injection_formula": "13/15"
+        },
+        "category_accuracy": {
+          "ordinary_genuine": {
+            "correct": 29,
+            "total": 30,
+            "accuracy": 0.9667
+          },
+          "difficult_genuine": {
+            "correct": 23,
+            "total": 30,
+            "accuracy": 0.7667
+          },
+          "conventional_phishing": {
+            "correct": 30,
+            "total": 30,
+            "accuracy": 1.0
+          },
+          "sophisticated_phishing": {
+            "correct": 29,
+            "total": 30,
+            "accuracy": 0.9667
+          },
+          "prompt_injection": {
+            "correct": 27,
+            "total": 30,
+            "accuracy": 0.9
+          }
+        },
+        "latency_stats": {
+          "stage1_mean_ms": 2558.9,
+          "stage1_median_ms": 2401.9,
+          "stage1_p95_ms": 3568.6,
+          "stage2_mean_ms": 1363.7,
+          "stage2_median_ms": 1347.9,
+          "stage2_p95_ms": 1476.0,
+          "total_mean_ms": 4019.2,
+          "total_median_ms": 3860.3,
+          "total_p95_ms": 5078.6
+        },
+        "inference_failures": 0
+      },
+      "heldout_100": {
+        "sample_count": 100,
+        "phishing_accuracy": 0.9,
+        "phishing_precision": 0.8448,
+        "phishing_recall": 0.98,
+        "phishing_f1": 0.9074,
+        "false_positive_rate": 0.18,
+        "false_negative_rate": 0.02,
+        "confusion_matrix": {
+          "tp": 49,
+          "fp": 9,
+          "tn": 41,
+          "fn": 1,
+          "tp_formula": "49/50 (98.0%)",
+          "fp_formula": "9/50 (18.0%)",
+          "tn_formula": "41/50 (82.0%)",
+          "fn_formula": "1/50 (2.0%)"
+        },
+        "injection_metrics": {
+          "injection_precision": 0.9091,
+          "injection_recall": 1.0,
+          "injection_f1": 0.9524,
+          "active_injection_recall": 1.0,
+          "active_injection_formula": "10/10",
+          "quoted_injection_accuracy": 1.0,
+          "quoted_injection_formula": "10/10"
+        },
+        "category_accuracy": {
+          "ordinary_genuine": {
+            "correct": 20,
+            "total": 20,
+            "accuracy": 1.0
+          },
+          "difficult_genuine": {
+            "correct": 15,
+            "total": 20,
+            "accuracy": 0.75
+          },
+          "conventional_phishing": {
+            "correct": 20,
+            "total": 20,
+            "accuracy": 1.0
+          },
+          "sophisticated_phishing": {
+            "correct": 19,
+            "total": 20,
+            "accuracy": 0.95
+          },
+          "prompt_injection": {
+            "correct": 16,
+            "total": 20,
+            "accuracy": 0.8
+          }
+        },
+        "latency_stats": {
+          "stage1_mean_ms": 2559.5,
+          "stage1_median_ms": 2411.4,
+          "stage1_p95_ms": 3551.0,
+          "stage2_mean_ms": 1418.4,
+          "stage2_median_ms": 1370.9,
+          "stage2_p95_ms": 1827.1,
+          "total_mean_ms": 4114.8,
+          "total_median_ms": 3944.7,
+          "total_p95_ms": 5131.7
+        },
+        "inference_failures": 0
+      }
+    },
+    "ISO-3": {
+      "combined_250": {
+        "sample_count": 250,
+        "phishing_accuracy": 0.892,
+        "phishing_precision": 0.8952,
+        "phishing_recall": 0.888,
+        "phishing_f1": 0.8916,
+        "false_positive_rate": 0.104,
+        "false_negative_rate": 0.112,
+        "confusion_matrix": {
+          "tp": 111,
+          "fp": 13,
+          "tn": 112,
+          "fn": 14,
+          "tp_formula": "111/125 (88.8%)",
+          "fp_formula": "13/125 (10.4%)",
+          "tn_formula": "112/125 (89.6%)",
+          "fn_formula": "14/125 (11.2%)"
+        },
+        "injection_metrics": {
+          "injection_precision": 0.8065,
+          "injection_recall": 1.0,
+          "injection_f1": 0.8929,
+          "active_injection_recall": 1.0,
+          "active_injection_formula": "25/25",
+          "quoted_injection_accuracy": 0.92,
+          "quoted_injection_formula": "23/25"
+        },
+        "category_accuracy": {
+          "ordinary_genuine": {
+            "correct": 49,
+            "total": 50,
+            "accuracy": 0.98
+          },
+          "difficult_genuine": {
+            "correct": 41,
+            "total": 50,
+            "accuracy": 0.82
+          },
+          "conventional_phishing": {
+            "correct": 47,
+            "total": 50,
+            "accuracy": 0.94
+          },
+          "sophisticated_phishing": {
+            "correct": 39,
+            "total": 50,
+            "accuracy": 0.78
+          },
+          "prompt_injection": {
+            "correct": 47,
+            "total": 50,
+            "accuracy": 0.94
+          }
+        },
+        "latency_stats": {
+          "stage1_mean_ms": 2621.0,
+          "stage1_median_ms": 2507.6,
+          "stage1_p95_ms": 3492.3,
+          "stage2_mean_ms": 3987.4,
+          "stage2_median_ms": 3998.7,
+          "stage2_p95_ms": 4849.4,
+          "total_mean_ms": 6744.3,
+          "total_median_ms": 6743.0,
+          "total_p95_ms": 7926.2
+        },
+        "inference_failures": 0
+      },
+      "v2_150": {
+        "sample_count": 150,
+        "phishing_accuracy": 0.8867,
+        "phishing_precision": 0.9028,
+        "phishing_recall": 0.8667,
+        "phishing_f1": 0.8844,
+        "false_positive_rate": 0.0933,
+        "false_negative_rate": 0.1333,
+        "confusion_matrix": {
+          "tp": 65,
+          "fp": 7,
+          "tn": 68,
+          "fn": 10,
+          "tp_formula": "65/75 (86.7%)",
+          "fp_formula": "7/75 (9.3%)",
+          "tn_formula": "68/75 (90.7%)",
+          "fn_formula": "10/75 (13.3%)"
+        },
+        "injection_metrics": {
+          "injection_precision": 0.75,
+          "injection_recall": 1.0,
+          "injection_f1": 0.8571,
+          "active_injection_recall": 1.0,
+          "active_injection_formula": "15/15",
+          "quoted_injection_accuracy": 0.8667,
+          "quoted_injection_formula": "13/15"
+        },
+        "category_accuracy": {
+          "ordinary_genuine": {
+            "correct": 29,
+            "total": 30,
+            "accuracy": 0.9667
+          },
+          "difficult_genuine": {
+            "correct": 26,
+            "total": 30,
+            "accuracy": 0.8667
+          },
+          "conventional_phishing": {
+            "correct": 28,
+            "total": 30,
+            "accuracy": 0.9333
+          },
+          "sophisticated_phishing": {
+            "correct": 22,
+            "total": 30,
+            "accuracy": 0.7333
+          },
+          "prompt_injection": {
+            "correct": 28,
+            "total": 30,
+            "accuracy": 0.9333
+          }
+        },
+        "latency_stats": {
+          "stage1_mean_ms": 2679.2,
+          "stage1_median_ms": 2544.9,
+          "stage1_p95_ms": 3548.4,
+          "stage2_mean_ms": 4084.6,
+          "stage2_median_ms": 4061.2,
+          "stage2_p95_ms": 4945.0,
+          "total_mean_ms": 6911.5,
+          "total_median_ms": 6880.8,
+          "total_p95_ms": 8124.1
+        },
+        "inference_failures": 0
+      },
+      "heldout_100": {
+        "sample_count": 100,
+        "phishing_accuracy": 0.9,
+        "phishing_precision": 0.8846,
+        "phishing_recall": 0.92,
+        "phishing_f1": 0.902,
+        "false_positive_rate": 0.12,
+        "false_negative_rate": 0.08,
+        "confusion_matrix": {
+          "tp": 46,
+          "fp": 6,
+          "tn": 44,
+          "fn": 4,
+          "tp_formula": "46/50 (92.0%)",
+          "fp_formula": "6/50 (12.0%)",
+          "tn_formula": "44/50 (88.0%)",
+          "fn_formula": "4/50 (8.0%)"
+        },
+        "injection_metrics": {
+          "injection_precision": 0.9091,
+          "injection_recall": 1.0,
+          "injection_f1": 0.9524,
+          "active_injection_recall": 1.0,
+          "active_injection_formula": "10/10",
+          "quoted_injection_accuracy": 1.0,
+          "quoted_injection_formula": "10/10"
+        },
+        "category_accuracy": {
+          "ordinary_genuine": {
+            "correct": 20,
+            "total": 20,
+            "accuracy": 1.0
+          },
+          "difficult_genuine": {
+            "correct": 15,
+            "total": 20,
+            "accuracy": 0.75
+          },
+          "conventional_phishing": {
+            "correct": 19,
+            "total": 20,
+            "accuracy": 0.95
+          },
+          "sophisticated_phishing": {
+            "correct": 17,
+            "total": 20,
+            "accuracy": 0.85
+          },
+          "prompt_injection": {
+            "correct": 19,
+            "total": 20,
+            "accuracy": 0.95
+          }
+        },
+        "latency_stats": {
+          "stage1_mean_ms": 2533.7,
+          "stage1_median_ms": 2473.9,
+          "stage1_p95_ms": 3128.4,
+          "stage2_mean_ms": 3841.5,
+          "stage2_median_ms": 3815.1,
+          "stage2_p95_ms": 4605.2,
+          "total_mean_ms": 6493.5,
+          "total_median_ms": 6497.9,
+          "total_p95_ms": 7369.8
+        },
+        "inference_failures": 0
+      }
+    }
+  },
+  "pairwise_attributions": {
+    "ISO-4_vs_A0": {
+      "label": "Injection Classifier Contribution (ISO-4 vs A0)",
+      "config1": "ISO-4",
+      "config2": "A0",
+      "both_correct": 228,
+      "both_incorrect": 19,
+      "beneficial_to_config1": 2,
+      "harmful_to_config1": 1,
+      "total_changed": 3,
+      "net_gain": 1,
+      "mcnemar_test": {
+        "b_favors_config1": 2,
+        "c_favors_config2": 1,
+        "total_discordant": 3,
+        "chi2": 0.0,
+        "p_value": 1.0,
+        "significant_at_05": false
+      },
+      "changed_samples": [
+        {
+          "sample_id": "v2-inj-24",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "A0 Incorrect (True) -> ISO-4 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "heldout-dif-14",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "A0 Correct (False) -> ISO-4 Incorrect (True) [HARMFUL]"
+        },
+        {
+          "sample_id": "heldout-inj-13",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "A0 Incorrect (True) -> ISO-4 Correct (False) [BENEFICIAL]"
+        }
+      ]
+    },
+    "A1_vs_ISO-4": {
+      "label": "Sanitization Contribution (A1 vs ISO-4)",
+      "config1": "A1",
+      "config2": "ISO-4",
+      "both_correct": 229,
+      "both_incorrect": 17,
+      "beneficial_to_config1": 3,
+      "harmful_to_config1": 1,
+      "total_changed": 4,
+      "net_gain": 2,
+      "mcnemar_test": {
+        "b_favors_config1": 3,
+        "c_favors_config2": 1,
+        "total_discordant": 4,
+        "chi2": 0.25,
+        "p_value": 0.617075,
+        "significant_at_05": false
+      },
+      "changed_samples": [
+        {
+          "sample_id": "v2-sop-13",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "ISO-4 Correct (True) -> A1 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-inj-22",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "ISO-4 Incorrect (True) -> A1 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "heldout-dif-14",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "ISO-4 Incorrect (True) -> A1 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "heldout-inj-19",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "ISO-4 Incorrect (True) -> A1 Correct (False) [BENEFICIAL]"
+        }
+      ]
+    },
+    "A2_vs_A1": {
+      "label": "Domain Telemetry Contribution (A2 vs A1)",
+      "config1": "A2",
+      "config2": "A1",
+      "both_correct": 209,
+      "both_incorrect": 4,
+      "beneficial_to_config1": 14,
+      "harmful_to_config1": 23,
+      "total_changed": 37,
+      "net_gain": -9,
+      "mcnemar_test": {
+        "b_favors_config1": 14,
+        "c_favors_config2": 23,
+        "total_discordant": 37,
+        "chi2": 1.7297,
+        "p_value": 0.188445,
+        "significant_at_05": false
+      },
+      "changed_samples": [
+        {
+          "sample_id": "v2-ord-04",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "A1 Correct (False) -> A2 Incorrect (True) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-ord-19",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "A1 Incorrect (True) -> A2 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "v2-dif-02",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "A1 Incorrect (True) -> A2 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "v2-dif-09",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "A1 Incorrect (True) -> A2 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "v2-dif-10",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "A1 Incorrect (True) -> A2 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "v2-dif-14",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "A1 Incorrect (True) -> A2 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "v2-dif-15",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "A1 Incorrect (True) -> A2 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "v2-dif-19",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "A1 Incorrect (True) -> A2 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "v2-dif-21",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "A1 Correct (False) -> A2 Incorrect (True) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-dif-24",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "A1 Correct (False) -> A2 Incorrect (True) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-dif-26",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "A1 Correct (False) -> A2 Incorrect (True) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-dif-27",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "A1 Correct (False) -> A2 Incorrect (True) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-con-26",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "A1 Correct (True) -> A2 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-con-27",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "A1 Correct (True) -> A2 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-sop-02",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "A1 Correct (True) -> A2 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-sop-06",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "A1 Correct (True) -> A2 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-sop-07",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "A1 Correct (True) -> A2 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-sop-10",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "A1 Correct (True) -> A2 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-sop-13",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "A1 Incorrect (False) -> A2 Correct (True) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "v2-sop-14",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "A1 Correct (True) -> A2 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-sop-17",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "A1 Correct (True) -> A2 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-sop-24",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "A1 Correct (True) -> A2 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-sop-30",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "A1 Incorrect (False) -> A2 Correct (True) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "v2-inj-03",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "A1 Incorrect (False) -> A2 Correct (True) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "v2-inj-24",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "A1 Correct (False) -> A2 Incorrect (True) [HARMFUL]"
+        },
+        {
+          "sample_id": "heldout-dif-04",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "A1 Correct (False) -> A2 Incorrect (True) [HARMFUL]"
+        },
+        {
+          "sample_id": "heldout-dif-05",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "A1 Correct (False) -> A2 Incorrect (True) [HARMFUL]"
+        },
+        {
+          "sample_id": "heldout-dif-12",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "A1 Correct (False) -> A2 Incorrect (True) [HARMFUL]"
+        },
+        {
+          "sample_id": "heldout-dif-16",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "A1 Incorrect (True) -> A2 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "heldout-dif-17",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "A1 Correct (False) -> A2 Incorrect (True) [HARMFUL]"
+        },
+        {
+          "sample_id": "heldout-dif-19",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "A1 Incorrect (True) -> A2 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "heldout-phish-19",
+          "dataset": "heldout",
+          "ground_truth": true,
+          "direction": "A1 Correct (True) -> A2 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "heldout-sop-02",
+          "dataset": "heldout",
+          "ground_truth": true,
+          "direction": "A1 Incorrect (False) -> A2 Correct (True) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "heldout-sop-06",
+          "dataset": "heldout",
+          "ground_truth": true,
+          "direction": "A1 Correct (True) -> A2 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "heldout-sop-10",
+          "dataset": "heldout",
+          "ground_truth": true,
+          "direction": "A1 Correct (True) -> A2 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "heldout-sop-14",
+          "dataset": "heldout",
+          "ground_truth": true,
+          "direction": "A1 Correct (True) -> A2 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "heldout-inj-20",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "A1 Incorrect (True) -> A2 Correct (False) [BENEFICIAL]"
+        }
+      ]
+    },
+    "A3_vs_A2": {
+      "label": "Balanced RAG Contribution (A3 vs A2)",
+      "config1": "A3",
+      "config2": "A2",
+      "both_correct": 217,
+      "both_incorrect": 20,
+      "beneficial_to_config1": 7,
+      "harmful_to_config1": 6,
+      "total_changed": 13,
+      "net_gain": 1,
+      "mcnemar_test": {
+        "b_favors_config1": 7,
+        "c_favors_config2": 6,
+        "total_discordant": 13,
+        "chi2": 0.0,
+        "p_value": 1.0,
+        "significant_at_05": false
+      },
+      "changed_samples": [
+        {
+          "sample_id": "v2-dif-19",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "A2 Correct (False) -> A3 Incorrect (True) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-dif-21",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "A2 Incorrect (True) -> A3 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "v2-dif-24",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "A2 Incorrect (True) -> A3 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "v2-dif-25",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "A2 Correct (False) -> A3 Incorrect (True) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-con-26",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "A2 Incorrect (False) -> A3 Correct (True) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "v2-sop-04",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "A2 Correct (True) -> A3 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-sop-21",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "A2 Correct (True) -> A3 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-inj-08",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "A2 Correct (True) -> A3 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-inj-24",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "A2 Incorrect (True) -> A3 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "heldout-dif-06",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "A2 Incorrect (True) -> A3 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "heldout-sop-10",
+          "dataset": "heldout",
+          "ground_truth": true,
+          "direction": "A2 Incorrect (False) -> A3 Correct (True) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "heldout-inj-11",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "A2 Incorrect (True) -> A3 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "heldout-inj-20",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "A2 Correct (False) -> A3 Incorrect (True) [HARMFUL]"
+        }
+      ]
+    },
+    "A4_vs_A3": {
+      "label": "Canonical Parity Check (A4 vs A3)",
+      "config1": "A4",
+      "config2": "A3",
+      "both_correct": 224,
+      "both_incorrect": 26,
+      "beneficial_to_config1": 0,
+      "harmful_to_config1": 0,
+      "total_changed": 0,
+      "net_gain": 0,
+      "mcnemar_test": {
+        "chi2": 0.0,
+        "p_value": 1.0,
+        "significant_at_05": false,
+        "interpretation": "No discordant pairs"
+      },
+      "changed_samples": []
+    },
+    "A4_vs_ISO-1": {
+      "label": "Sanitization in Full System (A4 vs ISO-1)",
+      "config1": "A4",
+      "config2": "ISO-1",
+      "both_correct": 219,
+      "both_incorrect": 25,
+      "beneficial_to_config1": 5,
+      "harmful_to_config1": 1,
+      "total_changed": 6,
+      "net_gain": 4,
+      "mcnemar_test": {
+        "b_favors_config1": 5,
+        "c_favors_config2": 1,
+        "total_discordant": 6,
+        "chi2": 1.5,
+        "p_value": 0.220671,
+        "significant_at_05": false
+      },
+      "changed_samples": [
+        {
+          "sample_id": "v2-ord-04",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "ISO-1 Correct (False) -> A4 Incorrect (True) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-inj-22",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "ISO-1 Incorrect (True) -> A4 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "heldout-dif-06",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "ISO-1 Incorrect (True) -> A4 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "heldout-sop-10",
+          "dataset": "heldout",
+          "ground_truth": true,
+          "direction": "ISO-1 Incorrect (False) -> A4 Correct (True) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "heldout-sop-16",
+          "dataset": "heldout",
+          "ground_truth": true,
+          "direction": "ISO-1 Incorrect (False) -> A4 Correct (True) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "heldout-inj-11",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "ISO-1 Incorrect (True) -> A4 Correct (False) [BENEFICIAL]"
+        }
+      ]
+    },
+    "A4_vs_ISO-2": {
+      "label": "Domain Telemetry in Full System (A4 vs ISO-2)",
+      "config1": "A4",
+      "config2": "ISO-2",
+      "both_correct": 207,
+      "both_incorrect": 5,
+      "beneficial_to_config1": 17,
+      "harmful_to_config1": 21,
+      "total_changed": 38,
+      "net_gain": -4,
+      "mcnemar_test": {
+        "b_favors_config1": 17,
+        "c_favors_config2": 21,
+        "total_discordant": 38,
+        "chi2": 0.2368,
+        "p_value": 0.626496,
+        "significant_at_05": false
+      },
+      "changed_samples": [
+        {
+          "sample_id": "v2-ord-04",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "ISO-2 Correct (False) -> A4 Incorrect (True) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-ord-15",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "ISO-2 Incorrect (True) -> A4 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "v2-dif-02",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "ISO-2 Incorrect (True) -> A4 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "v2-dif-09",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "ISO-2 Incorrect (True) -> A4 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "v2-dif-11",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "ISO-2 Incorrect (True) -> A4 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "v2-dif-14",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "ISO-2 Incorrect (True) -> A4 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "v2-dif-15",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "ISO-2 Incorrect (True) -> A4 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "v2-dif-26",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "ISO-2 Correct (False) -> A4 Incorrect (True) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-dif-27",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "ISO-2 Correct (False) -> A4 Incorrect (True) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-con-27",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "ISO-2 Correct (True) -> A4 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-sop-02",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "ISO-2 Correct (True) -> A4 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-sop-04",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "ISO-2 Correct (True) -> A4 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-sop-06",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "ISO-2 Correct (True) -> A4 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-sop-07",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "ISO-2 Correct (True) -> A4 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-sop-08",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "ISO-2 Correct (True) -> A4 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-sop-10",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "ISO-2 Correct (True) -> A4 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-sop-14",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "ISO-2 Correct (True) -> A4 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-sop-17",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "ISO-2 Correct (True) -> A4 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-sop-21",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "ISO-2 Correct (True) -> A4 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-sop-24",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "ISO-2 Correct (True) -> A4 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-sop-30",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "ISO-2 Incorrect (False) -> A4 Correct (True) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "v2-inj-03",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "ISO-2 Incorrect (False) -> A4 Correct (True) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "heldout-dif-04",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "ISO-2 Correct (False) -> A4 Incorrect (True) [HARMFUL]"
+        },
+        {
+          "sample_id": "heldout-dif-05",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "ISO-2 Correct (False) -> A4 Incorrect (True) [HARMFUL]"
+        },
+        {
+          "sample_id": "heldout-dif-06",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "ISO-2 Incorrect (True) -> A4 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "heldout-dif-10",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "ISO-2 Incorrect (True) -> A4 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "heldout-dif-12",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "ISO-2 Correct (False) -> A4 Incorrect (True) [HARMFUL]"
+        },
+        {
+          "sample_id": "heldout-dif-13",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "ISO-2 Incorrect (True) -> A4 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "heldout-dif-16",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "ISO-2 Incorrect (True) -> A4 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "heldout-dif-17",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "ISO-2 Correct (False) -> A4 Incorrect (True) [HARMFUL]"
+        },
+        {
+          "sample_id": "heldout-dif-19",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "ISO-2 Incorrect (True) -> A4 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "heldout-phish-19",
+          "dataset": "heldout",
+          "ground_truth": true,
+          "direction": "ISO-2 Correct (True) -> A4 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "heldout-sop-02",
+          "dataset": "heldout",
+          "ground_truth": true,
+          "direction": "ISO-2 Incorrect (False) -> A4 Correct (True) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "heldout-sop-06",
+          "dataset": "heldout",
+          "ground_truth": true,
+          "direction": "ISO-2 Correct (True) -> A4 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "heldout-sop-14",
+          "dataset": "heldout",
+          "ground_truth": true,
+          "direction": "ISO-2 Correct (True) -> A4 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "heldout-inj-11",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "ISO-2 Incorrect (True) -> A4 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "heldout-inj-16",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "ISO-2 Incorrect (True) -> A4 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "heldout-inj-19",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "ISO-2 Incorrect (True) -> A4 Correct (False) [BENEFICIAL]"
+        }
+      ]
+    },
+    "A4_vs_ISO-3": {
+      "label": "Balanced RAG in Full System (A4 vs ISO-3)",
+      "config1": "A4",
+      "config2": "ISO-3",
+      "both_correct": 217,
+      "both_incorrect": 20,
+      "beneficial_to_config1": 7,
+      "harmful_to_config1": 6,
+      "total_changed": 13,
+      "net_gain": 1,
+      "mcnemar_test": {
+        "b_favors_config1": 7,
+        "c_favors_config2": 6,
+        "total_discordant": 13,
+        "chi2": 0.0,
+        "p_value": 1.0,
+        "significant_at_05": false
+      },
+      "changed_samples": [
+        {
+          "sample_id": "v2-dif-19",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "ISO-3 Correct (False) -> A4 Incorrect (True) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-dif-21",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "ISO-3 Incorrect (True) -> A4 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "v2-dif-24",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "ISO-3 Incorrect (True) -> A4 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "v2-dif-25",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "ISO-3 Correct (False) -> A4 Incorrect (True) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-con-26",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "ISO-3 Incorrect (False) -> A4 Correct (True) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "v2-sop-04",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "ISO-3 Correct (True) -> A4 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-sop-21",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "ISO-3 Correct (True) -> A4 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-inj-08",
+          "dataset": "v2",
+          "ground_truth": true,
+          "direction": "ISO-3 Correct (True) -> A4 Incorrect (False) [HARMFUL]"
+        },
+        {
+          "sample_id": "v2-inj-24",
+          "dataset": "v2",
+          "ground_truth": false,
+          "direction": "ISO-3 Incorrect (True) -> A4 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "heldout-dif-06",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "ISO-3 Incorrect (True) -> A4 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "heldout-sop-10",
+          "dataset": "heldout",
+          "ground_truth": true,
+          "direction": "ISO-3 Incorrect (False) -> A4 Correct (True) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "heldout-inj-11",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "ISO-3 Incorrect (True) -> A4 Correct (False) [BENEFICIAL]"
+        },
+        {
+          "sample_id": "heldout-inj-20",
+          "dataset": "heldout",
+          "ground_truth": false,
+          "direction": "ISO-3 Correct (False) -> A4 Incorrect (True) [HARMFUL]"
+        }
+      ]
+    }
+  },
+  "total_records": 2250
+}

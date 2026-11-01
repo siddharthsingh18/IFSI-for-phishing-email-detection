@@ -1,0 +1,269 @@
+<USER_REQUEST>
+# IFSI — Phase 7: Domain Evidence Precision Refinement & Regression Study
+
+## Objective
+
+Refine the Phase 6 Config B experimental architecture to reduce false positives caused by legitimate secondary domains, internal corporate senders, and legitimate third-party SaaS authentication domains.
+
+Preserve the phishing recall improvements achieved in Phase 6.
+
+This is an isolated experimental phase. Production promotion is not authorized.
+
+## 1. Mandatory protection rules
+
+Do not modify:
+
+- Production M4 (`src/core/inference.py`).
+- Frozen A1 (`src/core/inference_m4_v2.py`).
+- Phase 5 implementations.
+- Phase 6 implementations.
+- Historical datasets, predictions, metrics, or reports.
+- Clean FAISS index or metadata.
+
+Create new implementation files under:
+
+`src/experiments/phase7_domain_precision/`
+
+Create all results under:
+
+`results/phase7_domain_precision/`
+
+Use Phase 6 Config B as the experimental reference.
+
+Do not overwrite or modify Phase 6 Config B.
+
+## 2. Investigate the three false positives
+
+Reconstruct the complete processing path for:
+
+- `gen-ord-010`
+- `p6-leg-007`
+- `p6-leg-015`
+
+For each sample inspect:
+
+1. Original email content.
+2. Sender and display name.
+3. Reply-to address.
+4. URLs and destination domains.
+5. Domain Analyzer V2 output.
+6. Evidence block passed to Stage 2.
+7. Stage 2 reasoning and output.
+8. Final security action.
+
+Determine precisely why the evidence caused an incorrect phishing classification.
+
+## 3. Domain evidence precision improvements
+
+Implement an experimental Domain Analyzer V3.
+
+### A. Legitimate secondary domains
+
+Handle legitimate organizational secondary domains without assuming that every hyphenated or unfamiliar domain is malicious.
+
+Use explicit, auditable domain relationships.
+
+Do not create broad wildcard trust rules such as allowing every domain containing a brand name.
+
+### B. Internal corporate sender handling
+
+Distinguish:
+
+- A corporate employee using an internal corporate sender domain.
+- An external party impersonating a corporate brand.
+- A legitimate third-party provider sending a message on behalf of an organization.
+
+A brand name appearing in the subject or body must not automatically create an identity mismatch.
+
+### C. Legitimate SaaS authentication domains
+
+Support legitimate multi-domain service relationships, including:
+
+- Workday and its tenant authentication domains.
+- SAP Concur and legitimate corporate integrations.
+- Other known services where explicitly supported by the evidence registry.
+
+Every relationship must be documented with its evidence source and scope.
+
+Do not infer trust from name similarity alone.
+
+### D. Evidence semantics
+
+Keep the distinction between:
+
+- Observed domain facts.
+- Structural anomalies.
+- Verified organizational relationships.
+- Unknown or unavailable reputation information.
+
+Never translate unknown evidence into a clean or trusted verdict.
+
+Do not generate invented maliciousness scores.
+
+Do not automatically classify an email as phishing solely because of one domain anomaly.
+
+## 4. Investigate Config A / Config C parity discrepancy
+
+Phase 6 required Config C to reproduce Config A on all 40 domain challenge samples.
+
+The report indicates only 97.5% prediction parity.
+
+Identify:
+
+- Exact sample ID where predictions differ.
+- Whether the difference is in phishing classification, security action, confidence, or another output.
+- Whether Config C actually disables all domain evidence.
+- Whether prompts, model parameters, retrieval results, or other configuration variables differ.
+- Whether this discrepancy invalidates any Phase 6 ablation conclusion.
+
+Document the cause before implementing V3.
+
+Do not silently dismiss the discrepancy.
+
+## 5. Phase 7 experimental configurations
+
+Run these configurations on identical inputs:
+
+**A — Frozen Phase 6 Config B**
+
+- Compact Stage 1.
+- Sanitizer V2.
+- Domain Analyzer V2.
+- Phase 6 Stage 2 prompt.
+- Standard top-3 RAG.
+
+**B — Experimental Config B with Domain Analyzer V3**
+
+- Identical to A.
+- Only the domain analyzer and its explicitly documented evidence semantics change.
+
+**C — Domain Evidence Disabled**
+
+- Same implementation and all other configuration parameters.
+- Domain evidence disabled.
+- Used to verify parity with the appropriate baseline.
+
+Do not introduce balanced RAG or unrelated Stage 2 changes.
+
+## 6. Regression datasets
+
+Evaluate on:
+
+### Historical regression cases
+- All 160 Phase 5 regression samples.
+- All 40 Phase 6 domain challenge samples.
+
+### New precision challenge set
+
+Include:
+
+- The three historical false positives.
+- Legitimate secondary domains.
+- Legitimate corporate internal senders.
+- Third-party SaaS authentication domains.
+- Legitimate brand mentions.
+- Actual lookalike-domain phishing.
+- External sender impersonation.
+- Reply-to mismatch attacks.
+- Legitimate external service-provider notifications.
+
+Create fresh variants rather than merely duplicating historical templates.
+
+Ensure explicit ground truth and no overlap with training, validation, test, or historical evaluation datasets.
+
+Report synthetic and adapted samples separately from any raw real-world samples.
+
+## 7. Mandatory evaluation metrics
+
+For each configuration calculate:
+
+- Accuracy.
+- Precision.
+- Recall.
+- F1.
+- FPR.
+- FNR.
+- Confusion matrix.
+- Per-category accuracy.
+- Sophisticated phishing recall.
+- Difficult legitimate accuracy.
+- Ordinary legitimate accuracy.
+- Active injection recall.
+- Quoted injection safe-delivery rate.
+- Operational security-action distribution.
+
+Measure mean, median, P90 and P95 latency.
+
+Perform paired comparisons and inspect every changed prediction.
+
+Pay special attention to whether V3 corrects the three historical false positives without reintroducing the 20 sophisticated phishing misses.
+
+## 8. Security invariants
+
+Maintain:
+
+- No unresolved active injection reaches the inbox.
+- Quoted injection does not automatically imply phishing.
+- Unknown domain reputation is not treated as proof of legitimacy.
+- Legitimate brand mentions are not automatically treated as impersonation.
+- Domain anomalies are evidence, not definitive phishing labels.
+- Sanitization does not remove unrelated content.
+- Failures retain existing fail-safe behavior.
+
+Report classification performance and operational security outcomes separately.
+
+## 9. Deliverables
+
+Save under:
+
+`results/phase7_domain_precision/`
+
+Create:
+
+- `phase6_false_positive_root_cause.md`
+- `config_c_parity_investigation.md`
+- `domain_analyzer_v3_design.md`
+- `implementation_report.md`
+- `dataset_integrity_report.md`
+- `independent_metrics.json`
+- `false_positive_analysis.md`
+- `sophisticated_phishing_analysis.md`
+- `latency_comparison.md`
+- `predictions.jsonl`
+- `promotion_readiness.md`
+
+## 10. Final audit — mandatory
+
+At completion provide:
+
+1. Exact files inspected, created and modified.
+2. SHA-256 hashes of protected files.
+3. Dataset sizes, category distributions and overlap checks.
+4. Exact commands executed.
+5. Automated test results.
+6. Independent metrics calculated from raw predictions.
+7. All changed predictions with sample IDs.
+8. Results for all 20 historical sophisticated phishing cases.
+9. Results for all three historical false positives.
+10. Config A/C parity investigation findings.
+11. Latency comparison.
+12. Actual Git status and complete diff summary.
+13. Any deviations from the requested scope.
+
+Conclude with one recommendation:
+
+- Suitable for a larger independent evaluation.
+- Requires further refinement.
+- Abandon this domain-evidence approach.
+
+Do not promote or merge anything into production.
+
+Stop after generating all reports and audit evidence.
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-11-01T16:20:00+05:30.
+
+The user's current state is as follows:
+Active Document: d:\Project\IFSI-for-phishing-email-detection\tools\final_phase6_audit.py (LANGUAGE_UNSPECIFIED)
+Cursor is on line: 1
+</ADDITIONAL_METADATA>

@@ -1,0 +1,21 @@
+{
+  "total_expected": 2250,
+  "completed_count": 2250,
+  "percent_complete": 100.0,
+  "current_config": "DONE",
+  "config_counts": {
+    "A0": 250,
+    "ISO-4": 250,
+    "A1": 250,
+    "A2": 250,
+    "A3": 250,
+    "A4": 250,
+    "ISO-1": 250,
+    "ISO-2": 250,
+    "ISO-3": 250
+  },
+  "elapsed_seconds": 11972.6,
+  "estimated_remaining_seconds": 0.0,
+  "estimated_remaining_minutes": 0.0,
+  "last_updated": "2026-10-31 23:22:05"
+}

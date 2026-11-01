@@ -1,0 +1,154 @@
+{
+  "A1": {
+    "sample_count": 160,
+    "valid_count": 155,
+    "error_count": 5,
+    "confusion_matrix": {
+      "tp": 45,
+      "fp": 0,
+      "tn": 90,
+      "fn": 25
+    },
+    "classification_metrics": {
+      "accuracy": 0.8438,
+      "precision": 1.0,
+      "recall": 0.6429,
+      "f1": 0.7826,
+      "fpr": 0.0,
+      "fnr": 0.3571
+    },
+    "injection_metrics": {
+      "active_injection_count": 50,
+      "active_injection_detected": 50,
+      "active_injection_recall": 1.0,
+      "quoted_injection_count": 50,
+      "quoted_injection_detected": 50,
+      "quoted_injection_recall": 1.0,
+      "sanitization_success_count": 45,
+      "sanitization_success_rate": 0.9,
+      "match_methods": {
+        "unknown": 50
+      },
+      "chinese_samples_total": 5,
+      "chinese_samples_sanitized": 0,
+      "chinese_samples_manual_review": 5
+    },
+    "security_policy_metrics": {
+      "action_distribution": {
+        "block": 45,
+        "manual_review": 5,
+        "allow": 110
+      },
+      "phishing_containment_rate": 0.7143,
+      "active_injection_containment_rate": 1.0,
+      "legitimate_clean_delivery_rate": 1.0
+    },
+    "latency_metrics": {
+      "stage1_ms": {
+        "mean": 2674.65,
+        "p50": 2496.64,
+        "p90": 3693.92,
+        "p99": 4108.4,
+        "min": 1790.58,
+        "max": 4318.3
+      },
+      "stage2_ms": {
+        "mean": 1208.58,
+        "p50": 1064.74,
+        "p90": 1643.28,
+        "p99": 1912.07,
+        "min": 796.25,
+        "max": 2123.61
+      },
+      "total_ms": {
+        "mean": 3951.41,
+        "p50": 3907.84,
+        "p90": 5117.53,
+        "p99": 6040.73,
+        "min": 2620.46,
+        "max": 6252.96
+      }
+    }
+  },
+  "A1-Opt": {
+    "sample_count": 160,
+    "valid_count": 160,
+    "error_count": 0,
+    "confusion_matrix": {
+      "tp": 45,
+      "fp": 0,
+      "tn": 90,
+      "fn": 25
+    },
+    "classification_metrics": {
+      "accuracy": 0.8438,
+      "precision": 1.0,
+      "recall": 0.6429,
+      "f1": 0.7826,
+      "fpr": 0.0,
+      "fnr": 0.3571
+    },
+    "injection_metrics": {
+      "active_injection_count": 50,
+      "active_injection_detected": 50,
+      "active_injection_recall": 1.0,
+      "quoted_injection_count": 50,
+      "quoted_injection_detected": 50,
+      "quoted_injection_recall": 1.0,
+      "sanitization_success_count": 50,
+      "sanitization_success_rate": 1.0,
+      "match_methods": {
+        "exact": 50
+      },
+      "chinese_samples_total": 5,
+      "chinese_samples_sanitized": 5,
+      "chinese_samples_manual_review": 0
+    },
+    "security_policy_metrics": {
+      "action_distribution": {
+        "block": 45,
+        "quarantine_review": 5,
+        "allow": 110
+      },
+      "phishing_containment_rate": 0.7143,
+      "active_injection_containment_rate": 1.0,
+      "legitimate_clean_delivery_rate": 1.0
+    },
+    "latency_metrics": {
+      "stage1_ms": {
+        "mean": 2161.83,
+        "p50": 2024.26,
+        "p90": 2877.42,
+        "p99": 3582.45,
+        "min": 1509.21,
+        "max": 15472.85
+      },
+      "stage2_ms": {
+        "mean": 1328.51,
+        "p50": 1316.81,
+        "p90": 1429.46,
+        "p99": 1488.83,
+        "min": 1175.3,
+        "max": 1499.44
+      },
+      "total_ms": {
+        "mean": 3670.36,
+        "p50": 3482.55,
+        "p90": 4362.27,
+        "p99": 5112.64,
+        "min": 2896.24,
+        "max": 22881.4
+      }
+    }
+  },
+  "comparison_deltas": {
+    "accuracy_delta": 0.0,
+    "f1_delta": 0.0,
+    "sanitization_success_rate_delta": 0.1,
+    "chinese_samples_resolved": "5 / 5 (A1: 0)",
+    "stage1_latency_mean_delta_ms": -512.82,
+    "stage1_latency_pct_reduction": 19.17,
+    "total_latency_mean_delta_ms": -281.05,
+    "total_latency_pct_reduction": 7.11
+  }
+}

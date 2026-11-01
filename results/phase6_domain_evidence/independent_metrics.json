@@ -1,0 +1,317 @@
+{
+  "total_records": 440,
+  "configurations": {
+    "A": {
+      "total_evaluated": 200,
+      "overall": {
+        "sample_count": 200,
+        "accuracy": 0.865,
+        "precision": 1.0,
+        "recall": 0.7,
+        "f1": 0.8235,
+        "fpr": 0.0,
+        "fnr": 0.3,
+        "confusion_matrix": {
+          "tp": 63,
+          "tn": 110,
+          "fp": 0,
+          "fn": 27,
+          "tp_formula": "63/90 (70.0%)",
+          "fp_formula": "0/110 (0.0%)",
+          "tn_formula": "110/110 (100.0%)",
+          "fn_formula": "27/90 (30.0%)"
+        }
+      },
+      "latency": {
+        "stage1": {
+          "mean_ms": 2232.94,
+          "median_ms": 2018.89,
+          "p95_ms": 3015.78
+        },
+        "stage2": {
+          "mean_ms": 1430.56,
+          "median_ms": 1341.27,
+          "p95_ms": 1862.02
+        },
+        "total": {
+          "mean_ms": 3888.92,
+          "median_ms": 3676.89,
+          "p95_ms": 4973.35
+        }
+      },
+      "regression_160": {
+        "sample_count": 160,
+        "accuracy": 0.8438,
+        "precision": 1.0,
+        "recall": 0.6429,
+        "f1": 0.7826,
+        "fpr": 0.0,
+        "fnr": 0.3571,
+        "confusion_matrix": {
+          "tp": 45,
+          "tn": 90,
+          "fp": 0,
+          "fn": 25,
+          "tp_formula": "45/70 (64.3%)",
+          "fp_formula": "0/90 (0.0%)",
+          "tn_formula": "90/90 (100.0%)",
+          "fn_formula": "25/70 (35.7%)"
+        },
+        "category_breakdown": {
+          "active_injection": {
+            "count": 50,
+            "accuracy": 0.9,
+            "contained": 50
+          },
+          "quoted_injection": {
+            "count": 50,
+            "accuracy": 1.0,
+            "contained": 0
+          },
+          "difficult_legitimate": {
+            "count": 20,
+            "accuracy": 1.0,
+            "contained": 0
+          },
+          "sophisticated_phishing": {
+            "count": 20,
+            "accuracy": 0.0,
+            "contained": 0
+          }
+        }
+      },
+      "challenge_40": {
+        "sample_count": 40,
+        "accuracy": 0.95,
+        "precision": 1.0,
+        "recall": 0.9,
+        "f1": 0.9474,
+        "fpr": 0.0,
+        "fnr": 0.1,
+        "confusion_matrix": {
+          "tp": 18,
+          "tn": 20,
+          "fp": 0,
+          "fn": 2,
+          "tp_formula": "18/20 (90.0%)",
+          "fp_formula": "0/20 (0.0%)",
+          "tn_formula": "20/20 (100.0%)",
+          "fn_formula": "2/20 (10.0%)"
+        },
+        "sophisticated_phishing_recall": {
+          "tp": 18,
+          "total": 20,
+          "recall": 0.9
+        },
+        "difficult_legitimate_fpr": {
+          "fp": 0,
+          "total": 20,
+          "fpr": 0.0
+        }
+      }
+    },
+    "B": {
+      "total_evaluated": 200,
+      "overall": {
+        "sample_count": 200,
+        "accuracy": 0.985,
+        "precision": 0.9677,
+        "recall": 1.0,
+        "f1": 0.9836,
+        "fpr": 0.0273,
+        "fnr": 0.0,
+        "confusion_matrix": {
+          "tp": 90,
+          "tn": 107,
+          "fp": 3,
+          "fn": 0,
+          "tp_formula": "90/90 (100.0%)",
+          "fp_formula": "3/110 (2.7%)",
+          "tn_formula": "107/110 (97.3%)",
+          "fn_formula": "0/90 (0.0%)"
+        }
+      },
+      "latency": {
+        "stage1": {
+          "mean_ms": 2392.71,
+          "median_ms": 2125.3,
+          "p95_ms": 3707.18
+        },
+        "stage2": {
+          "mean_ms": 1834.14,
+          "median_ms": 1710.72,
+          "p95_ms": 2703.59
+        },
+        "total": {
+          "mean_ms": 4466.87,
+          "median_ms": 4166.01,
+          "p95_ms": 6522.5
+        }
+      },
+      "regression_160": {
+        "sample_count": 160,
+        "accuracy": 0.9938,
+        "precision": 0.9859,
+        "recall": 1.0,
+        "f1": 0.9929,
+        "fpr": 0.0111,
+        "fnr": 0.0,
+        "confusion_matrix": {
+          "tp": 70,
+          "tn": 89,
+          "fp": 1,
+          "fn": 0,
+          "tp_formula": "70/70 (100.0%)",
+          "fp_formula": "1/90 (1.1%)",
+          "tn_formula": "89/90 (98.9%)",
+          "fn_formula": "0/70 (0.0%)"
+        },
+        "category_breakdown": {
+          "active_injection": {
+            "count": 50,
+            "accuracy": 1.0,
+            "contained": 50
+          },
+          "quoted_injection": {
+            "count": 50,
+            "accuracy": 1.0,
+            "contained": 0
+          },
+          "difficult_legitimate": {
+            "count": 20,
+            "accuracy": 1.0,
+            "contained": 0
+          },
+          "sophisticated_phishing": {
+            "count": 20,
+            "accuracy": 1.0,
+            "contained": 20
+          }
+        }
+      },
+      "challenge_40": {
+        "sample_count": 40,
+        "accuracy": 0.95,
+        "precision": 0.9091,
+        "recall": 1.0,
+        "f1": 0.9524,
+        "fpr": 0.1,
+        "fnr": 0.0,
+        "confusion_matrix": {
+          "tp": 20,
+          "tn": 18,
+          "fp": 2,
+          "fn": 0,
+          "tp_formula": "20/20 (100.0%)",
+          "fp_formula": "2/20 (10.0%)",
+          "tn_formula": "18/20 (90.0%)",
+          "fn_formula": "0/20 (0.0%)"
+        },
+        "sophisticated_phishing_recall": {
+          "tp": 20,
+          "total": 20,
+          "recall": 1.0
+        },
+        "difficult_legitimate_fpr": {
+          "fp": 2,
+          "total": 20,
+          "fpr": 0.1
+        }
+      }
+    },
+    "C": {
+      "total_evaluated": 40,
+      "overall": {
+        "sample_count": 40,
+        "accuracy": 0.975,
+        "precision": 1.0,
+        "recall": 0.95,
+        "f1": 0.9744,
+        "fpr": 0.0,
+        "fnr": 0.05,
+        "confusion_matrix": {
+          "tp": 19,
+          "tn": 20,
+          "fp": 0,
+          "fn": 1,
+          "tp_formula": "19/20 (95.0%)",
+          "fp_formula": "0/20 (0.0%)",
+          "tn_formula": "20/20 (100.0%)",
+          "fn_formula": "1/20 (5.0%)"
+        }
+      },
+      "latency": {
+        "stage1": {
+          "mean_ms": 1936.07,
+          "median_ms": 1894.06,
+          "p95_ms": 2126.91
+        },
+        "stage2": {
+          "mean_ms": 1433.08,
+          "median_ms": 1424.39,
+          "p95_ms": 1732.84
+        },
+        "total": {
+          "mean_ms": 3545.56,
+          "median_ms": 3441.51,
+          "p95_ms": 4266.62
+        }
+      },
+      "challenge_40": {
+        "sample_count": 40,
+        "accuracy": 0.975,
+        "precision": 1.0,
+        "recall": 0.95,
+        "f1": 0.9744,
+        "fpr": 0.0,
+        "fnr": 0.05,
+        "confusion_matrix": {
+          "tp": 19,
+          "tn": 20,
+          "fp": 0,
+          "fn": 1,
+          "tp_formula": "19/20 (95.0%)",
+          "fp_formula": "0/20 (0.0%)",
+          "tn_formula": "20/20 (100.0%)",
+          "fn_formula": "1/20 (5.0%)"
+        },
+        "sophisticated_phishing_recall": {
+          "tp": 19,
+          "total": 20,
+          "recall": 0.95
+        },
+        "difficult_legitimate_fpr": {
+          "fp": 0,
+          "total": 20,
+          "fpr": 0.0
+        }
+      }
+    }
+  },
+  "pairwise_attributions": {
+    "A_vs_C_invariance": {
+      "samples_compared": 40,
+      "divergences_count": 1,
+      "divergences": [
+        {
+          "sample_id": "p6-sop-016",
+          "pred_A": false,
+          "pred_C": true
+        }
+      ],
+      "invariant": false
+    },
+    "A_vs_B_domain_evidence": {
+      "common_samples": 200,
+      "config_A_accuracy": 0.865,
+      "config_B_accuracy": 0.985,
+      "delta_accuracy": 0.12,
+      "config_A_recall": 0.7,
+      "config_B_recall": 1.0,
+      "delta_recall": 0.3,
+      "config_A_fpr": 0.0,
+      "config_B_fpr": 0.0273,
+      "delta_fpr": 0.0273
+    }
+  }
+}

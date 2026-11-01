@@ -1,0 +1,285 @@
+{
+  "benchmark_sample_count": 160,
+  "configurations_evaluated": [
+    "A1",
+    "A1-Opt"
+  ],
+  "overall_classification": {
+    "Frozen_A1": {
+      "count": 160,
+      "tp": 45,
+      "fp": 0,
+      "tn": 90,
+      "fn": 25,
+      "accuracy": 0.8438,
+      "precision": 1.0,
+      "recall": 0.6429,
+      "f1": 0.7826,
+      "fpr": 0.0,
+      "fnr": 0.3571
+    },
+    "A1_Opt": {
+      "count": 160,
+      "tp": 45,
+      "fp": 0,
+      "tn": 90,
+      "fn": 25,
+      "accuracy": 0.8438,
+      "precision": 1.0,
+      "recall": 0.6429,
+      "f1": 0.7826,
+      "fpr": 0.0,
+      "fnr": 0.3571
+    }
+  },
+  "per_category_metrics": {
+    "active_prompt_injection": {
+      "A1": {
+        "count": 50,
+        "tp": 45,
+        "fp": 0,
+        "tn": 0,
+        "fn": 5,
+        "accuracy": 0.9,
+        "precision": 1.0,
+        "recall": 0.9,
+        "f1": 0.9474,
+        "fpr": 0.0,
+        "fnr": 0.1
+      },
+      "A1-Opt": {
+        "count": 50,
+        "tp": 45,
+        "fp": 0,
+        "tn": 0,
+        "fn": 5,
+        "accuracy": 0.9,
+        "precision": 1.0,
+        "recall": 0.9,
+        "f1": 0.9474,
+        "fpr": 0.0,
+        "fnr": 0.1
+      }
+    },
+    "quoted_prompt_injection": {
+      "A1": {
+        "count": 50,
+        "tp": 0,
+        "fp": 0,
+        "tn": 50,
+        "fn": 0,
+        "accuracy": 1.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "fpr": 0.0,
+        "fnr": 0.0
+      },
+      "A1-Opt": {
+        "count": 50,
+        "tp": 0,
+        "fp": 0,
+        "tn": 50,
+        "fn": 0,
+        "accuracy": 1.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "fpr": 0.0,
+        "fnr": 0.0
+      }
+    },
+    "difficult_legitimate": {
+      "A1": {
+        "count": 20,
+        "tp": 0,
+        "fp": 0,
+        "tn": 20,
+        "fn": 0,
+        "accuracy": 1.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "fpr": 0.0,
+        "fnr": 0.0
+      },
+      "A1-Opt": {
+        "count": 20,
+        "tp": 0,
+        "fp": 0,
+        "tn": 20,
+        "fn": 0,
+        "accuracy": 1.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "fpr": 0.0,
+        "fnr": 0.0
+      }
+    },
+    "sophisticated_phishing": {
+      "A1": {
+        "count": 20,
+        "tp": 0,
+        "fp": 0,
+        "tn": 0,
+        "fn": 20,
+        "accuracy": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "fpr": 0.0,
+        "fnr": 1.0
+      },
+      "A1-Opt": {
+        "count": 20,
+        "tp": 0,
+        "fp": 0,
+        "tn": 0,
+        "fn": 20,
+        "accuracy": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "fpr": 0.0,
+        "fnr": 1.0
+      }
+    },
+    "ordinary_legitimate": {
+      "A1": {
+        "count": 20,
+        "tp": 0,
+        "fp": 0,
+        "tn": 20,
+        "fn": 0,
+        "accuracy": 1.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "fpr": 0.0,
+        "fnr": 0.0
+      },
+      "A1-Opt": {
+        "count": 20,
+        "tp": 0,
+        "fp": 0,
+        "tn": 20,
+        "fn": 0,
+        "accuracy": 1.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "fpr": 0.0,
+        "fnr": 0.0
+      }
+    }
+  },
+  "operational_security": {
+    "Frozen_A1": {
+      "action_counts": {
+        "block": 45,
+        "manual_review": 5,
+        "allow": 110
+      },
+      "active_injection_containment_rate": 1.0,
+      "quoted_injection_safe_delivery_rate": 1.0,
+      "clean_legitimate_delivery_rate": 1.0,
+      "unresolved_sanitizations": 0,
+      "pipeline_errors": 5
+    },
+    "A1_Opt": {
+      "action_counts": {
+        "block": 45,
+        "quarantine_review": 5,
+        "allow": 110
+      },
+      "active_injection_containment_rate": 1.0,
+      "quoted_injection_safe_delivery_rate": 1.0,
+      "clean_legitimate_delivery_rate": 1.0,
+      "unresolved_sanitizations": 0,
+      "pipeline_errors": 0
+    }
+  },
+  "latency_metrics": {
+    "Frozen_A1": {
+      "stage1": {
+        "mean": 2674.65,
+        "p50": 2496.64,
+        "p90": 3693.92,
+        "p95": 3852.1,
+        "p99": 4108.4,
+        "min": 1790.58,
+        "max": 4318.3
+      },
+      "stage2": {
+        "mean": 1208.58,
+        "p50": 1064.74,
+        "p90": 1643.28,
+        "p95": 1693.88,
+        "p99": 1912.07,
+        "min": 796.25,
+        "max": 2123.61
+      },
+      "total": {
+        "mean": 3951.41,
+        "p50": 3907.84,
+        "p90": 5117.53,
+        "p95": 5609.91,
+        "p99": 6040.73,
+        "min": 2620.46,
+        "max": 6252.96
+      }
+    },
+    "A1_Opt": {
+      "stage1": {
+        "mean": 2161.83,
+        "p50": 2024.26,
+        "p90": 2877.42,
+        "p95": 2944.76,
+        "p99": 3582.45,
+        "min": 1509.21,
+        "max": 15472.85
+      },
+      "stage2": {
+        "mean": 1328.51,
+        "p50": 1316.81,
+        "p90": 1429.46,
+        "p95": 1463.92,
+        "p99": 1488.83,
+        "min": 1175.3,
+        "max": 1499.44
+      },
+      "total": {
+        "mean": 3670.36,
+        "p50": 3482.55,
+        "p90": 4362.27,
+        "p95": 4462.7,
+        "p99": 5112.64,
+        "min": 2896.24,
+        "max": 22881.4
+      }
+    },
+    "A1_Opt_warmed_stage1": {
+      "mean": 2078.11,
+      "p50": 2022.89,
+      "p90": 2858.63,
+      "p95": 2927.13,
+      "p99": 3526.08,
+      "min": 1509.21,
+      "max": 3624.38
+    },
+    "stage1_pct_reduction_mean": 19.17,
+    "stage1_pct_reduction_p50": 18.92,
+    "stage1_pct_reduction_p90": 22.1
+  },
+  "sophisticated_phishing_summary": {
+    "total_samples": 20,
+    "frozen_a1_tp": 0,
+    "frozen_a1_fn": 20,
+    "a1_opt_tp": 0,
+    "a1_opt_fn": 20,
+    "discrepancies": 0,
+    "domain_evidence_present": false,
+    "status": "Identical parity (20/20 FN in both configs due to absence of domain analysis)"
+  }
+}

@@ -1,0 +1,136 @@
+<USER_REQUEST>
+# IFSI — Phase 7: Domain Evidence Precision Refinement & Regression Study
+
+## Objective
+
+Refine the Phase 6 Config B experimental architecture to reduce false positives caused by legitimate secondary domains, internal corporate senders, and legitimate third-party SaaS authentication domains.
+
+Preserve the phishing recall improvements achieved in Phase 6.
+
+This is an isolated experimental phase. Production promotion is not authorized.
+
+## 1. Mandatory protection rules
+
+Do not modify:
+
+- Production M4 (`src/core/inference.py`).
+- Frozen A1 (`src/core/inference_m4_v2.py`).
+- Phase 5 implementations.
+- Phase 6 implementations.
+- Historical datasets, predictions, metrics, or reports.
+- Clean FAISS index or metadata.
+
+Create new implementation files under:
+
+`src/experiments/phase7_domain_precision/`
+
+Create all results under:
+
+`results/phase7_domain_precision/`
+
+Use Phase 6 Config B as the experimental reference.
+
+Do not overwrite or modify Phase 6 Config B.
+
+## 2. Investigate the three false positives
+
+Reconstruct the complete processing path for:
+
+- `gen-ord-010`
+- `p6-leg-007`
+- `p6-leg-015`
+
+For each sample inspect:
+
+1. Original email content.
+2. Sender and display name.
+3. Reply-to address.
+4. URLs and destination domains.
+5. Domain Analyzer V2 output.
+6. Evidence block passed to Stage 2.
+7. Stage 2 reasoning and output.
+8. Final security action.
+
+Determine precisely why the evidence caused an incorrect phishing classification.
+
+## 3. Domain evidence precision improvements
+
+Implement an experimental Domain Analyzer V3.
+
+### A. Legitimate secondary domains
+
+Handle legitimate organizational secondary domains without assuming that every hyphenated or unfamiliar domain is malicious.
+
+Use explicit, auditable domain relationships.
+
+Do not create broad wildcard trust rules such as allowing every domain containing a brand name.
+
+### B. Internal corporate sender handling
+
+Distinguish:
+
+- A corporate employee using an internal corporate s
+<truncated 4102 bytes>
+n domain reputation is not treated as proof of legitimacy.
+- Legitimate brand mentions are not automatically treated as impersonation.
+- Domain anomalies are evidence, not definitive phishing labels.
+- Sanitization does not remove unrelated content.
+- Failures retain existing fail-safe behavior.
+
+Report classification performance and operational security outcomes separately.
+
+## 9. Deliverables
+
+Save under:
+
+`results/phase7_domain_precision/`
+
+Create:
+
+- `phase6_false_positive_root_cause.md`
+- `config_c_parity_investigation.md`
+- `domain_analyzer_v3_design.md`
+- `implementation_report.md`
+- `dataset_integrity_report.md`
+- `independent_metrics.json`
+- `false_positive_analysis.md`
+- `sophisticated_phishing_analysis.md`
+- `latency_comparison.md`
+- `predictions.jsonl`
+- `promotion_readiness.md`
+
+## 10. Final audit — mandatory
+
+At completion provide:
+
+1. Exact files inspected, created and modified.
+2. SHA-256 hashes of protected files.
+3. Dataset sizes, category distributions and overlap checks.
+4. Exact commands executed.
+5. Automated test results.
+6. Independent metrics calculated from raw predictions.
+7. All changed predictions with sample IDs.
+8. Results for all 20 historical sophisticated phishing cases.
+9. Results for all three historical false positives.
+10. Config A/C parity investigation findings.
+11. Latency comparison.
+12. Actual Git status and complete diff summary.
+13. Any deviations from the requested scope.
+
+Conclude with one recommendation:
+
+- Suitable for a larger independent evaluation.
+- Requires further refinement.
+- Abandon this domain-evidence approach.
+
+Do not promote or merge anything into production.
+
+Stop after generating all reports and audit evidence.
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-11-01T16:20:00+05:30.
+
+The user's current state is as follows:
+Active Document: d:\Project\IFSI-for-phishing-email-detection\tools\final_phase6_audit.py (LANGUAGE_UNSPECIFIED)
+Cursor is on line: 1
+</ADDITIONAL_METADATA>

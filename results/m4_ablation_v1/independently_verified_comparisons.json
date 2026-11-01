@@ -1,0 +1,1274 @@
+{
+  "ISO-4_vs_A0": {
+    "title": "Stage 1 Active vs Quoted Injection Classifier (ISO-4 vs A0)",
+    "test_config": "ISO-4",
+    "baseline_config": "A0",
+    "contingency_table": {
+      "both_correct": 228,
+      "both_wrong": 19,
+      "beneficial_b": 2,
+      "harmful_c": 1,
+      "total_discordant": 3
+    },
+    "statistical_test": {
+      "b_favors_test": 2,
+      "c_favors_baseline": 1,
+      "discordant_total": 3,
+      "net_gain": 1,
+      "mcnemar_chi2_corrected": 0.0,
+      "asymptotic_p_value": 1.0,
+      "exact_binomial_p_value": 1.0,
+      "significant_at_05": false,
+      "effect_size_delta": 0.004,
+      "delta_ci_95": [
+        -0.0096,
+        0.0176
+      ]
+    },
+    "beneficial_samples": [
+      {
+        "sample_id": "v2-inj-24",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Multilingual NLP Benchmark: German Injection Test Suite Sample",
+        "category": "prompt_injection"
+      },
+      {
+        "sample_id": "heldout-inj-13",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Red Team Bug Report: Discovered Jailbreak Vector in Customer Service Bot (SEC-8821)",
+        "category": "prompt_injection"
+      }
+    ],
+    "harmful_samples": [
+      {
+        "sample_id": "heldout-dif-14",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "QUARTERLY ACCESS CERTIFICATION: Production Cloud Roles Revocation Notice",
+        "category": "difficult_genuine"
+      }
+    ]
+  },
+  "A1_vs_ISO-4": {
+    "title": "Stage 1.5 Prompt Sanitization Cumulative (A1 vs ISO-4)",
+    "test_config": "A1",
+    "baseline_config": "ISO-4",
+    "contingency_table": {
+      "both_correct": 229,
+      "both_wrong": 17,
+      "beneficial_b": 3,
+      "harmful_c": 1,
+      "total_discordant": 4
+    },
+    "statistical_test": {
+      "b_favors_test": 3,
+      "c_favors_baseline": 1,
+      "discordant_total": 4,
+      "net_gain": 2,
+      "mcnemar_chi2_corrected": 0.25,
+      "asymptotic_p_value": 0.617075,
+      "exact_binomial_p_value": 0.625,
+      "significant_at_05": false,
+      "effect_size_delta": 0.008,
+      "delta_ci_95": [
+        -0.0076,
+        0.0236
+      ]
+    },
+    "beneficial_samples": [
+      {
+        "sample_id": "v2-inj-22",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Red Team Assessment Findings: Executive Summary & Injection Test Cases",
+        "category": "prompt_injection"
+      },
+      {
+        "sample_id": "heldout-dif-14",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "QUARTERLY ACCESS CERTIFICATION: Production Cloud Roles Revocation Notice",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "heldout-inj-19",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "ML Reading Group: Discussion on Prompt Leaking and Instruction Hierarchy",
+        "category": "prompt_injection"
+      }
+    ],
+    "harmful_samples": [
+      {
+        "sample_id": "v2-sop-13",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "2027 Compensation Structure & Hybrid Work Policy Revisions",
+        "category": "sophisticated_phishing"
+      }
+    ]
+  },
+  "A2_vs_A1": {
+    "title": "Structured Sender/Domain Telemetry Cumulative (A2 vs A1)",
+    "test_config": "A2",
+    "baseline_config": "A1",
+    "contingency_table": {
+      "both_correct": 209,
+      "both_wrong": 4,
+      "beneficial_b": 14,
+      "harmful_c": 23,
+      "total_discordant": 37
+    },
+    "statistical_test": {
+      "b_favors_test": 14,
+      "c_favors_baseline": 23,
+      "discordant_total": 37,
+      "net_gain": -9,
+      "mcnemar_chi2_corrected": 1.7297,
+      "asymptotic_p_value": 0.188445,
+      "exact_binomial_p_value": 0.187742,
+      "significant_at_05": false,
+      "effect_size_delta": -0.036,
+      "delta_ci_95": [
+        -0.0835,
+        0.0115
+      ]
+    },
+    "beneficial_samples": [
+      {
+        "sample_id": "v2-ord-19",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Discover Card: Automatic Monthly Payment Processed",
+        "category": "ordinary_genuine"
+      },
+      {
+        "sample_id": "v2-dif-02",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Okta Verify: One-time verification PIN (Expires in 5 minutes)",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "v2-dif-09",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "IRS Electronic Federal Tax Payment Confirmation (EFTPS-849201)",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "v2-dif-10",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Silicon Valley Bank: Outbound Domestic Wire Settled (#W-49210)",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "v2-dif-14",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "MANDATORY: Submit Missing I-9 Verification Documents by Friday",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "v2-dif-15",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "ACTION REQUIRED TODAY: Q3 Corporate Credit Card Reconciliation Closes",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "v2-dif-19",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "IT Policy Enforcement: Immediate Password Change Required Due to Weak Entropy",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "v2-sop-13",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "2027 Compensation Structure & Hybrid Work Policy Revisions",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "v2-sop-30",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "Concur Expense: Monthly Mileage Reimbursement Rate Update for 2027",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "v2-inj-03",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "Fwd: Critical Payroll Update - Direct Deposit Verification",
+        "category": "prompt_injection"
+      },
+      {
+        "sample_id": "heldout-dif-16",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Corporate Card Cancellation Notice: Inactive Card Ending in 4019",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "heldout-dif-19",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "LEGAL HOLD NOTICE: Retention Directive Concerning Project Apollo Correspondence",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "heldout-sop-02",
+        "dataset": "heldout",
+        "ground_truth": true,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "SAP Concur: 2027 International Travel Per Diem and Meal Lodging Schedules",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "heldout-inj-20",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Enterprise SIEM Alert Summary: Intercepted LLM Prompt Injection Payload Log",
+        "category": "prompt_injection"
+      }
+    ],
+    "harmful_samples": [
+      {
+        "sample_id": "v2-ord-04",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "Vendor Presentation: Snowflake Data Cloud Optimization",
+        "category": "ordinary_genuine"
+      },
+      {
+        "sample_id": "v2-dif-21",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "Mandatory Annual Phishing Awareness & Social Engineering Training",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "v2-dif-24",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "Fwd: Is this email from Bank of America legitimate?",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "v2-dif-26",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "Question regarding suspicious package delivery notice",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "v2-dif-27",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "Fwd: Suspicious DocuSign email received by Legal",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "v2-con-26",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Urgent Freelance Opportunity: Part-Time Secret Shopper ($500/assignment)",
+        "category": "conventional_phishing"
+      },
+      {
+        "sample_id": "v2-con-27",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Work From Home: High-Paying Administrative Assistant Position",
+        "category": "conventional_phishing"
+      },
+      {
+        "sample_id": "v2-sop-02",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Confidential Request: Executive Bonus & Deferred Compensation Census",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "v2-sop-06",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "From the Desk of the COO: Organizational Realignment & Q1 Targets",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "v2-sop-07",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Year-End Executive Discretionary Bonus Allocation Review",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "v2-sop-10",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Important: Revised Wiring Instructions for Upcoming Milestone Payment",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "v2-sop-14",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Confidential Investigation: Workplace Culture Review Feedback",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "v2-sop-17",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Statement of Account: Outstanding Invoices for PO-2026-94812",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "v2-sop-24",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "ACM Queue: Invitation to Peer Review Manuscript #ACMQ-2026-891",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "v2-inj-24",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "Multilingual NLP Benchmark: German Injection Test Suite Sample",
+        "category": "prompt_injection"
+      },
+      {
+        "sample_id": "heldout-dif-04",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "FINAL CALL: 2027 Healthcare & 401(k) Open Enrollment Closes at Midnight",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "heldout-dif-05",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "Expense Audit Notice: Missing Itemized Receipt for Expense Report #EXP-55910",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "heldout-dif-12",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "Form W-2 Wage and Tax Statement Availability for Tax Year 2026",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "heldout-dif-17",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "MANDATORY ANNUAL UPDATE: Emergency Contact Information Verification",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "heldout-phish-19",
+        "dataset": "heldout",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Microsoft Teams: You have a new voicemail from +1 (415) 555-0199 (1:24)",
+        "category": "conventional_phishing"
+      },
+      {
+        "sample_id": "heldout-sop-06",
+        "dataset": "heldout",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Supplier Onboarding: Updated W-9 and Banking Verification for 2027 Master Services Agreement",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "heldout-sop-10",
+        "dataset": "heldout",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Adobe Sign: Annual Cloud Vendor Services Agreement Ready for Execution",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "heldout-sop-14",
+        "dataset": "heldout",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "American Express Global Business Travel: Flight Itinerary Schedule Change",
+        "category": "sophisticated_phishing"
+      }
+    ]
+  },
+  "A3_vs_A2": {
+    "title": "Balanced RAG Retrieval Cumulative (A3 vs A2)",
+    "test_config": "A3",
+    "baseline_config": "A2",
+    "contingency_table": {
+      "both_correct": 217,
+      "both_wrong": 20,
+      "beneficial_b": 7,
+      "harmful_c": 6,
+      "total_discordant": 13
+    },
+    "statistical_test": {
+      "b_favors_test": 7,
+      "c_favors_baseline": 6,
+      "discordant_total": 13,
+      "net_gain": 1,
+      "mcnemar_chi2_corrected": 0.0,
+      "asymptotic_p_value": 1.0,
+      "exact_binomial_p_value": 1.0,
+      "significant_at_05": false,
+      "effect_size_delta": 0.004,
+      "delta_ci_95": [
+        -0.0243,
+        0.0323
+      ]
+    },
+    "beneficial_samples": [
+      {
+        "sample_id": "v2-dif-21",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Mandatory Annual Phishing Awareness & Social Engineering Training",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "v2-dif-24",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Fwd: Is this email from Bank of America legitimate?",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "v2-con-26",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "Urgent Freelance Opportunity: Part-Time Secret Shopper ($500/assignment)",
+        "category": "conventional_phishing"
+      },
+      {
+        "sample_id": "v2-inj-24",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Multilingual NLP Benchmark: German Injection Test Suite Sample",
+        "category": "prompt_injection"
+      },
+      {
+        "sample_id": "heldout-dif-06",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "CRITICAL SECURITY DIRECTIVE: Zero-Day Patching Required on All Linux Endpoints",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "heldout-sop-10",
+        "dataset": "heldout",
+        "ground_truth": true,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "Adobe Sign: Annual Cloud Vendor Services Agreement Ready for Execution",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "heldout-inj-11",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "SOC Incident Briefing: Intercepted Prompt Injection Attack against HR Mailbox",
+        "category": "prompt_injection"
+      }
+    ],
+    "harmful_samples": [
+      {
+        "sample_id": "v2-dif-19",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "IT Policy Enforcement: Immediate Password Change Required Due to Weak Entropy",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "v2-dif-25",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "Suspicious email report: Employee reported fake CEO wire request",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "v2-sop-04",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Legal Hold & Wire Settlement: Case No. 2026-CV-84910",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "v2-sop-21",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Invitation to Speak: MIT Technology Review AI Safety Symposium 2027",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "v2-inj-08",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Urgent Vendor Payment Direction - Updated Banking Coordinates",
+        "category": "prompt_injection"
+      },
+      {
+        "sample_id": "heldout-inj-20",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "Enterprise SIEM Alert Summary: Intercepted LLM Prompt Injection Payload Log",
+        "category": "prompt_injection"
+      }
+    ]
+  },
+  "A4_vs_A3": {
+    "title": "Canonical Experimental Engine Parity Check (A4 vs A3)",
+    "test_config": "A4",
+    "baseline_config": "A3",
+    "contingency_table": {
+      "both_correct": 224,
+      "both_wrong": 26,
+      "beneficial_b": 0,
+      "harmful_c": 0,
+      "total_discordant": 0
+    },
+    "statistical_test": {
+      "b_favors_test": 0,
+      "c_favors_baseline": 0,
+      "discordant_total": 0,
+      "net_gain": 0,
+      "mcnemar_chi2_corrected": 0.0,
+      "asymptotic_p_value": 1.0,
+      "exact_binomial_p_value": 1.0,
+      "significant_at_05": false,
+      "effect_size_delta": 0.0,
+      "delta_ci_95": [
+        0.0,
+        0.0
+      ]
+    },
+    "beneficial_samples": [],
+    "harmful_samples": []
+  },
+  "A4_vs_ISO-1": {
+    "title": "Prompt Sanitization Leave-One-Out (A4 vs ISO-1)",
+    "test_config": "A4",
+    "baseline_config": "ISO-1",
+    "contingency_table": {
+      "both_correct": 219,
+      "both_wrong": 25,
+      "beneficial_b": 5,
+      "harmful_c": 1,
+      "total_discordant": 6
+    },
+    "statistical_test": {
+      "b_favors_test": 5,
+      "c_favors_baseline": 1,
+      "discordant_total": 6,
+      "net_gain": 4,
+      "mcnemar_chi2_corrected": 1.5,
+      "asymptotic_p_value": 0.220671,
+      "exact_binomial_p_value": 0.21875,
+      "significant_at_05": false,
+      "effect_size_delta": 0.016,
+      "delta_ci_95": [
+        -0.0031,
+        0.0351
+      ]
+    },
+    "beneficial_samples": [
+      {
+        "sample_id": "v2-inj-22",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Red Team Assessment Findings: Executive Summary & Injection Test Cases",
+        "category": "prompt_injection"
+      },
+      {
+        "sample_id": "heldout-dif-06",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "CRITICAL SECURITY DIRECTIVE: Zero-Day Patching Required on All Linux Endpoints",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "heldout-sop-10",
+        "dataset": "heldout",
+        "ground_truth": true,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "Adobe Sign: Annual Cloud Vendor Services Agreement Ready for Execution",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "heldout-sop-16",
+        "dataset": "heldout",
+        "ground_truth": true,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "Atlassian Jira Cloud: Scheduled Inactive Project Workspace Archival Notice",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "heldout-inj-11",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "SOC Incident Briefing: Intercepted Prompt Injection Attack against HR Mailbox",
+        "category": "prompt_injection"
+      }
+    ],
+    "harmful_samples": [
+      {
+        "sample_id": "v2-ord-04",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "Vendor Presentation: Snowflake Data Cloud Optimization",
+        "category": "ordinary_genuine"
+      }
+    ]
+  },
+  "A4_vs_ISO-2": {
+    "title": "Domain Telemetry Leave-One-Out (A4 vs ISO-2)",
+    "test_config": "A4",
+    "baseline_config": "ISO-2",
+    "contingency_table": {
+      "both_correct": 207,
+      "both_wrong": 5,
+      "beneficial_b": 17,
+      "harmful_c": 21,
+      "total_discordant": 38
+    },
+    "statistical_test": {
+      "b_favors_test": 17,
+      "c_favors_baseline": 21,
+      "discordant_total": 38,
+      "net_gain": -4,
+      "mcnemar_chi2_corrected": 0.2368,
+      "asymptotic_p_value": 0.626496,
+      "exact_binomial_p_value": 0.627103,
+      "significant_at_05": false,
+      "effect_size_delta": -0.016,
+      "delta_ci_95": [
+        -0.0643,
+        0.0323
+      ]
+    },
+    "beneficial_samples": [
+      {
+        "sample_id": "v2-ord-15",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Starbucks eGift Card Delivery Confirmation",
+        "category": "ordinary_genuine"
+      },
+      {
+        "sample_id": "v2-dif-02",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Okta Verify: One-time verification PIN (Expires in 5 minutes)",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "v2-dif-09",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "IRS Electronic Federal Tax Payment Confirmation (EFTPS-849201)",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "v2-dif-11",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Vanguard: Important tax notice regarding required minimum distribution",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "v2-dif-14",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "MANDATORY: Submit Missing I-9 Verification Documents by Friday",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "v2-dif-15",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "ACTION REQUIRED TODAY: Q3 Corporate Credit Card Reconciliation Closes",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "v2-sop-30",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "Concur Expense: Monthly Mileage Reimbursement Rate Update for 2027",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "v2-inj-03",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "Fwd: Critical Payroll Update - Direct Deposit Verification",
+        "category": "prompt_injection"
+      },
+      {
+        "sample_id": "heldout-dif-06",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "CRITICAL SECURITY DIRECTIVE: Zero-Day Patching Required on All Linux Endpoints",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "heldout-dif-10",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Hardware MFA Token Recertification - Expiration Notice",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "heldout-dif-13",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "ACTION REQUIRED: Annual Remote Work Equipment Asset Audit",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "heldout-dif-16",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Corporate Card Cancellation Notice: Inactive Card Ending in 4019",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "heldout-dif-19",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "LEGAL HOLD NOTICE: Retention Directive Concerning Project Apollo Correspondence",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "heldout-sop-02",
+        "dataset": "heldout",
+        "ground_truth": true,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "SAP Concur: 2027 International Travel Per Diem and Meal Lodging Schedules",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "heldout-inj-11",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "SOC Incident Briefing: Intercepted Prompt Injection Attack against HR Mailbox",
+        "category": "prompt_injection"
+      },
+      {
+        "sample_id": "heldout-inj-16",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "US-CERT Advisory: Emerging Threat Actor Tactics Using Invisible LLM Jailbreak Prompts",
+        "category": "prompt_injection"
+      },
+      {
+        "sample_id": "heldout-inj-19",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "ML Reading Group: Discussion on Prompt Leaking and Instruction Hierarchy",
+        "category": "prompt_injection"
+      }
+    ],
+    "harmful_samples": [
+      {
+        "sample_id": "v2-ord-04",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "Vendor Presentation: Snowflake Data Cloud Optimization",
+        "category": "ordinary_genuine"
+      },
+      {
+        "sample_id": "v2-dif-26",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "Question regarding suspicious package delivery notice",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "v2-dif-27",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "Fwd: Suspicious DocuSign email received by Legal",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "v2-con-27",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Work From Home: High-Paying Administrative Assistant Position",
+        "category": "conventional_phishing"
+      },
+      {
+        "sample_id": "v2-sop-02",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Confidential Request: Executive Bonus & Deferred Compensation Census",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "v2-sop-04",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Legal Hold & Wire Settlement: Case No. 2026-CV-84910",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "v2-sop-06",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "From the Desk of the COO: Organizational Realignment & Q1 Targets",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "v2-sop-07",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Year-End Executive Discretionary Bonus Allocation Review",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "v2-sop-08",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "URGENT: Corporate Gift Cards for Client Appreciation Event Tonight",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "v2-sop-10",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Important: Revised Wiring Instructions for Upcoming Milestone Payment",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "v2-sop-14",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Confidential Investigation: Workplace Culture Review Feedback",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "v2-sop-17",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Statement of Account: Outstanding Invoices for PO-2026-94812",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "v2-sop-21",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Invitation to Speak: MIT Technology Review AI Safety Symposium 2027",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "v2-sop-24",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "ACM Queue: Invitation to Peer Review Manuscript #ACMQ-2026-891",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "heldout-dif-04",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "FINAL CALL: 2027 Healthcare & 401(k) Open Enrollment Closes at Midnight",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "heldout-dif-05",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "Expense Audit Notice: Missing Itemized Receipt for Expense Report #EXP-55910",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "heldout-dif-12",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "Form W-2 Wage and Tax Statement Availability for Tax Year 2026",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "heldout-dif-17",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "MANDATORY ANNUAL UPDATE: Emergency Contact Information Verification",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "heldout-phish-19",
+        "dataset": "heldout",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Microsoft Teams: You have a new voicemail from +1 (415) 555-0199 (1:24)",
+        "category": "conventional_phishing"
+      },
+      {
+        "sample_id": "heldout-sop-06",
+        "dataset": "heldout",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Supplier Onboarding: Updated W-9 and Banking Verification for 2027 Master Services Agreement",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "heldout-sop-14",
+        "dataset": "heldout",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "American Express Global Business Travel: Flight Itinerary Schedule Change",
+        "category": "sophisticated_phishing"
+      }
+    ]
+  },
+  "A4_vs_ISO-3": {
+    "title": "Balanced RAG Leave-One-Out (A4 vs ISO-3)",
+    "test_config": "A4",
+    "baseline_config": "ISO-3",
+    "contingency_table": {
+      "both_correct": 217,
+      "both_wrong": 20,
+      "beneficial_b": 7,
+      "harmful_c": 6,
+      "total_discordant": 13
+    },
+    "statistical_test": {
+      "b_favors_test": 7,
+      "c_favors_baseline": 6,
+      "discordant_total": 13,
+      "net_gain": 1,
+      "mcnemar_chi2_corrected": 0.0,
+      "asymptotic_p_value": 1.0,
+      "exact_binomial_p_value": 1.0,
+      "significant_at_05": false,
+      "effect_size_delta": 0.004,
+      "delta_ci_95": [
+        -0.0243,
+        0.0323
+      ]
+    },
+    "beneficial_samples": [
+      {
+        "sample_id": "v2-dif-21",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Mandatory Annual Phishing Awareness & Social Engineering Training",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "v2-dif-24",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Fwd: Is this email from Bank of America legitimate?",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "v2-con-26",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "Urgent Freelance Opportunity: Part-Time Secret Shopper ($500/assignment)",
+        "category": "conventional_phishing"
+      },
+      {
+        "sample_id": "v2-inj-24",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Multilingual NLP Benchmark: German Injection Test Suite Sample",
+        "category": "prompt_injection"
+      },
+      {
+        "sample_id": "heldout-dif-06",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "CRITICAL SECURITY DIRECTIVE: Zero-Day Patching Required on All Linux Endpoints",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "heldout-sop-10",
+        "dataset": "heldout",
+        "ground_truth": true,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "Adobe Sign: Annual Cloud Vendor Services Agreement Ready for Execution",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "heldout-inj-11",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "SOC Incident Briefing: Intercepted Prompt Injection Attack against HR Mailbox",
+        "category": "prompt_injection"
+      }
+    ],
+    "harmful_samples": [
+      {
+        "sample_id": "v2-dif-19",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "IT Policy Enforcement: Immediate Password Change Required Due to Weak Entropy",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "v2-dif-25",
+        "dataset": "v2",
+        "ground_truth": false,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "Suspicious email report: Employee reported fake CEO wire request",
+        "category": "difficult_genuine"
+      },
+      {
+        "sample_id": "v2-sop-04",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Legal Hold & Wire Settlement: Case No. 2026-CV-84910",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "v2-sop-21",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Invitation to Speak: MIT Technology Review AI Safety Symposium 2027",
+        "category": "sophisticated_phishing"
+      },
+      {
+        "sample_id": "v2-inj-08",
+        "dataset": "v2",
+        "ground_truth": true,
+        "baseline_pred": true,
+        "test_pred": false,
+        "subject": "Urgent Vendor Payment Direction - Updated Banking Coordinates",
+        "category": "prompt_injection"
+      },
+      {
+        "sample_id": "heldout-inj-20",
+        "dataset": "heldout",
+        "ground_truth": false,
+        "baseline_pred": false,
+        "test_pred": true,
+        "subject": "Enterprise SIEM Alert Summary: Intercepted LLM Prompt Injection Payload Log",
+        "category": "prompt_injection"
+      }
+    ]
+  }
+}

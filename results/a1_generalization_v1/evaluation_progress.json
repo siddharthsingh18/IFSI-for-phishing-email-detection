@@ -1,0 +1,15 @@
+{
+  "total_expected": 1000,
+  "completed_count": 1000,
+  "percent_complete": 100.0,
+  "current_config": "A1",
+  "config_counts": {
+    "A0": 500,
+    "A1": 500
+  },
+  "elapsed_seconds": 3082.2,
+  "estimated_remaining_seconds": 0.0,
+  "estimated_remaining_minutes": 0.0,
+  "rate_predictions_per_sec": 0.324,
+  "last_updated": "2026-11-01 13:13:44"
+}
