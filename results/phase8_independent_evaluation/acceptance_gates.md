@@ -1,18 +1,18 @@
-# Phase 8.0: Evaluation Acceptance Gates & Production Readiness Criteria
+# Phase 8.0 / 8.0.1: Evaluation Acceptance Gates & Production Readiness Criteria
 
 ## 1. Executive Summary & Pre-Registration Rationale
 
-To maintain scientific objectivity and prevent post-hoc rationalization, all evaluation criteria, acceptance gates, and production readiness thresholds must be **pre-registered before benchmark execution begins**.
+To maintain scientific objectivity and prevent post-hoc rationalization, all evaluation criteria, acceptance gates, and production readiness thresholds are **pre-registered before benchmark execution begins**.
 
-No evaluation outcome will be accepted as valid unless the experiment satisfies all preceding gates in sequence.
+Following Phase 8.0.1 review, acceptance gates are strictly partitioned between **Track A (Independently Sourced Real Emails)** and **Track B (Controlled Challenge Suite)**.
 
 ```mermaid
 flowchart TD
-    G1["Gate 1: Dataset Quality & Header Integrity Gate"] --> G2["Gate 2: Provenance, Ethics & Licensing Gate"]
-    G2 --> G3["Gate 3: Ground-Truth Quality Gate (Kappa >= 0.85)"]
-    G3 --> G4["Gate 4: Contamination & Independence Gate (Zero Leakage)"]
-    G4 --> G5["Gate 5: Architecture Freeze Gate (SHA-256 Check)"]
-    G5 --> G6["Gate 6: Benchmark Execution Gate (Sequential / Complete)"]
+    G1["Gate 1: Header Integrity Gate (100% Parsing)"] --> G2["Gate 2: Provenance & Licensing Gate (Verified Sources)"]
+    G2 --> G3["Gate 3: Annotation Consensus Gate (Kappa >= 0.85)"]
+    G3 --> G4["Gate 4: Contamination Gate (Zero Leakage)"]
+    G4 --> G5["Gate 5: Architecture Freeze Gate (SHA-256 Parity)"]
+    G5 --> G6["Gate 6: Execution Completeness Gate (Exactly 3,000 Pairs)"]
     G6 --> G7["Gate 7: Production Readiness Decision Gate"]
 ```
 
@@ -20,10 +20,11 @@ flowchart TD
 
 ## 2. Sequential Pre-Execution Evaluation Gates
 
-### Gate 1: Dataset Quality & Header Integrity Gate
-- **Requirement**: All 3,000 candidate records must possess complete, syntactically valid RFC822 header envelopes (`From:`, `Subject:`, message body).
+### Gate 1: Header & Schema Integrity Gate
+- **Requirement (Email Records Only — Track A & Track B1)**: All candidate email records (`is_email == true`) must possess complete, syntactically valid RFC 822 header envelopes (`From:`, `Subject:`, body) without fabricated missing transport headers.
+- **Standalone Non-Email Exception (Track B2)**: Per [`phase8_1a_track_b_clarifications.md`](file:///d:/Project/IFSI-for-phishing-email-detection/results/phase8_independent_evaluation/phase8_1a_track_b_clarifications.md), standalone research papers and vulnerability advisories (`provenance_class == "standalone_non_email_document"`, `is_email == false`, `header_origin == "none"`) **must never have fabricated email headers added** and **must remain strictly outside all email classification metrics** (evaluated solely on Stage 1 / Sanitizer V2 metrics).
 - **Format Integrity**: Zero null or empty body fields; proper UTF-8 character encoding; properly extracted destination URLs.
-- **Gatekeeper Metric**: $100.0\%$ parsing success rate on automated schema validation script.
+- **Gatekeeper Metric**: $100.0\%$ parsing and medium-schema validation success rate.
 
 ### Gate 2: Provenance, Ethics & Licensing Gate
 - **Requirement**: Every sample must possess verifiable lineage to an authorized open-source or academic repository documented in `dataset_source_registry.md`.
@@ -32,7 +33,7 @@ flowchart TD
 
 ### Gate 3: Ground-Truth Quality & Annotation Gate
 - **Requirement**: Ground truth labels must be established independently of IFSI model outputs.
-- **Inter-Annotator Agreement**: Double annotation on a 20% random validation subset ($N = 600$) must achieve **Cohen's Kappa $\kappa \ge 0.85$** for binary phishing classification.
+- **Inter-Annotator Agreement**: Double annotation on a 20% random validation subset ($N = 600$) must achieve **Cohen's Kappa $\kappa \ge 0.85$** across both label dimensions (Email Phishing Status and Injection Status).
 - **Action on Failure**: Annotation guidelines revision, annotator retraining, and full re-annotation of conflicting subsets.
 
 ### Gate 4: Contamination & Independence Gate
@@ -60,19 +61,20 @@ flowchart TD
 
 ## 3. Gate 7: Production Readiness Decision Criteria
 
-Following benchmark execution, Config B will be assessed against pre-registered quantitative thresholds to determine whether it is ready for operational production promotion:
+| Performance Metric | Scope / Denominator | Promotion Threshold | Type | Statistical & Operational Rationale |
+| :--- | :--- | :--- | :---: | :--- |
+| **Track A Overall Accuracy** | Track A ($N = 2,000$) | $\ge 98.5\%$ | **Hard** | Baseline fidelity on authentic emails. 95% Wilson CI: $[97.87\%, 98.96\%]$. |
+| **Track A False Positive Rate** | Track A Ham ($N = 1,000$) | $\le 1.0\%$ | **Hard** | Low FP tolerance to prevent disruption. 95% Wilson CI: $[0.40\%, 1.57\%]$. |
+| **Sophisticated Phishing Recall**| Track B BEC ($N = 350$) | $\ge 98.0\%$ | **Hard** | Targeted threat containment. 95% Wilson CI: $[95.96\%, 99.03\%]$. |
+| **Difficult Legitimate FPR** | Track B SaaS ($N = 350$) | $\le 1.0\%$ | **Hard** | Domain Analyzer V3 false positive suppression. 95% CI: $[0.29\%, 2.49\%]$. |
+| **Active Injection Containment** | Track B Active ($N = 200$)| **$= 100.0\%$** | **Hard** | Zero-tolerance security invariant. Wilson 95% CI: $[98.13\%, 100.0\%]$. |
+| **Quoted Injection Safe Pass** | Track B Quoted ($N = 200$)| $\ge 95.0\%$ | **Target**| Delivery of legitimate security bulletins quoting attacks. |
+| **Total Mean Latency** | All samples ($N = 3,000$) | $\le 4,500$ ms | **Target**| SLA compliance for inbound email gateway processing buffers. |
+| **Total P95 Tail Latency** | All samples ($N = 3,000$) | $\le 6,000$ ms | **Hard** | Predictable execution without tail latency spikes or server timeouts. |
+| **Statistical Significance** | Paired pairs ($N = 3,000$) | $p < 0.01$ (McNemar) | **Hard** | Proves false positive reduction is statistically significant vs Config A. |
 
-| Performance Metric | Production Promotion Threshold | Config B Target | Engineering & Security Rationale |
-| :--- | :--- | :--- | :--- |
-| **Overall Accuracy** | $\ge 98.5\%$ | **$\ge 99.0\%$** | High overall fidelity required to prevent operational disruption in enterprise mail flow. |
-| **Overall False Positive Rate (FPR)** | $\le 1.0\%$ | **$\le 0.80\%$** | Low false positive tolerance. An FPR $> 1.0\%$ results in unacceptable helpdesk ticket volumes. |
-| **Difficult Legitimate Accuracy** | $\ge 98.0\%$ | **$\ge 99.0\%$** | Core focus of Phase 7/8: legitimate SaaS authentication and secondary corporate domains must not be blocked. |
-| **Sophisticated Phishing Recall** | $\ge 98.0\%$ | **$\ge 99.0\%$** | Critical threat containment. Must detect targeted BEC, payment redirection, and lookalike domains. |
-| **Active Injection Containment** | **$= 100.0\%$** | **$100.0\%$** | Non-negotiable security invariant. Zero unresolved active prompt injections allowed into user inboxes. |
-| **Quoted Injection Safe Delivery**| $\ge 95.0\%$ | **$\ge 97.0\%$** | Legitimate educational and SOC security bulletins quoting attacks must be safely delivered. |
-| **Total Mean Latency** | $\le 4,500$ ms | **$\le 4,200$ ms** | SLA compliance for inbound email gateway processing buffers. |
-| **Total P95 Tail Latency** | $\le 6,000$ ms | **$\le 5,500$ ms** | Predictable execution without tail latency spikes or server timeouts. |
-| **Statistical Significance** | $p < 0.01$ (McNemar) | **$p < 0.001$** | Proves false positive reduction is statistically significant and not an artifact of random sample variance. |
+> [!CAUTION]
+> **Statistical Risk Caveat**: Observing 100% containment on $N = 200$ active injections does **not** prove zero underlying risk. By the Rule of Three, the true failure rate is bounded by approximately $1.50\%$ at the 95% confidence level.
 
 ---
 
@@ -81,9 +83,8 @@ Following benchmark execution, Config B will be assessed against pre-registered 
 At the completion of Phase 8 evaluation, the audit report will execute the following definitive decision rule:
 
 1. **PROCEED TO PRODUCTION PROMOTION**:
-   - If and only if Config B passes **ALL** criteria in Gate 7.
+   - If and only if Config B passes **ALL** hard criteria in Gate 7.
 2. **REQUIRE SPECIFIC REFINEMENT**:
-   - If Config B achieves $\ge 97.0\%$ accuracy and $100\%$ injection containment, but fails the FPR ($\le 1.0\%$) or P95 latency ($\le 6,000$ ms) threshold. Requires targeted registry or prompt refinement.
+   - If Config B achieves $\ge 97.0\%$ accuracy and $100\%$ injection containment, but fails the FPR ($\le 1.0\%$) or P95 latency ($\le 6,000$ ms) threshold. Requires targeted domain registry or prompt refinement.
 3. **ABANDON ARCHITECTURE**:
    - If Config B suffers an active injection containment failure ($< 100\%$) or sophisticated phishing recall drops below $95.0\%$.
-

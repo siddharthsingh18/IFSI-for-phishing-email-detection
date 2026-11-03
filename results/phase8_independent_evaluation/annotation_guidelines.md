@@ -82,7 +82,7 @@ To ensure maximum labeling objectivity, the annotation pipeline enforces a multi
 flowchart TD
     Sample["Candidate Email Sample"] --> Ann1["Annotator 1 (Independent)"]
     Sample --> Ann2["Annotator 2 (Independent)"]
-    
+
     Ann1 & Ann2 --> CheckAgreement{"Label Agreement Check"}
     CheckAgreement -->|Unanimous Agreement| Accepted["Accepted Ground Truth"]
     CheckAgreement -->|Discrepancy Detected| LeadAdjudicator["Lead Security Analyst Review\n(Documented Consensus)"]
@@ -98,4 +98,3 @@ Inter-annotator reliability is measured using **Cohen's Kappa ($\kappa$)** for b
 $$\kappa = \frac{P_o - P_e}{1 - P_e}$$
 - **Mandatory Quality Gate**: Binary classification agreement must achieve **$\kappa \ge 0.85$** (near-perfect agreement) across the 600-sample validation subset.
 - If $\kappa < 0.85$, annotation guidelines must be clarified, all annotators retrained, and the validation subset re-annotated prior to benchmark execution.
-

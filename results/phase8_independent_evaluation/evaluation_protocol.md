@@ -2,9 +2,9 @@
 
 ## 1. Executive Summary & Objective
 
-This document defines the formal, scientifically defensible evaluation protocol for the large-scale independent validation of the **IFSI Phishing Email Detection Pipeline**. 
+This document defines the formal, scientifically defensible evaluation protocol for the large-scale independent validation of the **IFSI Phishing Email Detection Pipeline**.
 
-Phase 7 established that **Config B (Domain Analyzer V3)** successfully eliminated historical false positives on legitimate enterprise secondary and SaaS domains, achieving a **0.77% False Positive Rate (FPR)** and **100.0% Sophisticated Phishing Recall** across a controlled 240-email benchmark. 
+Phase 7 established that **Config B (Domain Analyzer V3)** successfully eliminated historical false positives on legitimate enterprise secondary and SaaS domains, achieving a **0.77% False Positive Rate (FPR)** and **100.0% Sophisticated Phishing Recall** across a controlled 240-email benchmark.
 
 The objective of Phase 8 is to evaluate whether these performance characteristics generalize to a scaled, independently sourced corpus of **3,000 emails** without model retraining, threshold tuning, or architectural modifications.
 
@@ -21,23 +21,23 @@ Phase 8 evaluates a strictly controlled, paired comparison between two frozen co
 flowchart TD
     CandidateEmail["Input Email (RFC822 Formatted)"] --> S1["Stage 1: Injection Detector\n(Compact Prompt - Frozen Phase 5)"]
     S1 --> S15["Stage 1.5: Multilingual Sanitizer V2\n(Unicode/CJK Flexible Regex - Frozen Phase 5)"]
-    
+
     CandidateEmail --> ConfigChoice{"Configuration Dispatch"}
-    
+
     subgraph ConfigA ["Config A: Frozen Phase 6 Baseline"]
         ConfigChoice -->|"Config A"| V2["Domain Analyzer V2\n(Single-domain brand mappings)"]
         V2 --> S2A["Stage 2 Classifier\n(STAGE2_WITH_DOMAIN_EVIDENCE_PROMPT)"]
     end
-    
+
     subgraph ConfigB ["Config B: Frozen Phase 7 Candidate"]
         ConfigChoice -->|"Config B"| V3["Domain Analyzer V3\n(Multi-Domain Registry & Internal Context)"]
         V3 --> S2B["Stage 2 Classifier\n(STAGE2_WITH_DOMAIN_EVIDENCE_PROMPT)"]
     end
-    
+
     CleanFAISS[("Clean FAISS Index\n(1,321 Exemplars)")] --> Top3RAG["Standard Top-3 Retrieval"]
     Top3RAG --> S2A & S2B
     S15 --> S2A & S2B
-    
+
     S2A & S2B --> Policy["Defensive Security Action Policy\n(Allow / Block / Quarantine / Manual Review)"]
 ```
 
@@ -82,3 +82,14 @@ flowchart TD
 3. **No Dynamic Registry Inflation**:
    `VERIFIED_ENTERPRISE_RELATIONSHIPS` in `domain_analyzer_v3.py` remains frozen during evaluation. No domain may be added to the registry post-hoc to resolve benchmark false positives.
 
+---
+
+## 5. Dual-Track Execution & Reporting Protocol
+
+In accordance with Phase 8.0.1 design corrections:
+1. **Track A (Independently Sourced Real Emails, N = 2,000)** and **Track B (Controlled Challenge Suite, N = 1,000)** must be executed and recorded in separate prediction streams:
+   - `results/phase8_independent_evaluation/track_a_predictions.jsonl`
+   - `results/phase8_independent_evaluation/track_b_predictions.jsonl`
+2. **Separate Metric Computation**:
+   - Accuracy, FPR, Recall, and McNemar's paired test are computed independently for Track A and Track B.
+   - Track B synthetic results must never be combined with Track A to make claims regarding real-world performance.

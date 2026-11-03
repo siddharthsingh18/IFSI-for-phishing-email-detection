@@ -88,4 +88,3 @@ All Phase 8 evaluation metrics must be reported along four orthogonal axes:
    - `real_world_unmodified` vs `real_world_anonymized` vs `adapted_template` vs `synthetic_adversarial`.
 4. **By Message Formatting**:
    - Plain text RFC822 vs Multipart MIME (HTML/Text).
-

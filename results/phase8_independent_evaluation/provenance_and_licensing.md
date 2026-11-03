@@ -89,4 +89,3 @@ Every sample ingested into `data/evaluation/phase8/` must carry the following st
 ### Legal & Ethical Sign-Off
 1. **Redistribution Strategy**: The evaluation harness will store the curated dataset under `data/evaluation/phase8/` for reproducible local evaluation. Any public artifact release will publish dataset generation scripts and SHA-256 hashes rather than redistributing raw IWSPA academic text, respecting academic dataset agreements.
 2. **Zero Privacy Leakage**: All messages pass automated regex filters to ensure no unredacted social security numbers, credit card numbers, or live private phone numbers are persisted.
-

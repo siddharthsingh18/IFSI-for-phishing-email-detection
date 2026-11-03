@@ -1,31 +1,37 @@
-# Phase 8.0: Large-Scale Independent Evaluation Readiness Report
+# Phase 8.0 / 8.0.1: Large-Scale Independent Evaluation Readiness Report
 
 ## 1. Executive Summary & Recommendation
 
-Phase 8.0 establishes the scientific, legal, ethical, and statistical foundation for conducting a large-scale independent evaluation of the **IFSI Phishing Email Detection Pipeline**.
+Phase 8.0 and Phase 8.0.1 establish the scientific, legal, ethical, and statistical foundation for conducting a large-scale independent evaluation of the **IFSI Phishing Email Detection Pipeline**.
 
-Following the successful precision refinement achieved in Phase 7 (where Config B / Domain Analyzer V3 achieved 99.58% accuracy, 0.77% FPR, and 100.0% sophisticated phishing recall on a controlled 240-email benchmark), this phase delivers a fully articulated, pre-registered evaluation protocol designed to evaluate generalization across **$N = 3,000$ independent emails**.
+Following the **Phase 8.0.1 Source Suitability Audit and Evaluation Design Correction**:
+1. All candidate sources were audited against 10 strict provenance and legal criteria. Non-email sources (SEC filings, FBI IC3 reports) were excluded from raw email acquisition.
+2. The benchmark was partitioned into **Track A (Independently Sourced Real Emails, N = 2,000)** and **Track B (Controlled Challenge Suite, N = 1,000)**.
+3. Label taxonomy was decoupled into two independent orthogonal dimensions: **Email Phishing Status** and **Prompt Injection Status**.
+4. Acceptance gates were mathematically audited with 95% Wilson Score intervals and sample size limitations (Rule of Three).
 
-### Definitive Recommendation
+### Definitive Recommendation:
 
-### **READY FOR DATASET ACQUISITION.**
+### **APPROVED FOR LIMITED ACQUISITION; SPECIFIC SOURCES REMAIN EXCLUDED.**
 
-*(This recommendation authorizes progressing to Phase 8.1: Dataset Acquisition & Screening. It does **NOT** authorize production promotion or benchmark inference execution until all pre-registered acceptance gates are satisfied.)*
+*(This recommendation authorizes progressing to Phase 8.1 for approved Track A sources [Enron clean subset and Nazario mbox] and Track B challenge preparations. Non-email sources remain excluded from raw email acquisition, and leaked/stolen inboxes remain permanently banned.)*
 
 ---
 
-## 2. Synthesis of Phase 8.0 Deliverables & Specifications
+## 2. Synthesis of Phase 8.0 / 8.0.1 Deliverables & Specifications
 
 | Deliverable Document | Core Purpose & Scope | Key Specifications & Standards |
 | :--- | :--- | :--- |
-| **[`evaluation_protocol.md`](file:///d:/Project/IFSI-for-phishing-email-detection/results/phase8_independent_evaluation/evaluation_protocol.md)** | Master experimental protocol | Paired double-blind evaluation of Config A vs Config B; identical inputs; local Ollama `qwen3.5:4b` (`temp=0.0`, `num_predict=512`); top-3 clean FAISS retrieval. |
-| **[`dataset_source_registry.md`](file:///d:/Project/IFSI-for-phishing-email-detection/results/phase8_independent_evaluation/dataset_source_registry.md)** | Multi-source feasibility audit | 6 authorized research corpora (Enron clean, Nazario, Mendeley, IWSPA, OWASP LLM, SEC EDGAR); absolute prohibition of leaked/hacked inboxes. |
-| **[`provenance_and_licensing.md`](file:///d:/Project/IFSI-for-phishing-email-detection/results/phase8_independent_evaluation/provenance_and_licensing.md)** | Legal & privacy framework | Mandatory regex PII scrubbing; structural domain and routing header preservation; auditable cryptographic provenance schema (`origin_type`). |
-| **[`dataset_composition_plan.md`](file:///d:/Project/IFSI-for-phishing-email-detection/results/phase8_independent_evaluation/dataset_composition_plan.md)** | Target corpus distribution | Target $N = 3,000$: 900 Ordinary Legitimate (30%), 600 Difficult Legitimate (20%), 750 Conventional Phishing (25%), 450 Sophisticated Phishing (15%), 300 Prompt Injections (10%). |
-| **[`annotation_guidelines.md`](file:///d:/Project/IFSI-for-phishing-email-detection/results/phase8_independent_evaluation/annotation_guidelines.md)** | Independent ground-truth assignment | Zero model-in-the-loop annotation; explicit evidentiary criteria for phishing vs legitimate; dual-annotation on 20% validation subset; mandatory Cohen's Kappa $\kappa \ge 0.85$. |
-| **[`leakage_prevention_protocol.md`](file:///d:/Project/IFSI-for-phishing-email-detection/results/phase8_independent_evaluation/leakage_prevention_protocol.md)**| Contamination elimination | 7-tier screening pipeline: 0 SHA-256 collisions, 0 normalized collisions, MinHash Jaccard $\le 0.70$, FAISS cosine $\le 0.95$, template deduplication, split isolation. |
-| **[`statistical_analysis_plan.md`](file:///d:/Project/IFSI-for-phishing-email-detection/results/phase8_independent_evaluation/statistical_analysis_plan.md)**| Formal hypothesis testing | Pre-registered McNemar's test ($\alpha = 0.01$); 95% Wilson Score confidence intervals; Wilcoxon signed-rank latency test; power $> 0.95$ across all sub-cohorts. |
-| **[`acceptance_gates.md`](file:///d:/Project/IFSI-for-phishing-email-detection/results/phase8_independent_evaluation/acceptance_gates.md)** | Pre-registered gate thresholds | 7 sequential gates; explicit production readiness thresholds: Accuracy $\ge 98.5\%$, Sophisticated Recall $\ge 98.0\%$, FPR $\le 1.0\%$, Injection Containment $= 100.0\%$, P95 Latency $\le 6,000$ ms. |
+| **[`source_suitability_audit.md`](file:///d:/Project/IFSI-for-phishing-email-detection/results/phase8_independent_evaluation/source_suitability_audit.md)** | 10-point source suitability audit | Excludes non-email filings (SEC EDGAR, FBI IC3) from Track A; approves Enron and Nazario as real emails. |
+| **[`licensing_evidence_register.md`](file:///d:/Project/IFSI-for-phishing-email-detection/results/phase8_independent_evaluation/licensing_evidence_register.md)** | Legal & licensing audit | Statutory public domain, CC BY 4.0, CC BY-SA 4.0 terms; mandatory PII redaction; permanent ban on stolen inboxes. |
+| **[`real_email_vs_challenge_track.md`](file:///d:/Project/IFSI-for-phishing-email-detection/results/phase8_independent_evaluation/real_email_vs_challenge_track.md)** | Dual-track architecture | Track A (Real Emails, N=2,000) vs Track B (Challenge Suite, N=1,000); strict ban on blending tracks. |
+| **[`revised_dataset_cross_tabulation.md`](file:///d:/Project/IFSI-for-phishing-email-detection/results/phase8_independent_evaluation/revised_dataset_cross_tabulation.md)** | Decoupled 2D label taxonomy | Email Phishing Status x Injection Status cross-tabulation; active injection != phishing; quoted != legitimate. |
+| **[`revised_acceptance_gate_review.md`](file:///d:/Project/IFSI-for-phishing-email-detection/results/phase8_independent_evaluation/revised_acceptance_gate_review.md)** | Acceptance gate statistical review | Formal definitions, numerators, denominators, 95% Wilson Score intervals, Rule of Three risk analysis. |
+| **[`phase8_1_readiness_decision.md`](file:///d:/Project/IFSI-for-phishing-email-detection/results/phase8_independent_evaluation/phase8_1_readiness_decision.md)** | Formal readiness decision | Formal sign-off: Approved for limited acquisition; specific sources remain excluded. |
+| **[`evaluation_protocol.md`](file:///d:/Project/IFSI-for-phishing-email-detection/results/phase8_independent_evaluation/evaluation_protocol.md)** | Master experimental protocol | Paired double-blind evaluation of Config A vs Config B; separate prediction logging. |
+| **[`dataset_source_registry.md`](file:///d:/Project/IFSI-for-phishing-email-detection/results/phase8_independent_evaluation/dataset_source_registry.md)** | Multi-source feasibility audit | Sourcing catalog updated with Track A and Track B separation. |
+| **[`dataset_composition_plan.md`](file:///d:/Project/IFSI-for-phishing-email-detection/results/phase8_independent_evaluation/dataset_composition_plan.md)** | Target corpus distribution | Target N = 3,000: Track A (2,000) + Track B (1,000). |
+| **[`acceptance_gates.md`](file:///d:/Project/IFSI-for-phishing-email-detection/results/phase8_independent_evaluation/acceptance_gates.md)** | Pre-registered gate thresholds | 7 sequential gates; partitioned thresholds for Track A and Track B. |
 
 ---
 
@@ -74,4 +80,3 @@ Phase 8.3: Independent Forensic Audit & Production Readiness Decision
 - **Zero Datasets Ingested**: In strict adherence to protection rules, no external datasets were downloaded or stored during Phase 8.0.
 - **Zero Inferences Executed**: No benchmark inferences were launched.
 - **Zero Code Modifications**: Production M4 (`src/core/inference.py`), Frozen A1 (`src/core/inference_m4_v2.py`), Clean FAISS Index (`results/rag_index_clean/index.faiss`), and Phase 7 implementations remain 100% untouched.
-
