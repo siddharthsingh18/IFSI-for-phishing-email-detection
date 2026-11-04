@@ -1,46 +1,116 @@
-# Phase 8.1C: Final Shortlisted Source Readiness & Track A Preflight Decision
+# Phase 8.1C — Final Acquisition-Readiness Decision
 
-## 1. Separate Four-Axis Readiness Assessment (Per Shortlisted Source)
+## Overall decision
 
-Per Phase 8.1C governance rules, **legal clearance**, **technical suitability**, **independence**, and **usable sample yield** are assessed independently for every shortlisted candidate. **Zero files or archives have been downloaded.**
+> **No defensible acquisition design is currently feasible.**
 
-| Shortlisted Source | 1. Legal Clearance | 2. Technical Suitability | 3. Independence Status | 4. Usable Sample Yield (`Revised 600+200`) | **Final Per-Source Readiness Decision** |
-| :--- | :--- | :--- | :--- | :--- | :---: |
-| **`rf-peixoto/phishing_pot`** (https://github.com/rf-peixoto/phishing_pot) | **UNCLEARED PENDING APPROVAL** — `CC BY-NC 4.0` documented; must hash pinned `LICENSE`, confirm `NC` scope, and keep bodies local-only (`redistribution_allowed: false`). | **SUITABLE** — Raw `.eml` wire format (`SPF`/`DKIM`/`DMARC`, MIME, URLs); must normalize `To: phishing@pot` to `<REDACTED_RECIPIENT>` & strip attachments. | **INDEPENDENT** — `0%` prior IFSI overlap; run SHA-256 + `0.70` shingle dedup at ingestion. | **PLAUSIBLE (`225` test + `75` val = `300` phish)** — `<2.5%` of `12,000+` `.eml` files; requires 6-class human filter (`C1/C2` vs `C4`) + campaign dedup. | **`READY FOR A SEPARATE ACQUISITION APPROVAL`** |
-| **IETF Public Mail Archive** (https://mailarchive.ietf.org/) | **UNCLEARED PENDING APPROVAL** — Public under `BCP 78` (`RFC 5378`) & TLP; author prose copyright retained (`redistribution_allowed: false`); hash `rsync`/TLP terms first. | **SUITABLE** — Official `.mbox`/`rsync` (`rsync.ietf.org`, no scraping) with `DKIM`/`ARC`; strip `List-*` & mask `<REDACTED_RECIPIENT>` + signature PII. | **INDEPENDENT** — `0%` prior IFSI overlap on `2021–2025` slice. | **EVIDENCE-BASED (`105` test + `35` val = `140` legit)** — `<0.15%` of `>100k` `2021–2025` messages (`1`/thread, max `3`/domain). | **`READY FOR A SEPARATE ACQUISITION APPROVAL`** |
-| **ASF Public Mail Archives** (https://lists.apache.org/) | **UNCLEARED PENDING APPROVAL** — ASF Public Forum Archive Policy (`public-archives.html`); author prose copyright retained (`redistribution_allowed: false`); hash policy first. | **SUITABLE** — `.mbox` with `SPF`/`DKIM`; exclude `jira@`/`gitbox@`/CI bots, strip `List-*`, and scrub PII. | **INDEPENDENT** — `0%` prior IFSI overlap on `2021–2025` slice (`spamassassin_ham` is `2002–2003`). | **EVIDENCE-BASED (`90` test + `30` val = `120` legit)** — `<0.15%` of human governance/security/ops threads. | **`READY FOR A SEPARATE ACQUISITION APPROVAL`** |
-| **NIST / Waterloo `TREC 2007` (`trec07p`)** (https://plg.uwaterloo.ca/~gvcormac/treccorpus07/) | **UNCLEARED PENDING APPROVAL** — Waterloo TREC Spam Usage Agreement (`NC` research, no redistribution); must capture/hash gateway agreement & confirm institutional sign-off. | **CONDITIONAL** — Raw RFC 2822 (`inmail.*`), single MTA, **but** `2007` pre-DMARC era, heavy `2007` image/PDF spam, and disused/honeypot `spam` accounts requiring `<REDACTED_RECIPIENT>`. | **INDEPENDENT** — `0%` prior IFSI overlap. | **MIXED**: `ham` (`105+35=140`) **evidence-based** (`25,220` `ham`); `phish` (`120+30` **rejected**; revised `45+15=60` **conditional estimate** requiring `0.12%` yield across `50,199` `spam` via 6-class dual human review). | **`CONDITIONALLY SUITABLE`** |
-| **`Untroubled.org` Bait Archive** (http://untroubled.org/spam/) | **UNCLEARED PENDING APPROVAL** — Informal R&D permission notice over plain `http://` (no SPDX; third-party sender copyright/PII uncleared; `redistribution_allowed: false`). | **CONDITIONAL** — Raw RFC 822 in `.7z` archives; `>95%` ordinary bulk spam (`C4`) + live malware payloads requiring isolated sandbox & attachment stripping. | **INDEPENDENT** — `0%` prior IFSI overlap; must cross-deduplicate `2022–2025` waves against `phishing_pot`. | **CONDITIONAL ESTIMATE** — Phase 8.1B `100+25=125` phish **rejected**; revised `30` test + `10` val = `40` verified phish (`<0.04%` of `2022–2025` bait volume) requires manual 6-class extraction. | **`CONDITIONALLY SUITABLE`** |
+This is a preflight decision, not a rejection of every source forever. The `800 + 200` arithmetic works and respects the `0.40` source cap, but its class counts depend on unsupported phishing extraction from TREC and Untroubled.org and on unmeasured post-deduplication yields elsewhere. The conditional `600 + 200` envelope is retained as a planning fallback only; it is not approved or feasible until the acquisition gates pass.
 
----
+## Per-source decisions
 
-## 2. Formal Overall Phase 8.1C Preflight Decision
+| Source | Legal assessment | Technical assessment | Independence assessment | Usable-yield assessment | Decision |
+|---|---|---|---|---|---|
+| TREC 2007 | Usage agreement not captured or hashed | Public email corpus documented; exact current fields unverified | No source-byte comparison performed | Ham capacity-plausible; phishing unknown | **UNVERIFIED** |
+| `phishing_pot` | CC BY-NC 4.0 visible; third-party rights and institutional scope unresolved | `.eml` format and mixed real-mail content documented | Requires hash/near-duplicate audit after approval | Quota is an estimate | **CONDITIONALLY SUITABLE** |
+| Untroubled.org | Informal research permission; third-party rights unresolved | p7zip spam archive documented; exact members/headers unverified | Requires cross-source deduplication | Phishing quota unsupported | **CONDITIONALLY SUITABLE** |
+| IETF archive | Public-record and Trust framework; exact reuse scope unresolved | Public archive/rsync path documented | Requires source-byte comparison | Legitimate quota is an estimate | **CONDITIONALLY SUITABLE** |
+| ASF archive | Public Forum Archive Policy; no blanket message license established | Public mbox path documented | Requires source-byte comparison | Legitimate quota is an estimate | **CONDITIONALLY SUITABLE** |
 
-Out of the three permitted overall decisions:
-- *The 800 + 200 design is feasible.*
-- *A smaller source-diverse design is feasible.*
-- *No defensible acquisition design is currently feasible.*
+No source is `READY FOR A SEPARATE ACQUISITION APPROVAL` yet because the required exact legal text, pinned version, and yield evidence are incomplete.
 
-**Selected Overall Decision:**
+## Allocation audit
 
-> **`A smaller source-diverse design is feasible.`**
+### Phase 8.1B proposal
 
-### Why `The 800 + 200 design is feasible` Was Rejected
-1. Phase 8.1B's `800 + 200` design required **`120 + 30 = 150` unique phishing records from `TREC 2007`** and **`100 + 25 = 125` unique phishing records from `Untroubled.org`** (`275 / 500 = 55.0%` of all phishing across Test + Validation) from two general spam corpora with **`0` native phishing labels** and no published phishing counts.
-2. Presenting `TREC 2007` as a `120 / 120` balanced phishing benchmark misrepresented an `Apr–Jul 2007` general spam dataset dominated by commercial/image/PDF spam.
+| Source | Test | Test fraction | Validation | Validation fraction |
+|---|---:|---:|---:|---:|
+| TREC 2007 | 240 | 30.00% | 60 | 30.00% |
+| `phishing_pot` | 180 | 22.50% | 45 | 22.50% |
+| IETF | 160 | 20.00% | 40 | 20.00% |
+| ASF | 120 | 15.00% | 30 | 15.00% |
+| Untroubled.org | 100 | 12.50% | 25 | 12.50% |
+| **Total** | **800** | **100%** | **200** | **100%** |
 
-### Why `A smaller source-diverse design is feasible` (`600` Test + `200` Disjoint Validation) Is Justified
-1. Down-scoping Test to **`N_test = 600` (`300` Legitimate + `300` Phishing)** alongside **`N_val = 200` (`100` Legitimate + `100` Phishing)** satisfies **every bound in [`config/dataset_gates.yaml`](file:///d:/Project/IFSI-for-phishing-email-detection/config/dataset_gates.yaml)** without relaxing `maximum_source_fraction: 0.40` (`max = 37.50%` in both Test and Validation).
-2. Unverified spam-archive phishing reliance is cut by **`63.6%`** (`275 -> 100` total: `45 + 15 = 60` conditional from `50,199` `TREC` spam [`0.12%`] and `30 + 10 = 40` conditional from `>100,000` `Untroubled.org` spam [`<0.04%`]), while `TREC 2007` is restored to a legitimate-majority (`70%` `ham` / `30%` verified phishing) server slice.
-3. Paired McNemar power (`A0` vs `A1` and `Config A` vs `Config B`) remains high (`>= 6` zero-loss discordant flips significant at $p = 0.031 < 0.05$; class-level 95% Wilson CIs widen by only `0.20–0.35 pp` relative to `N = 800`).
+The class arithmetic was `400` test / `400` test and `100` validation / `100` validation, but those are assumed counts, not verified accepted labels. The largest source is `30%`, and the allocation is not perfectly confounded because TREC is dual-class. It remains highly source/class-confounded: `70%` of each partition is from single-class sources, with an approximate source-only balanced accuracy of `0.85` under a majority rule. Validation disjointness and independent sampling are **not demonstrated** before acquisition.
 
----
+### Conditional fallback
 
-## 3. Preserved Protections & Mandatory Pre-Acquisition Authorization Gate
+The retained fallback is `600` test (`300` legitimate, `300` phishing) plus `200` validation (`100` legitimate, `100` phishing): Phishing Pot `225/75` phishing; TREC `105/35` legitimate plus `45/15` conditional phishing; IETF `105/35` legitimate; ASF `90/30` legitimate; and Untroubled `30/10` conditional phishing. Test and validation source fractions are respectively `37.50%`, `25.00%`, `17.50%`, `15.00%`, and `5.00%` for those five rows. This satisfies the arithmetic source cap, but every conditional phishing count and every live-archive yield still requires evidence.
 
-1. **Zero Downloads Executed**: Nothing has been downloaded, scraped, or ingested in Phase 8.1C.
-2. **Prior Decisions Preserved**: All Phase 8.1A (`phase8_1a_*.md`) and Phase 8.1B (`phase8_1b_*.md`) deliverables remain intact; **Enron** and **Jose Nazario** remain on acquisition hold; **Track B1** and **Track B2** remain strictly separated from Track A.
-3. **Mandatory Separate Acquisition Approval Checklist (Before Any Bytes Are Fetched)**:
-   - Obtain human legal/PI sign-off after capturing verbatim texts + SHA-256 hashes of all five upstream license/policy documents (`phishing_pot` `LICENSE` at pinned commit; Waterloo `trec07p` Usage Agreement; `untroubled.org/spam/` R&D notice; IETF TLP/`rsync` terms; ASF `public-archives.html`).
-   - Execute dual-analyst 6-class blind annotation (`C1`–`C6`, $\kappa_{\text{binary}} \ge 0.85$) and enforce the **Hard Stop Contingency Rule** in [`phase8_1c_revised_allocation.md`](file:///d:/Project/IFSI-for-phishing-email-detection/results/phase8_independent_evaluation/phase8_1c_revised_allocation.md) if `TREC 2007` or `Untroubled.org` falls short of its reduced conditional phishing ceiling (`60` and `40` records).
+## Unresolved licensing and governance questions
 
+- TREC: exact Waterloo agreement text, acceptance mechanism, institutional requirements, and redistribution language must be captured and hashed.
+- Phishing Pot: pin a commit; verify the exact license at that commit; confirm that non-commercial institutional evaluation is authorized; assess third-party privacy, trademark, and malware risks.
+- Untroubled: preserve the permission-page text and hash; determine whether the informal notice covers the intended institution and derived processing; assess third-party rights and PII.
+- IETF: freeze the applicable TLP/Note Well version, list/date scope, archive export terms, and the institution’s right to create and retain derived data.
+- ASF: establish the legal scope of the Public Forum Archive Policy and mbox export for research processing; do not apply Apache-2.0 to email prose.
+- For every source: define local-only storage, retention, deletion, redaction, and whether any message text may be published. Until resolved, set `redistribution_allowed: false`.
+
+## Exact label requirements
+
+No accepted Phase 8.1C message counts exist yet. The required classes are `C1` credential theft/phishing, `C2` financial fraud/impersonation, `C3` malware delivery, `C4` ordinary unsolicited commercial spam, `C5` legitimate email, and `C6` ambiguous. Only `C1/C2` count as phishing; `C3/C4` are not backfill; `C6` is quarantined. Two independent blind annotators and a third adjudicator for disagreements are required, with binary Cohen’s `κ ≥ 0.85`.
+
+## Mandatory next gate — still no download authorization
+
+1. Capture and hash only the five applicable license/policy texts and record their exact URLs and retrieval timestamps.
+2. Obtain institutional/legal approval for local processing and non-commercial scope.
+3. Pin each source version/list/date window and define the local-only storage boundary.
+4. Run an approved, sandboxed, metadata-controlled yield pilot; do not execute or render attachments/URLs.
+5. Perform dual annotation, deduplication, cross-source overlap checks, and the independent validation split.
+6. Recompute accepted class counts and source fractions. If any quota fails, reduce the design or stop; never relabel ordinary spam.
+
+## Mandatory final audit record
+
+### Files created or modified
+
+The six Phase 8.1C deliverables in this directory were updated:
+
+- `phase8_1c_trec_label_validity_audit.md`
+- `phase8_1c_primary_source_legal_verification.md`
+- `phase8_1c_sample_yield_feasibility.md`
+- `phase8_1c_revised_allocation.md`
+- `phase8_1c_statistical_design_review.md`
+- `phase8_1c_final_decision.md`
+
+No production implementation, historical dataset, RAG index, or prior Phase 8.1A/8.1B deliverable was modified.
+
+### Source evidence examined
+
+The exact primary URLs are listed in `phase8_1c_primary_source_legal_verification.md`. The key evidence was the NIST TREC 2007 overview; Phishing Pot’s repository/readme/dataset card/license; Untroubled’s archive policy page; IETF open-records, archive, RFC 5378, TLP, and FAQ pages; and ASF’s archive homepage, developer mbox instructions, Public Forum Archive Policy, and Pony Mail documentation.
+
+### Required execution audit
+
+Commands executed and observed exit codes:
+
+| Command | Exit code | Result |
+|---|---:|---|
+| `python tools/init_phase8.py` | `1` | Not run because Python is unavailable in the shell (`python unavailable`). |
+| PowerShell `Get-FileHash -Algorithm SHA256` protected-file audit | `0` | Completed for all listed components. |
+| `git status --short` | `0` | Six modified Phase 8.1C reports only; no production/data/index files. |
+| `git diff --stat` | `0` | `6 files changed, 329 insertions(+), 371 deletions(-)`. |
+| `git diff --check` | `0` | No whitespace errors. |
+
+No dataset was downloaded, scraped, archived, extracted, or ingested. No model inference or benchmark execution was run. No protected file was modified. The primary-source checks used web metadata/policy pages only.
+
+### Protected baseline
+
+The repository’s `tools/init_phase8.py` currently enumerates 13 paths, while the Phase 8 task calls for 12 protected baseline components. The 12 core components required for this audit are listed below; the script’s additional Phase 7 predictions result was also hashed as an extra preservation check. All are present and unchanged:
+
+| Protected component | SHA-256 |
+|---|---|
+| `src/core/inference.py` | `aaebc00ccda5c6f4e2f908fd0d4fcdbe3ee94f8a89342e277e2dd6e413ede506` |
+| `src/core/inference_m4_v2.py` | `fc579b5286a35af104101a3280adcb51e9e0fb1ef1cb15e587a8557608ea7d37` |
+| `results/rag_index_clean/index.faiss` | `d68174f1a6ab7aefb865b055cf419e077f2f81a33f076ac55914ba1e598aa5cc` |
+| `results/rag_index_clean/metadata.json` | `4fb2be683d2b14e4ae3e330bc9914e61d72b898d61c22841e3bc6716e6320ece` |
+| `src/experiments/phase5_a1_optimization/sanitizer_v2.py` | `b51f938ca3a3b4e2b9f4212d4178b58cd47c3f8b4a48a0ba9a0539be4759aa55` |
+| `src/experiments/phase6_domain_evidence/domain_analyzer_v2.py` | `e27aefb062350e758840aedd4ecb5eb29e43ae19b61f228a3c864aa3df59fc44` |
+| `src/experiments/phase6_domain_evidence/engine_v3.py` | `dbe5150dc7365b6a560b09f9056129fc24d50e0ebfa13c53719c6336263ae8a8` |
+| `src/experiments/phase7_domain_precision/domain_analyzer_v3.py` | `7abde00e3795c7e02504d60ad1f631e101eeefb7b9566c70b73bc02b25f32525` |
+| `src/experiments/phase7_domain_precision/engine_v4.py` | `b3c6e9b86d664fc911c82f80e81bff7686cbd2032352fd9326b5e0c40f689b01` |
+| `data/evaluation/phase5_regression_160.jsonl` | `325bf42f244120667aa00051ed0e2086b02645958c138699cd3bd32d615fc606` |
+| `data/evaluation/phase6_domain_challenge.jsonl` | `02ce51faa1c107e43af3ffee0d2eeff4dcf893b075075ba813896b378556a8a7` |
+| `data/evaluation/phase7_precision_challenge.jsonl` | `a6ea7aa12d5bc997939d9cd8c721b728fc6fc22cc2a6aab0ef38912f7fb71c1c` |
+
+Additional protected result audited because it is enumerated by `tools/init_phase8.py`:
+
+`results/phase7_domain_precision/predictions.jsonl` — `2e2efbcacc597afcccd060043618ad33cfc6372d42b23b477c749c804daea724`.

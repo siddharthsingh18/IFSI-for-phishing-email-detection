@@ -1,81 +1,64 @@
-# Phase 8.1C: NIST / Waterloo TREC 2007 (`trec07p`) Label Validity & Phishing Separation Audit
+# Phase 8.1C — TREC 2007 Label-Validity Audit
 
-## 1. Scope & Governance Mandate
+## Scope and evidence boundary
 
-This audit conducts a conservative, metadata-only preflight of the highest-priority candidate from Phase 8.1B: the **2007 TREC Public Spam Corpus (`trec07p`)** hosted at https://plg.uwaterloo.ca/~gvcormac/treccorpus07/ (Gordon V. Cormack & Thomas R. Lynam, University of Waterloo / NIST TREC 2007 Spam Track, NIST SP 500-274).
+This is a metadata-only preflight. No corpus archive, message file, index, attachment, or email body was downloaded or ingested. The official Waterloo page was examined as the requested source, but its current redirect to `cormack.uwaterloo.ca` was not retrievable in this environment. The corpus facts below therefore use the primary TREC 2007 overview published by NIST and the Waterloo source URL; they do not substitute a downloaded corpus inspection.
 
-No files or archives were downloaded, scraped, or parsed during this audit. All Phase 8.1A (`phase8_1a_*.md`) and Phase 8.1B (`phase8_1b_*.md`) deliverables remain preserved unmodified.
+Primary evidence examined:
 
----
+- <https://plg.uwaterloo.ca/~gvcormac/treccorpus07/>
+- <https://trec.nist.gov/pubs/trec16/papers/SPAM.OVERVIEW16.pdf>
+- <https://pages.nist.gov/trec-browser/trec16/spam/proceedings/>
 
-## 2. Primary-Source Corpus Composition & Native Label Structure
+## Confirmed native composition
 
-### 2.1 Confirmed Primary-Source Facts
-1. **Archive & Chronology**: `trec07p.tgz` contains **75,419** chronologically ordered email messages (`data/inmail.1` through `data/inmail.75419`) delivered to a single mail server over an 89-day window from **April 8, 2007 through July 6, 2007** (Cormack, *TREC 2007 Spam Track Overview*, NIST SP 500-274).
-2. **Native Gold-Standard Classes (`full/index`)**:
-   - **`ham` (Legitimate)**: **25,220** messages (`33.44%`), adjudicated via human review atop pre-adjudication filtering.
-   - **`spam` (Unsolicited / Malicious Bulk Mail)**: **50,199** messages (`66.56%`).
-   - **Auxiliary Index Files**: `delay/index` and `partial/index` define delayed/recipient-subset feedback schedules for online spam filters over the exact same `75,419` `inmail.*` files; neither adds finer semantic labels.
-   - **Native `phishing` Label Count**: **`0` (NONE)**. Native `trec07p` is strictly a binary `ham`-vs-`spam` anti-spam benchmark, **not** a curated phishing corpus.
-3. **Original Messages & Headers**:
-   - Raw RFC 2822 message files preserve delivery headers (`Received:`, `Return-Path:`, `Message-ID:`, `From:`, `To:`, `Subject:`, `Date:`, `MIME-Version:`, `Content-Type:`) and raw MIME payloads, with minor systematic substitutions of local server/recipient identifiers applied by Cormack & Lynam for privacy.
-4. **Recipient-Account Asymmetry Within the Same Server (Critical Nuance)**:
-   - Cormack (2007) explicitly documents: *"The server contains many accounts that have fallen into disuse but continue to receive a lot of spam. To these accounts were added a number of 'honeypot' accounts published on the web."*
-   - Consequently, although `ham` and `spam` traversed the same receiving MTA, `ham` arrived at **active user mailboxes** whereas a substantial share of `spam` arrived at **disused or web-published spam-trap accounts**. Unmasked `To:` / `Delivered-To:` headers would leak account status unless masked uniformly to `<REDACTED_RECIPIENT>`.
+The NIST overview reports that `trec07p` is a public corpus of `75,419` chronologically ordered messages delivered to one server from 8 April through 6 July 2007:
 
-### 2.2 Technical & Era Limitations Affecting Phishing Extraction
-- **2007 Spam Composition (`Storm` / Image-Spam / Stock-Pump Era)**: Mid-2007 botnet traffic heavily featured **inline GIF/PNG image spam** and **PDF attachment penny-stock pump-and-dump spam** carrying empty text parts or random word-salad ("Bayes-poisoning" prose), alongside pharmaceutical, replica-watch, casino, and adult commercial spam.
-- **IFSI Parser Interaction**: [`src/tools/data/parsers/common.py`](file:///d:/Project/IFSI-for-phishing-email-detection/src/tools/data/parsers/common.py) extracts `text/plain` (falling back to non-attachment `text/*`). Image-only or PDF-only `2007` messages yield empty or gibberish text and **cannot** serve as valid text/header phishing test cases.
-- **Pre-Modern Authentication Era**: `Apr–Jul 2007` predates `DMARC` (`RFC 7489`, 2015), `ARC` (`RFC 8617`, 2019), and modern multi-tenant SaaS `DKIM` ecosystems (`SendGrid`, `Workday`, `Okta`), limiting what `trec07p` can test in [`domain_analyzer_v3.py`](file:///d:/Project/IFSI-for-phishing-email-detection/src/experiments/phase7_domain_precision/domain_analyzer_v3.py) to URL/display-name/`From:`/`Reply-To:`/`Return-Path:` mismatches rather than modern SaaS authentication alignment.
+| Native class | Count | Fraction | Meaning in the source |
+|---|---:|---:|---|
+| `ham` | 25,220 | 33.44% | Non-spam / ham |
+| `spam` | 50,199 | 66.56% | Spam |
+| **Total** | **75,419** | **100%** | **TREC public corpus** |
 
----
+The source is a spam-filtering benchmark. Its native gold standard is binary `ham` versus `spam`; it has no native `phishing` class and no published message-level phishing count. The overview says that the public corpus contains messages delivered to a particular server, includes disused accounts and web-published honeypot accounts, and was unaltered except for a few systematic name substitutions. The same overview says that messages and an index of their gold-standard judgments were supplied to participants.
 
-## 3. Research Usage Agreement & Institutional Requirements
+What remains unconfirmed without an authorized acquisition is the exact current archive layout, exact header set in every message, and whether any local packaging has changed. The overview is consistent with original message files and headers, but that is not a license to claim that every RFC 5322 field is present or intact.
 
-- **Confirmed Agreement Structure**: Access at https://plg.uwaterloo.ca/~gvcormac/treccorpus07/ is governed by the **TREC Public Spam Corpus Usage Agreement** (*"By downloading and using this data, you accept the terms of agreement for use of the TREC public spam corpus..."*).
-- **Known Terms**:
-  1. Permitted solely for non-commercial academic research, development, and evaluation.
-  2. Public republication or redistribution of raw/derived message files (`trec07p.tgz` or extracted `inmail.*` texts) is **prohibited** (`redistribution_allowed: false` under [PUBLIC_RELEASE.md](file:///d:/Project/IFSI-for-phishing-email-detection/PUBLIC_RELEASE.md)).
-  3. Users acknowledge raw messages may contain offensive content, PII, or live malicious payloads.
-- **Unresolved Institutional/Legal Questions (Must Resolve Prior to Any Download)**:
-  1. Because Phase 8.1C prohibits fetching external files/gateways, the **exact verbatim HTML/text and SHA-256** of the Waterloo usage agreement page have not yet been archived locally.
-  2. Unlike NIST's TREC Enterprise `W3C` track (which requires bilateral signed Organizational + Individual User Agreements submitted to NIST), Waterloo's `trec07p` uses researcher acceptance on the Waterloo host; however, institutional counsel/PI sign-off must confirm whether researcher click-through acceptance is authorized under local university/lab policy.
+## Phishing cannot be inferred from `spam`
 
----
+`spam` is not synonymous with phishing. A `spam` record may be ordinary advertising, pharmaceutical or adult promotion, SEO spam, image spam, stock promotion, malware delivery, or an actual credential or financial lure. The native label does not distinguish these cases. Therefore:
 
-## 4. Can `trec07p` Spam Be Reliably Separated into Phishing vs. Ordinary Spam?
+- every `spam` record is **unverified for phishing** until a message-level review establishes deceptive identity or financial impersonation and the relevant action request;
+- ordinary unsolicited commercial spam must not be relabeled as phishing or legitimate;
+- malware delivery is not automatically phishing; it is phishing only if independent message evidence also satisfies the phishing definition;
+- the proposed `120` TREC phishing test messages plus `30` validation messages are not supported by the native corpus metadata and are rejected as a quota;
+- the proposed `120` TREC legitimate test messages plus `30` validation messages are a capacity-plausible ham draw (`150 / 25,220 = 0.595%`), subject to deduplication and review.
 
-**Verdict: Reliable separation is IMPOSSIBLE from index metadata or automated heuristics alone, and is ONLY valid at the message level via strict dual-human annotation with mandatory `Ordinary Spam`, `Malware Delivery`, and `Ambiguous` exclusions.**
+The number of actual, unique-campaign phishing messages in `trec07p` is **unknown** until an approved acquisition and manual review. No percentage, lower bound, or substitute quota is asserted here.
 
-### Mandatory 6-Class Annotation Taxonomy for `trec07p` (and All Raw Sinkhole Candidates)
+## Required six-class annotation taxonomy
 
-| Class ID | Taxonomy Label | Operational Definition & Required Message-Level Evidence | Track A Disposition |
-| :---: | :--- | :--- | :--- |
-| **`C1`** | **`Credential theft / phishing`** | Impersonates a specific trusted brand, financial institution, ISP, university, or IT administrator **and** solicits login credentials, passwords, PINs, account verification, or session authentication via a deceptive link, HTML form, or reply address. | **INCLUDE as `phishing` (`label = 1`)** |
-| **`C2`** | **`Financial fraud / impersonation`** | Uses deceptive identity spoofing, falsified authority, or targeted social engineering to induce unauthorized wire transfer, invoice diversion, banking/payment-card disclosure, fake tax/escrow settlement, or advance-fee payment (`419` advance-fee capped at $\le 10\%$ of source phishing quota to prevent genre domination). | **INCLUDE as `phishing` (`label = 1`)** |
-| **`C3`** | **`Malware delivery`** | Delivers an executable/archive/macro attachment (`.exe`, `.zip`, `.scr`, `.doc`) or exploit link **without** clear credential-harvesting or financial-impersonation prose, or relies on binary payload inspection rather than email text/headers. | **EXCLUDE (`EXCL_MALWARE_DELIVERY`)** *(strip attachments; do not map to phishing unless independent `C1`/`C2` text evidence holds)* |
-| **`C4`** | **`Ordinary unsolicited commercial spam`** | Unsolicited bulk marketing, pharmaceutical/pill ads, replica luxury goods, penny-stock pump-and-dump promotions, casino/adult spam, SEO link spam, or commercial newsletters lacking deceptive identity impersonation for credential/financial theft ([docs/V2_RESEARCH_SPEC_ZH.md](file:///d:/Project/IFSI-for-phishing-email-detection/docs/V2_RESEARCH_SPEC_ZH.md) §2.2). | **EXCLUDE (`EXCL_ORDINARY_SPAM`)** *(never map to `phishing` or `legitimate`)* |
-| **`C5`** | **`Legitimate email`** | Authentic benign personal, academic, administrative, or operational correspondence from the `ham` pool (`full/index == ham`) verified free of mislabeled spam, commercial bulk blasts, or phishing lures. | **INCLUDE as `legitimate` (`label = 0`)** |
-| **`C6`** | **`Ambiguous`** | Image-only/empty-text `2007` messages; dead/truncated `2007` URLs where deceptive impersonation cannot be confirmed from preserved headers + body + literal URL string; aggressive greymail; or unresolved annotator disagreement. | **QUARANTINE (`track_a_ambiguous_quarantine.jsonl`)** *(excluded from binary denominators; reported separately)* |
+The taxonomy is applied to the message and available headers, not to the native TREC label alone.
 
-### Dual-Annotator Labeling & Disagreement Adjudication Protocol
-1. **Blind Independent Dual Labeling**: Two human cybersecurity annotators independently inspect sanitized RFC 2822 headers + body + literal URLs (with active network rendering disabled) and assign both a 6-class category (`C1`–`C6`) and an `injection_status` tag, **strictly blind to each other and blind to `A0`/`A1`/Config A/Config B predictions**.
-2. **Inter-Annotator Reliability Gate**:
-   - Minimum unweighted 6-class Cohen's $\kappa \ge 0.80$.
-   - Minimum binary Cohen's $\kappa \ge 0.85$ across items assigned `C1/C2` vs. `C5`.
-3. **Conservative Adjudication Rules**:
-   - **Exact Match (`C1` or `C2` by both, or `C1`+`C2`)**: Accepted as `phishing` (`C1` vs `C2` subtype adjudicated by senior third reviewer for subtype reporting).
-   - **Exact Match (`C5` by both)**: Accepted as `legitimate`.
-   - **Any `C3` or `C4` Consensus**: Logged in `exclusion_log.jsonl` and discarded.
-   - **Boundary Disagreement (`C1/C2` vs. `C3/C4/C6`)**: Escalated to a blind senior third adjudicator. Unless the third adjudicator documents explicit message-level impersonation + credential/financial solicitation evidence, the record defaults to **`C4` (`EXCL_ORDINARY_SPAM`) or `C6` (`Ambiguous`)**—never `phishing`.
-   - **Opposite-Polarity Disagreement (`C1/C2` vs. `C5`)**: **Mandatory automatic quarantine as `C6` (`Ambiguous`)**; no tie-breaker may promote a `phishing`-vs-`legitimate` human conflict into the clean binary benchmark.
+| Code | Class | Positive evidence / disposition |
+|---|---|---|
+| `C1` | Credential theft / phishing | Deceptive identity or trusted-brand impersonation plus a request for credentials, login, password, PIN, account verification, or session information through a link, form, or reply path. Include as binary phishing. |
+| `C2` | Financial fraud / impersonation | Deceptive identity, authority, or relationship used to induce payment, wire transfer, invoice diversion, card/bank disclosure, tax/escrow payment, or advance-fee action. Include as binary phishing. |
+| `C3` | Malware delivery | Malicious attachment, exploit, or payload delivery without independently demonstrated `C1`/`C2` evidence. Exclude from the binary benchmark; never promote by default. |
+| `C4` | Ordinary unsolicited commercial spam | Bulk ads, newsletters, pharmaceuticals, adult/SEO, casino, stock promotion, or similar mail without deceptive credential or financial action. Exclude; never map to phishing or legitimate. |
+| `C5` | Legitimate email | Benign personal, administrative, academic, or operational correspondence; must also pass the independent review and contamination checks. Include as legitimate. |
+| `C6` | Ambiguous | Evidence is incomplete, image-only, truncated, unavailable, or the reviewers cannot establish intent. Quarantine and exclude from binary denominators. |
 
----
+`C1` and `C2` are the only positive phishing classes. `C3` and `C4` are retained in the audit log so that the source’s spam composition is not hidden.
 
-## 5. Reality Check on Phase 8.1B Quotas (`120` Phishing + `120` Legitimate Test; `30 + 30` Val)
+## Two-annotator and adjudication protocol
 
-| Proposed `trec07p` Quota (Phase 8.1B) | Evidence Status | Preflight Verdict & Conservative Revision |
-| :--- | :--- | :--- |
-| **`120` Test + `30` Val = `150` Legitimate (`ham`)** | **EVIDENCE-BASED** (`25,220` human-adjudicated `ham` in `full/index`; `150` is `0.59%` of `ham`) | **Supported** — Adjusted proportionally in Phase 8.1C to **`105` Test + `35` Val = `140` Legitimate** (`0.56%` of `ham`). |
-| **`120` Test + `30` Val = `150` Phishing (from `spam`)** | **UNVERIFIED ESTIMATE (NOT EVIDENCE-BASED)** — Zero published phishing count in Cormack (2007); `2007` `spam` heavily dominated by image/PDF stock/pharma spam; 89-day single-server window risks severe phish-kit burst collapse under `0.70` shingle Jaccard deduplication. | **REJECTED (`120 + 30` quota rejected)** — Misrepresents an ordinary-spam benchmark as a `50/50` phishing core. Slashed by **`60%`** to a strictly conditional ceiling of **`45` Test + `15` Val = `60` verified phishing** (`0.12%` of `50,199` spam: `1.2` per `1,000` spam messages), making `trec07p` `70%` `ham` / `30%` verified phishing. |
+1. Two trained annotators independently label every candidate using the six classes and record short evidence codes (identity target, action requested, URL/form/reply evidence, and uncertainty). They do not see one another’s labels or any A0/A1/model output. Link rendering, active attachment execution, and external network access are prohibited.
+2. Report six-class agreement and binary agreement (`C1/C2` versus `C5` after exclusions). The hard binary gate is Cohen’s `κ ≥ 0.85`; a failure pauses allocation.
+3. `C1`/`C1`, `C2`/`C2`, or `C1`/`C2` becomes phishing, with subtype resolved by a senior adjudicator. `C5`/`C5` becomes legitimate. `C3`/`C3` and `C4`/`C4` are excluded. `C6`/`C6` is quarantined.
+4. Any disagreement crossing binary polarity (`C1/C2` versus `C5`) is reviewed by a third adjudicator. Without explicit message-level evidence, the result defaults to `C6` or an exclusion, never to phishing.
+5. Campaign, thread, and near-duplicate controls are applied before the test/validation split. A shortfall is reported as a shortfall; it is not filled with `C3`, `C4`, synthetic mail, or a relaxed deduplication rule.
 
+## TREC verdict
+
+TREC 2007 is technically useful as a same-server historical spam/ham source and as a possible legitimate-mail stratum. It is **not a verified phishing source**. The proposed dual-class TREC core is not currently defensible as `120` phishing plus `120` legitimate. The phishing side remains **UNVERIFIED** pending authorized acquisition and message-level annotation.
